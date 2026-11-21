@@ -708,10 +708,17 @@ export class CanvasDiorama {
         const K = '#20242E', cx = -0.2, seg = function (x0, z0, x1, z1) { const n = Math.ceil(Math.hypot(x1 - x0, z1 - z0) / 0.025); for (let k = 0; k <= n; k++) { const t = k / n; add(B(x0 + (x1 - x0) * t - 0.035, y3, z0 + (z1 - z0) * t - 0.035, 0.07, 0.005, 0.07, K, F(K))); } };
         add(L.D(cx, y3, 3.12, 0.17, K, F(K)), L.D(cx, y3 + 0.002, 3.12, 0.12, '#CFE6F7', F('#CFE6F7')));
         seg(cx, 2.95, cx, 2.3); seg(cx, 2.78, cx - 0.3, 3.05); seg(cx, 2.78, cx + 0.3, 3.05); seg(cx, 2.3, cx - 0.24, 1.78); seg(cx, 2.3, cx + 0.24, 1.78);
+        // The artist's signature in the bottom-right corner of the drawing.
+        add(T(2.95, y3 + 0.004, 1.72, 0.22, 'Fakhrudin', { wt: 700, ff: 'Kalam, cursive', c: '#20242E', nc: '#20242E' }));
         // The text floats beside the easel, on its right (V1.05 only).
         if (UV === 5) {
         const k = W5[0].indexOf(' Years later'), pa = wrap(k > 0 ? W5[0].slice(0, k) : W5[0], 34), pb = k > 0 ? wrap(W5[0].slice(k + 1), 34) : [];
         const fl = function (arr, z0) { arr.forEach(function (ln, j) { add(T(4.5, 42.5, z0 - j * 0.36, 0.25, ln, { face: true, glow: true, a: 'dz-float', al: 'l', wt: 700, ff: 'Manrope, sans-serif', c: INK, nc: LITE })); }); };
+        // A rounded panel behind the floating text: the paper colour of V1.06's fade at 70 % (30 % see-through), no fade,
+        // turned to the camera like the text lines so it slants with them (drawn first, floats with them).
+        const zb = 8.1 - pa.length * 0.36 - 0.25 - Math.max(0, pb.length - 1) * 0.36, mx = Math.max.apply(null, pa.concat(pb).map(function (ln) { return ln.length; }));
+        const pW = mx * 0.14 + 0.8, pH = 8.1 - zb + 0.8, PX = 20 / 0.25, fade = function (c) { return 'rgba(' + c + ',0.7)'; };
+        add(T(4.15, 42.5, 8.5, 0.25, '', { face: true, panel: true, pw: pW * PX, ph: pH * PX, br: '28px', bg: fade('244,241,234'), nbg: fade('11,18,34'), a: 'dz-float' }));
         fl(pa, 8.1); fl(pb, 8.1 - pa.length * 0.36 - 0.25); }
       }
       // V1.07 Thread 2 in the studio: Jockie (teal) hands over a competition flyer, the opportunity he found; Achmad (blue) hands back the finished calendar he delivered. The lesson is painted on the back wall.
@@ -1141,6 +1148,7 @@ export class CanvasDiorama {
     if (!pov) out.push({ cls: 'dz-f', l: scx - sw / 2, t: scy - shh * 0.55, w: sw, h: shh, clip: 'none', br: '50%', o: 1, bg: 'radial-gradient(ellipse at center, ' + (dark ? 'rgba(0,0,0,0.38)' : 'rgba(19,32,58,0.2)') + ' 0%, rgba(19,32,58,0) 70%)' });
     faces.forEach(function (fc) {
       const it = fc.it, cls = 'dz-f' + (it.a ? ' ' + it.a : ''), o = it.op == null ? 1 : it.op;
+      if (fc.label && it.panel) { out.push({ cls: cls, l: 0, t: 0, w: it.pw, h: it.ph, clip: 'none', br: it.br || '0', o: o, bg: dark ? (it.nbg || it.bg) : it.bg, tf: fc.m, txt: '', ts: 'none', fc: 'transparent', fw: 400, ff: 'Manrope, sans-serif', tx: '0' }); return; }
       if (fc.label) { out.push({ cls: cls, l: 0, t: 0, w: 0, h: 0, clip: 'none', br: '0', o: (dark && !it.nc) ? 0.82 : 1, bg: 'transparent', tf: fc.m, txt: it.txt, ts: it.glow ? ((dark || it.glow === 'dark') ? '0 0 10px rgba(11,18,34,0.95), 0 0 3px rgba(11,18,34,0.95), 0 10px 18px rgba(0,0,0,0.35)' : '0 0 10px rgba(244,241,234,0.98), 0 0 3px rgba(244,241,234,1), 0 10px 16px rgba(19,32,58,0.22)') : 'none', fc: (dark && it.nc) ? it.nc : it.c, fw: it.wt, ff: it.ff || 'Manrope, sans-serif', tx: it.al === 'l' ? '0' : '-50%' }); return; }
       if (fc.round) {
         const cx = ox + k * fc.pt[0], cy = oy + k * fc.pt[1], r = fc.rr != null ? fc.rr : it.r * k;
