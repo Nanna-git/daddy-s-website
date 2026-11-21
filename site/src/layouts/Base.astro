@@ -1,0 +1,26 @@
+---
+import '../styles/global.css';
+import Stickman from '../components/Stickman.astro';
+const { title, idle = 'idle', progress = false } = Astro.props;
+const path = Astro.url.pathname;
+const nav = [['/', 'Home'], ['/my-story/', 'My Story'], ['/stories/', 'Stories'], ['/projects/', 'Projects'], ['/contact/', 'Contact']];
+const on = (h) => (h === '/' ? path === '/' : path.startsWith(h));
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{title ? `${title} · Achmad Farizky` : 'Achmad Farizky'}</title>
+<meta name="description" content="Achmad Farizky is a data specialist and data storyteller with 21 years of experience in telecom, retail and healthcare data. He is a CDMP Master and works at Johns Hopkins Aramco Healthcare in Saudi Arabia.">
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Lato:wght@400;700&display=swap">
+</head>
+<body data-idle={idle}>
+{progress && <div id="progress"></div>}
+<nav class="nav">{nav.map(([h, l]) => <a class="lnk" href={h} aria-current={on(h) ? 'page' : undefined}>{l}</a>)}</nav>
+<main><slot /></main>
+<footer>© Achmad Farizky · Dhahran / Madinah, Saudi Arabia</footer>
+<Stickman />
+<script is:inline src="/stickman.js"></script>
+</body>
+</html>

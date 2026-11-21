@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getStories, phaseGroup, PHASE_GROUPS } from '../../lib/content.js';
+const stories = getStories().map((s) => ({ ...s, group: phaseGroup(s.phase) }));
+const themes = [...new Set(stories.flatMap((s) => s.themes || []))].sort();
+const fmt = (d) => d.toLocaleDateString('en', { year: 'numeric', month: 'short' });
+const groups = PHASE_GROUPS.map(([, label]) => [label, stories.filter((s) => s.group === label).sort((a, b) => a.date - b.date)]).filter(([, l]) => l.length);
+---
+<Base title="Stories">
+<section class="wrap" style="text-align:center;padding:30px 20px 24px"><h1 class="fade" style="font-size:clamp(34px,6vw,52px);margin:0 0 8px">Stories</h1><p class="meta">{stories.length} stories, grouped by the phase of my career they belong to.</p>
+<div id="chips" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px">
+ <button class="chip" aria-pressed="true" data-t="">All</button>
+ {themes.map((t) => <button class="chip" aria-pressed="false" data-t={t}>{t}</button>)}
+</div></section>
+<div class="wrap" style="padding-bottom:40px">
+<div style="position:relative;border-left:2px solid var(--brass-lt);margin-left:8px;padding-left:26px">
+{groups.map(([label, list]) => (
+ <section class="grp" style="padding-bottom:28px">
+  <h2 style="font-size:24px;margin:0 0 14px;position:relative"><span style="position:absolute;left:-36px;top:9px;width:14px;height:14px;border-radius:50%;background:var(--forest);border:3px solid var(--ivory)"></span>{label}</h2>
+  <div style="display:grid;gap:14px">
+  {list.map((s) => <a class="card story" data-themes={(s.themes || []).join('|')} href={`/stories/${s.slug}/`}><div class="meta">{fmt(s.date)} · {s.reading_time}</div><h3 style="margin:4px 0 0;font-size:20px">{s.title}</h3></a>)}
+  </div>
+ </section>
+))}
+</div></div>
+<script is:inline>
+const chips=[...document.querySelectorAll('.chip')];
+chips.forEach(c=>c.onclick=()=>{chips.forEach(x=>x.setAttribute('aria-pressed',x===c));
+ document.querySelectorAll('.story').forEach(s=>s.hidden=c.dataset.t&&!s.dataset.themes.split('|').includes(c.dataset.t));
+ document.querySelectorAll('.grp').forEach(g=>g.hidden=!g.querySelector('.story:not([hidden])'));});
+</script>
+</Base>

@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { getProjects } from '../lib/content.js';
+const projects = getProjects();
+---
+<Base title="Projects">
+<section class="wrap" style="text-align:center;padding:30px 20px 20px"><h1 class="fade" style="font-size:clamp(34px,6vw,52px);margin:0 0 8px">Projects</h1><p class="meta">Press next and watch.</p></section>
+<div class="wrap" style="padding-bottom:40px">
+ <div id="carousel" style="min-height:340px">
+ {projects.map((p) => <article class="slide card" style="padding:28px"><div class="meta">Project {p.n}</div><h2 style="margin:4px 0 12px;font-size:28px">{p.title}</h2><div class="prose" style="margin:0" set:html={p.html} /></article>)}
+ </div>
+ <div style="display:flex;gap:16px;align-items:center;justify-content:center;margin-top:24px"><button class="btn" id="prev">← Previous</button><span id="count" class="meta"></span><button class="btn solid" id="next">Next →</button></div>
+</div>
+</Base>

@@ -1,0 +1,28 @@
+{
+ "version": "0.0.1",
+ "configurations": [
+  {
+   "name": "site",
+   "runtimeExecutable": "npm",
+   "runtimeArgs": [
+    "--prefix",
+    "site",
+    "run",
+    "dev",
+    "--",
+    "--port",
+    "4321"
+   ],
+   "port": 4321
+  },
+  {
+   "name": "story-design",
+   "runtimeExecutable": "sh",
+   "runtimeArgs": [
+    "-c",
+    "cd '/private/tmp/claude-502/-Users-nanna--claude-spares-spare-AEjanK/9531ef51-f755-4461-ba02-baee4f2a6ad8/scratchpad/canvas/project' && exec python3 -m http.server 8765"
+   ],
+   "port": 8765
+  }
+ ]
+}

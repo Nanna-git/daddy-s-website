@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import { getHome, getStories, getPhases, phaseGroup } from '../lib/content.js';
+const h = getHome();
+const stories = getStories();
+const featured = stories.slice(0, 6);
+const themes = [...new Set(stories.flatMap((s) => s.themes || []))].sort();
+const road = getPhases().map((p) => ({ name: p.title.replace(/^\d+\. /, '').split(':')[0].replace(/ \(.*\)/, ''), years: (p.title.match(/\(([^)]*\d{4}[^)]*)\)/) || [])[1] }));
+const fmt = (d) => d.toLocaleDateString('en', { year: 'numeric', month: 'short' });
+const bars = [34, 52, 44, 70, 62, 92];
+---
+<Base>
+<section data-kick class="hero">
+ <div>
+  <div class="fade" style="width:72px;height:72px;margin-bottom:22px;border:2px solid var(--brass-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 28px 'Lora',serif;color:var(--forest)">AF</div>
+  <h1 class="fade" style="animation-delay:.1s">Achmad Farizky</h1>
+  <div class="fade" style="animation-delay:.25s;font:italic 500 clamp(18px,3vw,25px) 'Lora',serif;color:var(--brass);margin-bottom:6px">{h.headline.split(' · ')[0]}</div>
+  <p class="meta fade" style="animation-delay:.3s;margin:0 0 20px">{h.location}</p>
+  <div class="fade prose" style="animation-delay:.4s;margin:0" set:html={h.introHtml.split('</p>')[0] + '</p>'} />
+  <div class="fade" style="animation-delay:.55s;display:flex;flex-wrap:wrap;gap:14px;margin-top:26px"><a class="btn solid" href="/stories/">Read my stories</a><a class="btn" href="/my-story/">My story</a></div>
+  <div class="stats fade" style="animation-delay:.7s"><div><b>{h.years}</b><span>YEARS IN DATA</span></div><div><b>3</b><span>INDUSTRIES</span></div><div><b>{stories.length}</b><span>STORIES</span></div><div><b>CDMP</b><span>MASTER</span></div></div>
+ </div>
+ <div class="viz fade" style="animation-delay:.3s" aria-hidden="true">
+  <svg viewBox="0 0 400 280" style="display:block;width:100%">
+   <g stroke="#4B7566" stroke-width="1">{[60, 120, 180, 240].map((y) => <line x1="0" x2="400" y1={y} y2={y} />)}</g>
+   {bars.map((b, i) => <rect class="gr" style={`animation-delay:${i * 0.12}s`} x={14 + i * 64} y={260 - b * 2.4} width="44" height={b * 2.4} fill={i === 5 ? '#D9B66A' : '#4B7566'} />)}
+   <path class="dr" pathLength="1" d="M36 170 C 110 150, 150 190, 218 110 S 330 60, 378 28" fill="none" stroke="#FAF6EC" stroke-width="3" stroke-linecap="round" />
+   <circle cx="378" cy="28" r="6" fill="#FAF6EC" />
+  </svg>
+  <span class="tag" style="left:-14px;top:30px">Telecom</span><span class="tag" style="right:-10px;top:110px">Retail</span><span class="tag" style="left:30px;bottom:-14px">Healthcare</span>
+ </div>
+</section>
+
+<section data-act class="s sand"><div class="wide"><h2 class="title">A road of seven chapters</h2><div class="rule"></div>
+ <div class="road">{road.map((r) => <a href="/my-story/"><i></i><b>{r.years}</b>{r.name}</a>)}</div></div></section>
+
+<section data-act class="band s"><div class="wide"><h2 class="title">Three threads in my story</h2><div class="rule"></div>
+ <div class="threads">{h.threadItems.map((t, i) => <div><em>{i + 1}</em><h3>{t.title}</h3><p style="margin:0;opacity:.9">{t.text}</p></div>)}</div></div></section>
+
+<section data-act class="s"><div class="wide"><h2 class="title">Latest stories</h2><div class="rule"></div>
+ <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px">
+ {featured.map((s) => <a class="card" style="border-top:3px solid var(--brass-lt)" href={`/stories/${s.slug}/`}><div class="meta">{phaseGroup(s.phase).toUpperCase()} · {fmt(s.date)} · {s.reading_time}</div><h3 style="margin:8px 0 0;font-size:21px">{s.title}</h3></a>)}
+ </div>
+ <p style="text-align:center;margin-top:32px"><a class="btn" href="/stories/">All {stories.length} stories</a></p></div></section>
+
+<section data-act class="s sand"><div class="wide"><h2 class="title">What I write about</h2><div class="rule"></div><div class="tags">{themes.map((t) => <a href="/stories/">{t}</a>)}</div></div></section>
+
+<section data-act class="s"><div class="wide"><h2 class="title">What people said</h2><div class="rule"></div>
+ <div class="quotes">{h.quotes.map((q) => <blockquote>“{q.text}”<cite>{q.who}<small>{q.role}</small></cite></blockquote>)}</div></div></section>
+
+<section data-act class="band s" style="text-align:center"><div class="wrap"><h2 class="title">Let's connect</h2><div class="rule"></div><p>Thank you for reading this far. I'd love to hear your story too.</p><a class="btn" href="/contact/">Get in touch</a></div></section>
+</Base>

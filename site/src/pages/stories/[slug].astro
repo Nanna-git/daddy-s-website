@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getStories } from '../../lib/content.js';
+export const getStaticPaths = () => getStories().map((s) => ({ params: { slug: s.slug }, props: { s } }));
+const { s } = Astro.props;
+const date = s.date.toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+<Base title={s.title} progress idle="hold">
+<article class="wrap" style="padding:30px 20px 60px">
+ <p class="meta"><a class="lnk" href="/stories/">← All stories</a></p>
+ <h1 style="font-size:clamp(32px,6vw,48px);margin:.3em 0 .2em">{s.title}</h1>
+ <p class="meta">{date} · {s.reading_time} · {s.phase}{s.themes?.length ? ` · ${s.themes.join(', ')}` : ''}</p>
+ {s.assets?.map((a) => <div class="ph">Media to come: {a}</div>)}
+ <div class="prose" style="margin:0" set:html={s.body} />
+ {s.linkedin_posts?.length > 0 && <p class="meta" style="margin-top:40px;border-top:1px solid var(--line);padding-top:16px">Read the original on LinkedIn: {s.linkedin_posts.map((p, i) => <><a class="lnk" href={p.url} rel="noopener">{p.note || new Date(p.date).toISOString().slice(0, 10)}</a>{i < s.linkedin_posts.length - 1 ? ' · ' : ''}</>)}</p>}
+</article>
+</Base>

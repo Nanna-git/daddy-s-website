@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import { getPhases, getRest } from '../lib/content.js';
+const phases = getPhases(); const r = getRest();
+const props = ['book', 'antenna', 'hourglass', 'lantern', 'clipboard', 'spark', 'cross'];
+---
+<Base title="My Story">
+<section class="wrap" style="text-align:center;padding:30px 20px 60px"><h1 class="fade" style="font-size:clamp(34px,6vw,52px);margin:0 0 8px">My story</h1><p class="meta">Seven phases, 21 years.</p></section>
+{phases.map((p, i) => (
+ <section data-act data-pose="hold" data-prop={props[i]} class:list={['s', i % 2 ? 'sand' : '']}><div class="wrap"><h2 style="font-size:clamp(26px,4vw,34px)">{p.title}</h2><div class="prose" style="margin:0" set:html={p.html} /></div></section>
+))}
+<section data-act class="band s"><div class="wrap"><h2 class="title">Community & recognition</h2><div class="rule"></div><div class="prose" set:html={r.community} /></div></section>
+<section data-act class="s"><div class="wrap"><h2 class="title">Passions</h2><div class="rule"></div><div class="prose" set:html={r.passions} /><h2 class="title" style="margin-top:56px">Tips from my path</h2><div class="rule"></div><div class="prose" set:html={r.tips} /></div></section>
+<section data-act class="sand s"><div class="wrap"><h2 class="title">Skills, tools & certificates</h2><div class="rule"></div><div class="prose" set:html={r.skills} /></div></section>
+</Base>

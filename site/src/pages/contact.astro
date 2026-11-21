@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import { getRest } from '../lib/content.js';
+const r = getRest();
+---
+<Base title="Contact" idle="wave">
+<section class="band" style="min-height:70vh"><div class="wrap s" style="text-align:center"><h1 class="title">Let's connect</h1><div class="rule"></div>
+ <div class="prose" style="text-align:left" set:html={r.connect} />
+ <p style="margin-top:28px"><a class="btn" href="mailto:achmadfarizky@gmail.com">Write to me</a></p></div></section>
+</Base>

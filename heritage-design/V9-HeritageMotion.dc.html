@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Farizky Heritage Motion</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Lato:wght@400;700&display=swap">
+<style>
+body{margin:0;background:#FAF6EC}
+a{color:inherit;text-decoration:none}
+a.lnk{background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .3s}
+a.lnk:hover{background-size:100% 1px}
+button{font:inherit;cursor:pointer}
+@keyframes fade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes rv{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:none}}
+@keyframes flipin{from{opacity:0;transform:perspective(900px) rotateX(-18deg) translateY(24px)}to{opacity:1;transform:none}}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes ring{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+@keyframes ringr{0%{r:6;opacity:.9}100%{r:60;opacity:0}}
+@keyframes bars{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+@keyframes drift{from{transform:rotateX(10deg) rotateY(-20deg)}to{transform:rotateX(2deg) rotateY(18deg)}}
+@keyframes spin{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
+@keyframes orbit{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+@keyframes floaty{from{transform:translateZ(0) translateY(0)}to{transform:translateZ(30px) translateY(-14px)}}
+@keyframes world{from{transform:rotateY(-8deg) translateX(0)}to{transform:rotateY(-8deg) translateX(-2600px)}}
+@keyframes far{from{transform:translateX(0)}to{transform:translateX(-900px)}}
+@keyframes cap{0%{opacity:0;transform:translateY(50px)}14%{opacity:1;transform:none}86%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-50px)}}
+@keyframes swingF{from{transform:rotate(-32deg)}to{transform:rotate(32deg)}}
+@keyframes swingB{from{transform:rotate(32deg)}to{transform:rotate(-32deg)}}
+@keyframes kneeF{from{transform:rotate(4deg)}to{transform:rotate(56deg)}}
+@keyframes kneeB{from{transform:rotate(56deg)}to{transform:rotate(4deg)}}
+@keyframes elbF{from{transform:rotate(-8deg)}to{transform:rotate(-58deg)}}
+@keyframes elbB{from{transform:rotate(-58deg)}to{transform:rotate(-8deg)}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+@keyframes shadow{from{transform:scaleX(1)}to{transform:scaleX(.82)}}
+@keyframes jump{0%{transform:translateY(0)}40%{transform:translateY(-100px) rotate(-5deg)}70%{transform:translateY(0)}85%{transform:translateY(-12px)}100%{transform:translateY(0)}}
+@keyframes type{from{transform:rotate(-6deg)}to{transform:rotate(8deg)}}
+@keyframes wave{from{transform:rotate(-22deg)}to{transform:rotate(18deg)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes hint{0%{transform:translateY(0);opacity:.2}50%{opacity:1}100%{transform:translateY(14px);opacity:.2}}
+@keyframes twinkle{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes pop{0%,10%{opacity:0;transform:scale(.6)}20%,70%{opacity:1;transform:scale(1)}85%,100%{opacity:0;transform:scale(.6)}}
+.fade{animation:fade .8s cubic-bezier(.2,.7,.2,1) both}
+.flipin{animation:flipin .7s cubic-bezier(.2,.7,.2,1) both}
+.gr{transform-box:fill-box;transform-origin:bottom;animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+.gx{transform-origin:left;animation:growx 1s cubic-bezier(.2,.7,.2,1) both}
+.dr{stroke-dasharray:1;animation:draw 1.5s ease both}
+.bb{transform-box:fill-box;transform-origin:bottom;animation:bars 2.2s ease-in-out infinite alternate}
+.ring{animation:ring 2.8s ease-out infinite}
+.ringc{animation:ringr 2.6s ease-out infinite}
+.rig{transform-style:preserve-3d;animation:drift 9s ease-in-out infinite alternate}
+.cube{transform-style:preserve-3d;animation:spin 14s linear infinite}
+.face{position:absolute;width:90px;height:90px;border:2px solid #D9B66A;background:rgba(31,74,58,.9);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;color:#FAF6EC;font-size:18px;backface-visibility:visible}
+.orbit{transform-style:preserve-3d;animation:orbit 20s linear infinite}
+.orbit:hover{animation-play-state:paused}
+.chip3{position:absolute;left:50%;top:50%;margin:-26px 0 0 -70px;width:140px;height:52px;display:flex;align-items:center;justify-content:center;font-weight:700;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 14px 24px -14px rgba(0,0,0,.6)}
+.arm-f{transform-origin:60px 58px;animation:swingB .6s ease-in-out infinite alternate}
+.arm-b{transform-origin:60px 58px;animation:swingF .6s ease-in-out infinite alternate}
+.elb-f{transform-origin:60px 84px;animation:elbF .6s ease-in-out infinite alternate}
+.elb-b{transform-origin:60px 84px;animation:elbB .6s ease-in-out infinite alternate}
+.leg-f{transform-origin:60px 106px;animation:swingF .6s ease-in-out infinite alternate}
+.leg-b{transform-origin:60px 106px;animation:swingB .6s ease-in-out infinite alternate}
+.knee-f{transform-origin:60px 138px;animation:kneeF .6s ease-in-out infinite alternate}
+.knee-b{transform-origin:60px 138px;animation:kneeB .6s ease-in-out infinite alternate}
+.body{animation:bob .3s ease-in-out infinite alternate}
+.shadow{transform-origin:62px 196px;animation:shadow .3s ease-in-out infinite alternate}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 4s infinite}
+.hint{animation:hint 1.8s ease-in-out infinite}
+.btn{transition:transform .2s,background .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px -10px rgba(31,74,58,.6)}
+.lift{transition:transform .25s,box-shadow .25s;transform-style:preserve-3d}
+.lift:hover{transform:perspective(800px) rotateX(4deg) translateY(-6px);box-shadow:0 22px 34px -22px rgba(31,74,58,.55)}
+.tabbtn{transition:background .2s,color .2s,border-color .2s}
+.tabbtn:hover{border-color:#D9B66A}
+.card3d{transition:transform 1s cubic-bezier(.2,.7,.2,1),opacity .6s}
+.ringwrap{transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+.caps{margin:0 auto;max-width:1100px;padding:24px 32px}
+.cap{margin-bottom:28px}
+.stage{position:relative;height:700px;overflow:hidden;background:radial-gradient(ellipse at 28% 0%,#2C6450 0%,#1F4A3A 55%,#173A2D 100%)}
+@supports (animation-timeline: view()) {
+.rv{animation:rv linear both;animation-timeline:view();animation-range:entry 0% entry 45%}
+.prog{transform-origin:left;animation:growx linear both;animation-timeline:scroll(root)}
+.story{height:2800px;view-timeline:--st block}
+.stage{position:sticky;top:0;perspective:1600px}
+.world{animation:world linear both;animation-timeline:--st;animation-range:cover 24% cover 80%;transform-origin:0 50%}
+.farl{animation:far linear both;animation-timeline:--st;animation-range:cover 24% cover 80%}
+.caps{position:absolute;left:0;right:0;top:44px;height:330px;padding-top:0;max-width:none}
+.cap{position:absolute;left:48px;top:0;max-width:560px;margin:0;opacity:0;animation:cap linear both;animation-timeline:--st}
+.c1{animation-range:cover 24% cover 38%}
+.c2{animation-range:cover 38% cover 52%}
+.c3{animation-range:cover 52% cover 66%}
+.c4{animation-range:cover 66% cover 80%}
+}
+@keyframes introPush{from{transform:none;opacity:1}to{transform:translateY(-170px);opacity:.08}}
+@keyframes capPull{0%{opacity:0;transform:translateY(240px)}16%{opacity:1;transform:none}82%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-260px)}}
+@keyframes showPush{0%,70%{opacity:1}100%{opacity:0}}
+@keyframes ptHero{0%,70%{opacity:0}100%{opacity:1}}
+@keyframes ptPull{0%,50%{opacity:1}54%,74%{opacity:0}78%,100%{opacity:1}}
+@keyframes showPull{0%,50%{opacity:0}54%,74%{opacity:1}78%,100%{opacity:0}}
+@keyframes hideN{from{opacity:1}to{opacity:0}}
+@keyframes pushUp{from{transform:translateY(0)}to{transform:translateY(-9px)}}
+@keyframes tug{from{transform:translateY(0)}to{transform:translateY(9px)}}
+@keyframes ptArm{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+@keyframes riseLine{0%{transform:translateY(0);opacity:0}30%{opacity:1}100%{transform:translateY(-22px);opacity:0}}
+.narr{display:none;position:fixed;left:12px;bottom:0;width:100px;height:167px;z-index:30;pointer-events:none}
+.pose{position:absolute;inset:0}
+.pushArms{animation:pushUp .5s ease-in-out infinite alternate}
+.tugG{animation:tug .7s ease-in-out infinite alternate}
+.ptArm{transform-origin:60px 58px;animation:ptArm .9s ease-in-out infinite alternate}
+.mline{animation:riseLine 1.1s linear infinite}
+.bub{position:absolute;left:104px;bottom:96px;white-space:nowrap;background:#FAF6EC;color:#1F4A3A;border:1.5px solid #D9B66A;padding:4px 14px;border-radius:99px;font-family:'Lora',serif;font-style:italic;font-size:15px;line-height:1.5;box-shadow:0 8px 16px -10px rgba(0,0,0,.5)}
+@supports (animation-timeline: view()) {
+.pg{timeline-scope:--hero,--st,--ct}
+.hero{view-timeline:--hero block}
+.contact{view-timeline:--ct block}
+.intro{animation:introPush linear both;animation-timeline:--hero;animation-range:cover 40% cover 90%}
+.c3{animation-name:capPull;border-left:3px solid #D9B66A;padding-left:18px}
+.narr{display:block;animation:hideN linear both;animation-timeline:--ct;animation-range:entry 30% entry 70%}
+.pPush{animation:showPush linear both;animation-timeline:--hero;animation-range:cover 40% cover 100%}
+.pPoint{animation:ptHero linear both,ptPull linear forwards;animation-timeline:--hero,--st;animation-range:cover 40% cover 100%,cover 18% cover 82%}
+.pPull{opacity:0;animation:showPull linear both;animation-timeline:--st;animation-range:cover 18% cover 82%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="pg" style="background:#FAF6EC;color:#23302A;font-family:'Lato',system-ui,sans-serif;font-size:18px;line-height:1.7;overflow:clip">
+
+<!-- NAV -->
+<div style="position:sticky;top:0;z-index:20;background:rgba(250,246,236,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
+<div style="max-width:1200px;margin:0 auto;padding:16px 32px;display:flex;flex-wrap:wrap;gap:8px 28px;justify-content:center;font-size:16px;letter-spacing:.04em"><a class="lnk" href="#h-story">Story</a><a class="lnk" href="#h-exp">Experience</a><a class="lnk" href="#h-work">Selected Work</a><a class="lnk" href="#h-craft">Craft</a><a class="lnk" href="#h-rec">Recognition</a><a class="lnk" href="#h-contact">Contact</a></div>
+<div class="prog" style="height:3px;background:{{accent}};transform:scaleX(0)"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero" style="max-width:1100px;margin:0 auto;padding:48px 32px 40px;text-align:center">
+<div class="intro">
+<div class="fade" style="width:84px;height:84px;margin:0 auto 24px;position:relative"><span class="ring" style="position:absolute;inset:0;border:2px solid {{accent}};border-radius:50%"></span><span style="position:absolute;inset:0;border:2px solid {{accent}};border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:32px;font-weight:600;color:#1F4A3A">AF</span></div>
+<h1 class="fade" style="animation-delay:.1s;font-family:'Lora',serif;font-weight:600;font-size:clamp(44px,8vw,84px);line-height:1.08;margin:0 0 10px;color:#1F4A3A">Achmad Farizky</h1>
+<div class="fade" style="animation-delay:.25s;font-family:'Lora',serif;font-style:italic;font-size:24px;color:{{accent}};margin-bottom:24px">Data Solution Professional</div>
+<p class="fade" style="animation-delay:.4s;margin:0 auto;max-width:700px;font-size:20px;color:#33433B">From Medan to Jeddah: more than eighteen years of turning telecom and retail data into stories people can act on. SAP BI, Power BI, Microsoft Fabric, Python and SQL.</p>
+</div>
+
+<div class="fade" style="animation-delay:.55s;position:relative;max-width:860px;height:400px;margin:36px auto 0;perspective:1400px" onMouseMove="{{tilt}}" onMouseLeave="{{untilt}}">
+<div class="rig" style="{{rigStyle}};position:absolute;left:50%;top:50%;width:520px;height:320px;margin:-160px 0 0 -260px">
+<div style="position:absolute;inset:0;background:#FFFFFF;border:1px solid #DCD3BD;padding:20px;box-sizing:border-box;box-shadow:0 40px 60px -30px rgba(31,74,58,.5)"><svg viewBox="0 0 480 260" style="width:100%;height:100%" aria-hidden="true"><g fill="#1F4A3A"><rect class="bb" x="10" y="130" width="40" height="130"/><rect class="bb" style="animation-delay:.2s" x="80" y="100" width="40" height="160"/><rect class="bb" style="animation-delay:.4s" x="150" y="150" width="40" height="110"/><rect class="bb" style="animation-delay:.6s" x="220" y="70" width="40" height="190" fill="{{accent}}"/><rect class="bb" style="animation-delay:.8s" x="290" y="120" width="40" height="140"/><rect class="bb" style="animation-delay:1s" x="360" y="50" width="40" height="210"/><rect class="bb" style="animation-delay:1.2s" x="430" y="90" width="40" height="170"/></g></svg></div>
+<div style="position:absolute;left:-60px;top:36px;width:280px;height:160px;transform:translateZ(70px);background:rgba(255,255,255,.94);border:1px solid #DCD3BD;padding:16px;box-sizing:border-box;text-align:left;box-shadow:0 30px 50px -24px rgba(31,74,58,.6)"><div style="font-size:12px;letter-spacing:.1em;color:#4D5C54;font-weight:700">NETWORK KPI</div><svg viewBox="0 0 240 90" style="width:100%;margin-top:6px" aria-hidden="true"><polyline class="dr" pathLength="1" points="0,74 40,60 80,66 120,36 160,46 200,20 240,10" fill="none" stroke="#1F4A3A" stroke-width="4" stroke-linecap="round"/><circle cx="240" cy="10" r="5" fill="{{accent}}"><animate attributeName="r" values="4;10;4" dur="2s" repeatCount="indefinite"/></circle></svg></div>
+<div style="position:absolute;right:-60px;bottom:-10px;width:210px;height:190px;transform:translateZ(140px);background:#1F4A3A;color:#FAF6EC;padding:16px;box-sizing:border-box;box-shadow:0 30px 50px -24px rgba(0,0,0,.7)"><svg viewBox="0 0 120 120" style="width:110px;display:block;margin:0 auto" aria-hidden="true"><circle cx="60" cy="60" r="38" fill="none" stroke="#4B7566" stroke-width="20"/><circle cx="60" cy="60" r="38" fill="none" stroke="#D9B66A" stroke-width="20" stroke-dasharray="0 239" transform="rotate(-90 60 60)"><animate attributeName="stroke-dasharray" values="0 239;160 239;0 239" dur="6s" repeatCount="indefinite"/></circle></svg><div style="font-size:12px;letter-spacing:.14em;text-align:center;margin-top:8px">GIS · LIVE</div></div>
+<div style="position:absolute;left:30px;bottom:-50px;width:90px;height:90px;transform:translateZ(190px);transform-style:preserve-3d"><div class="cube" style="position:absolute;inset:0"><div class="face" style="transform:translateZ(45px)">AF</div><div class="face" style="transform:rotateY(90deg) translateZ(45px)">BI</div><div class="face" style="transform:rotateY(180deg) translateZ(45px)">SQL</div><div class="face" style="transform:rotateY(-90deg) translateZ(45px)">PY</div><div class="face" style="transform:rotateX(90deg) translateZ(45px)">DAX</div><div class="face" style="transform:rotateX(-90deg) translateZ(45px)">GIS</div></div></div>
+</div></div>
+<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:22px"><a class="btn" href="mailto:achmadfarizky@gmail.com" style="background:#1F4A3A;color:#FAF6EC;padding:14px 30px;font-weight:700">Write to me</a><a class="btn" href="#h-story" style="border:1.5px solid #1F4A3A;color:#1F4A3A;padding:12.5px 30px;font-weight:700">Follow the story ↓</a></div>
+</section>
+
+<!-- STORY -->
+<section id="h-story" class="story" style="position:relative">
+<div class="stage">
+<svg class="farl" width="3000" height="700" viewBox="0 0 3000 700" style="position:absolute;left:0;top:0" aria-hidden="true"><g fill="#245843"><rect x="40" y="400" width="90" height="140"/><rect x="150" y="340" width="70" height="200"/><rect x="250" y="420" width="110" height="120"/><rect x="390" y="320" width="80" height="220"/><rect x="500" y="380" width="100" height="160"/><rect x="640" y="350" width="70" height="190"/><rect x="740" y="430" width="120" height="110"/><rect x="890" y="310" width="90" height="230"/><rect x="1010" y="390" width="80" height="150"/><rect x="1120" y="360" width="110" height="180"/><rect x="1260" y="320" width="70" height="220"/><rect x="1360" y="410" width="120" height="130"/><rect x="1510" y="340" width="90" height="200"/><rect x="1630" y="390" width="100" height="150"/><rect x="1760" y="310" width="80" height="230"/><rect x="1870" y="420" width="110" height="120"/><rect x="2010" y="360" width="90" height="180"/><rect x="2130" y="330" width="70" height="210"/><rect x="2230" y="400" width="120" height="140"/><rect x="2380" y="350" width="90" height="190"/><rect x="2500" y="320" width="80" height="220"/><rect x="2610" y="410" width="110" height="130"/><rect x="2750" y="370" width="90" height="170"/><rect x="2870" y="340" width="100" height="200"/></g></svg>
+
+<svg class="world" width="3800" height="700" viewBox="0 0 3800 700" style="position:absolute;left:0;top:0" role="img" aria-label="Illustrated career road: a cell tower, a live dashboard screen, catalog boxes and a winners podium">
+<line x1="0" y1="540" x2="3800" y2="540" stroke="#FAF6EC" stroke-width="3"/>
+<line x1="0" y1="560" x2="3800" y2="560" stroke="#4B7566" stroke-width="3" stroke-dasharray="40 30"/>
+<g fill="#D9B66A" font-family="Lora,serif" font-size="26" font-style="italic"><text x="420" y="610">2005</text><text x="1320" y="610">2010</text><text x="2320" y="610">2023</text><text x="3320" y="610">2025</text></g>
+<g stroke="#FAF6EC" stroke-width="4" fill="none" stroke-linecap="round"><path d="M440 540 L480 270 L520 540 M452 460 H508 M463 390 H497 M471 330 H489 M440 540 L520 460 M520 540 L440 460"/></g>
+<circle cx="480" cy="260" r="9" fill="#D9B66A"/><circle class="ringc" cx="480" cy="260" r="6" fill="none" stroke="#D9B66A" stroke-width="3"/><circle class="ringc" style="animation-delay:1.2s" cx="480" cy="260" r="6" fill="none" stroke="#D9B66A" stroke-width="3"/>
+<rect x="560" y="490" width="90" height="50" fill="#173A2D" stroke="#FAF6EC" stroke-width="3"/><rect x="574" y="504" width="18" height="14" fill="#D9B66A"/>
+<g><rect x="1180" y="290" width="400" height="220" rx="10" fill="#173A2D" stroke="#FAF6EC" stroke-width="4"/><path d="M1380 510 V540 M1330 540 H1430" stroke="#FAF6EC" stroke-width="4"/><g fill="#4B7566"><rect class="bb" x="1210" y="420" width="34" height="70"/><rect class="bb" style="animation-delay:.3s" x="1260" y="390" width="34" height="100"/><rect class="bb" style="animation-delay:.6s" x="1310" y="430" width="34" height="60"/><rect class="bb" style="animation-delay:.9s" x="1360" y="360" width="34" height="130" fill="#D9B66A"/></g><polyline points="1420,460 1460,430 1500,440 1550,350" fill="none" stroke="#D9B66A" stroke-width="5" stroke-linecap="round"/></g>
+<g><path d="M1700 540 C1680 500 1676 470 1700 452 C1724 470 1720 500 1700 540Z" fill="#D9B66A"/><circle cx="1700" cy="464" r="6" fill="#173A2D"/><circle class="ringc" cx="1700" cy="540" r="6" fill="none" stroke="#D9B66A" stroke-width="3"/></g>
+<g stroke="#FAF6EC" stroke-width="4" fill="#173A2D"><rect x="2250" y="480" width="64" height="60"/><rect x="2322" y="480" width="64" height="60"/><rect x="2286" y="418" width="64" height="60"/></g>
+<g font-family="Lato,sans-serif" font-weight="700" font-size="18" fill="#D9B66A"><text x="2262" y="518">PY</text><text x="2330" y="518">SQL</text><text x="2300" y="456">BI</text></g>
+<g><rect x="2480" y="420" width="170" height="110" rx="6" fill="#173A2D" stroke="#FAF6EC" stroke-width="4"/><path d="M2460 540 H2670 L2650 530 H2480Z" fill="#FAF6EC"/><polyline points="2500,510 2540,470 2580,490 2630,440" fill="none" stroke="#D9B66A" stroke-width="5" stroke-linecap="round"/></g>
+<g stroke="#FAF6EC" stroke-width="4" fill="#173A2D"><rect x="3250" y="470" width="80" height="70"/><rect x="3340" y="420" width="90" height="120" fill="#D9B66A"/><rect x="3440" y="490" width="80" height="50"/></g>
+<g font-family="Lora,serif" font-weight="700"><text x="3366" y="492" font-size="44" fill="#173A2D">1</text><text x="3282" y="520" font-size="32" fill="#FAF6EC">2</text><text x="3472" y="526" font-size="32" fill="#FAF6EC">3</text></g>
+<g fill="#D9B66A" font-size="34"><text x="3300" y="380" style="animation:twinkle 1.6s infinite">✦</text><text x="3400" y="350" style="animation:twinkle 1.6s .5s infinite">✦</text><text x="3480" y="400" style="animation:twinkle 1.6s 1s infinite">✦</text></g>
+</svg>
+
+<!-- detailed walking stickman -->
+<button onClick="{{doJump}}" aria-label="Make the stickman jump" style="position:absolute;left:21%;bottom:104px;width:120px;height:200px;padding:0;border:0;background:none;{{jumpStyle}}">
+<svg viewBox="0 0 120 200" width="120" height="200" fill="none" stroke="#FAF6EC" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<ellipse class="shadow" cx="62" cy="196" rx="30" ry="5" fill="#000" stroke="none" opacity=".35"/>
+<g class="body">
+<g class="arm-b"><path d="M60 58 V84"/><g class="elb-b"><path d="M60 84 V108"/><circle cx="60" cy="111" r="4" fill="#FAF6EC"/></g></g>
+<g class="leg-b"><path d="M60 106 V138"/><g class="knee-b"><path d="M60 138 V170 L73 172"/></g></g>
+<path d="M60 46 V108"/>
+<path d="M60 52 L55 66 L60 82 L65 66 Z" fill="#D9B66A" stroke="none"/>
+<circle cx="60" cy="28" r="17" fill="#1F4A3A"/>
+<path d="M43 24 Q60 2 77 24 Z" fill="#D9B66A" stroke="none"/><path d="M39 25 H81" stroke="#D9B66A" stroke-width="4"/>
+<g class="leg-f"><path d="M60 106 V138"/><g class="knee-f"><path d="M60 138 V170 L73 172"/></g></g>
+<g class="arm-f"><path d="M60 58 V84"/><g class="elb-f"><path d="M60 84 V108"/><circle cx="60" cy="111" r="4" fill="#FAF6EC"/><rect x="47" y="112" width="26" height="18" rx="3" fill="#D9B66A" stroke="none"/><path d="M54 112 v-5 h12 v5" stroke="#D9B66A" stroke-width="3"/></g></g>
+</g></svg>
+</button>
+
+<div class="caps">
+<div class="cap c1"><div style="font-size:14px;letter-spacing:.16em;color:#D9B66A;font-weight:700">CHAPTER 01 · 2005–2009 · MEDAN &amp; JAKARTA</div><h3 style="font-family:'Lora',serif;font-size:56px;line-height:1.05;margin:8px 0 10px;color:#FAF6EC;font-weight:600">The Signal</h3><p style="margin:0;color:#E3EDE7"><b>Telkomsel</b> · Radio Telecom Operation &amp; Network Performance Engineer. Became Super User of the Ericsson OSS tool within a year, automated workflows with scripts and built a 2G/3G data warehouse across every vendor.</p></div>
+<div class="cap c2"><div style="font-size:14px;letter-spacing:.16em;color:#D9B66A;font-weight:700">CHAPTER 02 · 2010–2023 · RIYADH &amp; JEDDAH</div><h3 style="font-family:'Lora',serif;font-size:56px;line-height:1.05;margin:8px 0 10px;color:#FAF6EC;font-weight:600">The Scale</h3><p style="margin:0;color:#E3EDE7"><b>Ericsson</b> · Data Solution Professional for Tawal, STC, Mobily, Zain and MTN Benin. Live dashboards and GIS used during multiple Hajj events, and monitoring tools still in use today.</p></div>
+<div class="cap c3"><div style="font-size:14px;letter-spacing:.16em;color:#D9B66A;font-weight:700">CHAPTER 03 · 2023–2025 · JEDDAH</div><h3 style="font-family:'Lora',serif;font-size:56px;line-height:1.05;margin:8px 0 10px;color:#FAF6EC;font-weight:600">The Catalog</h3><p style="margin:0;color:#E3EDE7"><b>Kanzway</b> · Business and Data Management Manager. A Python and SQL process that pulls complex catalog data from partner sites with full accuracy, plus the BRDs, ERDs and Power BI reports around it.</p></div>
+<div class="cap c4"><div style="font-size:14px;letter-spacing:.16em;color:#D9B66A;font-weight:700">CHAPTER 04 · 2025 · ONLINE</div><h3 style="font-family:'Lora',serif;font-size:56px;line-height:1.05;margin:8px 0 10px;color:#FAF6EC;font-weight:600">The Crowd</h3><p style="margin:0;color:#E3EDE7">#1 on the Power BI Park leaderboard January–March 2025, then selected as moderator. #1 on the Fabric Dojo leaderboard in April 2025.</p></div>
+</div>
+<div style="position:absolute;right:32px;bottom:20px;font-size:13px;letter-spacing:.16em;color:#CFE0D7">CLICK THE STICKMAN</div>
+</div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="h-exp" style="background:#1F4A3A;color:#FAF6EC;border-top:1px solid #4B7566">
+<div style="max-width:1000px;margin:0 auto;padding:80px 32px">
+<h2 class="rv" style="font-family:'Lora',serif;font-weight:600;font-size:40px;text-align:center;margin:0 0 8px">Experience in detail</h2>
+<div style="width:64px;height:2px;background:#D9B66A;margin:0 auto 32px"></div>
+<div role="tablist" aria-label="Employers" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:40px">
+<sc-for list="{{jobs}}" as="j" hint-placeholder-count="3">
+<button class="tabbtn" role="tab" aria-selected="{{j.sel}}" onClick="{{j.pick}}" style="{{j.style}}"><span style="display:block;font-family:'Lora',serif;font-size:20px">{{j.company}}</span><span style="display:block;font-size:14px;opacity:.85">{{j.years}}</span></button>
+</sc-for>
+</div>
+<div style="perspective:1000px"><div class="flipin" style="border-top:1px solid #4B7566;border-bottom:1px solid #4B7566;padding:36px 0;min-height:200px;background:rgba(255,255,255,.03)">
+<h3 style="font-family:'Lora',serif;font-size:28px;margin:0">{{cj.role}}</h3>
+<div style="color:#D9B66A;margin:4px 0 16px">{{cj.company}} · {{cj.place}} · {{cj.years}}</div>
+<ul style="margin:0;padding-left:22px;color:#E3EDE7;max-width:780px"><sc-for list="{{cj.points}}" as="pt" hint-placeholder-count="3"><li style="margin-bottom:8px">{{pt}}</li></sc-for></ul>
+</div></div>
+</div>
+</section>
+
+<!-- WORK: 3D CAROUSEL -->
+<section id="h-work" style="background:#F3EEDF;border-bottom:1px solid #DCD3BD">
+<div style="max-width:1100px;margin:0 auto;padding:88px 32px 80px;text-align:center">
+<h2 class="rv" style="font-family:'Lora',serif;font-weight:600;font-size:40px;margin:0 0 8px;color:#1F4A3A">Selected Work</h2>
+<div style="width:64px;height:2px;background:{{accent}};margin:0 auto 16px"></div>
+<p class="rv" style="color:#4D5C54;margin:0 0 20px;font-size:16px">Illustrative previews of Power BI dashboards. Click a card or use the arrows.</p>
+<div style="perspective:1800px;height:360px;position:relative">
+<div class="ringwrap" style="{{ringStyle}};transform-style:preserve-3d;position:absolute;left:0;right:0;top:20px;height:280px">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="6">
+<button class="card3d" onClick="{{c.pick}}" aria-label="{{c.title}}" style="{{c.style}}">
+<div style="font-size:12px;color:#4D5C54;letter-spacing:.12em;text-align:left;font-weight:700">{{c.n}} · {{c.title}}</div>
+<div style="height:150px;margin-top:14px;display:flex;align-items:center;justify-content:center;background:#F3EEDF;padding:10px;box-sizing:border-box">
+<sc-if value="{{c.pm}}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 280 120" style="width:100%" aria-hidden="true"><g fill="#1F4A3A"><rect class="bb" x="6" y="50" width="28" height="70"/><rect class="bb" style="animation-delay:.2s" x="52" y="30" width="28" height="90"/><rect class="bb" style="animation-delay:.4s" x="98" y="60" width="28" height="60"/><rect class="bb" style="animation-delay:.6s" x="144" y="10" width="28" height="110" fill="{{accent}}"/><rect class="bb" style="animation-delay:.8s" x="190" y="40" width="28" height="80"/><rect class="bb" style="animation-delay:1s" x="236" y="24" width="28" height="96"/></g></svg></sc-if>
+<sc-if value="{{c.ceo}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 280 120" style="width:100%" aria-hidden="true"><polyline points="0,100 50,84 100,92 150,50 200,62 250,20 280,26" fill="none" stroke="#1F4A3A" stroke-width="5" stroke-linecap="round"/><polyline points="0,110 280,60" fill="none" stroke="#9AA79F" stroke-width="3" stroke-dasharray="6 6"/></svg></sc-if>
+<sc-if value="{{c.hr}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 120 120" style="height:130px" aria-hidden="true"><circle cx="60" cy="60" r="38" fill="none" stroke="#C9D3CC" stroke-width="20"/><circle cx="60" cy="60" r="38" fill="none" stroke="#1F4A3A" stroke-width="20" stroke-dasharray="110 239" transform="rotate(-90 60 60)"/><circle cx="60" cy="60" r="38" fill="none" stroke="{{accent}}" stroke-width="20" stroke-dasharray="50 239" stroke-dashoffset="-110" transform="rotate(-90 60 60)"/></svg></sc-if>
+<sc-if value="{{c.web}}" hint-placeholder-val="{{ false }}"><div style="width:100%"><div style="height:50px;background:#1F4A3A"></div><div style="display:flex;gap:8px;margin-top:8px"><div style="flex:1;height:36px;background:#E7E0CC"></div><div style="flex:1;height:36px;background:#E7E0CC"></div><div style="flex:1;height:36px;background:{{accent}}"></div></div></div></sc-if>
+<sc-if value="{{c.svg}}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 280 120" style="width:100%" aria-hidden="true"><circle cx="140" cy="60" r="14" fill="#1F4A3A"/><circle class="ringc" cx="140" cy="60" r="6" fill="none" stroke="{{accent}}" stroke-width="3"/><circle class="ringc" style="animation-delay:1.3s" cx="140" cy="60" r="6" fill="none" stroke="{{accent}}" stroke-width="3"/></svg></sc-if>
+<sc-if value="{{c.forge}}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;width:100%"><sc-for list="{{heat}}" as="h" hint-placeholder-count="12"><div style="{{h.style}}"></div></sc-for></div></sc-if>
+</div></button>
+</sc-for>
+</div></div>
+<div style="display:flex;gap:14px;justify-content:center;margin-top:16px"><button class="btn" onClick="{{prev}}" aria-label="Previous project" style="width:50px;height:50px;border:1.5px solid #1F4A3A;background:none;color:#1F4A3A;font-size:20px">←</button><button class="btn" onClick="{{next}}" aria-label="Next project" style="width:50px;height:50px;border:0;background:#1F4A3A;color:#FAF6EC;font-size:20px">→</button></div>
+<div style="max-width:620px;margin:26px auto 0"><h3 style="font-family:'Lora',serif;font-size:30px;margin:0 0 6px;color:#1F4A3A">{{cur.title}}</h3><p style="margin:0;color:#33433B">{{cur.desc}}</p></div>
+<p style="margin:16px 0 0;font-size:14px;color:#5A675F">Previews are redrawn illustrations, not screenshots.</p>
+</div>
+</section>
+
+<!-- CRAFT -->
+<section id="h-craft" style="max-width:1100px;margin:0 auto;padding:90px 32px;display:flex;flex-wrap:wrap;gap:48px;align-items:center">
+<div style="flex:1 1 420px;min-width:0">
+<h2 class="rv" style="font-family:'Lora',serif;font-weight:600;font-size:40px;margin:0 0 8px;color:#1F4A3A">The Craft</h2>
+<div style="width:64px;height:2px;background:{{accent}};margin-bottom:24px"></div>
+<p class="rv" style="margin:0 0 14px;color:#33433B"><b>Python</b> generates Power BI JSON themes, acquires catalog data and automates workflows.</p>
+<p class="rv" style="margin:0 0 14px;color:#33433B"><b>Power Platform</b> — Power Query automation, Microsoft Fabric experiments and advanced DAX. SQL, SAP BI and Power BI at the core.</p>
+<p class="rv" style="margin:0;color:#33433B"><b>Creative</b> — PowerPoint animation for presentations and education, graphic design, and BI-style web reports with ReactJS.</p>
+<div style="height:300px;perspective:900px;margin-top:20px;position:relative" aria-label="Rotating ring of skills" role="img">
+<div class="orbit" style="position:absolute;left:0;right:0;top:80px;height:140px">
+<div class="chip3" style="transform:rotateY(0deg) translateZ(210px);background:#1F4A3A;color:#FAF6EC">Power BI</div>
+<div class="chip3" style="transform:rotateY(60deg) translateZ(210px);background:#D9B66A;color:#1F2A24">Fabric</div>
+<div class="chip3" style="transform:rotateY(120deg) translateZ(210px);background:#1F4A3A;color:#FAF6EC">Python</div>
+<div class="chip3" style="transform:rotateY(180deg) translateZ(210px);background:#D9B66A;color:#1F2A24">SQL</div>
+<div class="chip3" style="transform:rotateY(240deg) translateZ(210px);background:#1F4A3A;color:#FAF6EC">SAP BI</div>
+<div class="chip3" style="transform:rotateY(300deg) translateZ(210px);background:#D9B66A;color:#1F2A24">DAX</div>
+</div></div>
+</div>
+<div style="flex:1 1 420px;min-width:0;perspective:1000px">
+<!-- detailed seated stickman at the laptop -->
+<svg viewBox="0 0 520 360" style="width:100%" role="img" aria-label="Animated stickman typing at a laptop while a chart grows">
+<line x1="20" y1="320" x2="500" y2="320" stroke="#CBBF9F" stroke-width="4"/>
+<ellipse cx="160" cy="318" rx="80" ry="6" fill="#23302A" opacity=".15"/>
+<path d="M140 290 H220 M180 290 V320" stroke="#1F4A3A" stroke-width="6" stroke-linecap="round"/>
+<rect x="240" y="236" width="230" height="12" fill="#1F4A3A"/><path d="M262 248 V320 M450 248 V320" stroke="#1F4A3A" stroke-width="7"/>
+<rect x="296" y="140" width="132" height="92" rx="6" fill="#FFFFFF" stroke="#1F4A3A" stroke-width="5"/>
+<g fill="#1F4A3A"><rect class="bb" x="312" y="196" width="16" height="28"/><rect class="bb" style="animation-delay:.3s" x="336" y="180" width="16" height="44"/><rect class="bb" style="animation-delay:.6s" x="360" y="168" width="16" height="56"/><rect class="bb" style="animation-delay:.9s" x="384" y="156" width="16" height="68" fill="{{accent}}"/></g>
+<g fill="none" stroke="#1F4A3A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<path d="M150 150 L142 226"/>
+<path d="M142 226 L206 230 L212 308 L232 310"/>
+<path d="M150 170 L178 204" /><g style="transform-origin:178px 204px;animation:type .32s ease-in-out infinite alternate"><path d="M178 204 L238 220"/><circle cx="242" cy="221" r="4" fill="#1F4A3A"/></g>
+<circle cx="152" cy="126" r="22" fill="#FAF6EC"/>
+</g>
+<path d="M130 121 Q152 92 174 121 Z" fill="#D9B66A" stroke="none"/><path d="M125 122 H180" stroke="#D9B66A" stroke-width="5" stroke-linecap="round"/>
+<path d="M148 156 L142 176 L150 196 L156 176 Z" fill="{{accent}}"/>
+<g fill="none" stroke="#9AA79F" stroke-width="3" stroke-linecap="round"><path d="M80 60 Q90 40 110 50" style="animation:twinkle 2s infinite"/><path d="M60 90 Q70 70 90 80" style="animation:twinkle 2s .6s infinite"/></g>
+<g><rect x="396" y="40" width="96" height="60" rx="4" fill="#1F4A3A" style="transform-origin:444px 70px;animation:floaty 3s ease-in-out infinite alternate"/><polyline points="406,88 424,70 440,78 480,52" fill="none" stroke="#D9B66A" stroke-width="4" stroke-linecap="round"/></g>
+</svg></div>
+</section>
+
+<!-- RECOGNITION -->
+<section id="h-rec" style="max-width:1000px;margin:0 auto;padding:40px 32px 88px">
+<h2 class="rv" style="font-family:'Lora',serif;font-weight:600;font-size:40px;text-align:center;margin:0 0 8px;color:#1F4A3A">Recognition</h2>
+<div style="width:64px;height:2px;background:{{accent}};margin:0 auto 28px"></div>
+<div role="tablist" aria-label="Recognition" style="display:flex;gap:10px;justify-content:center;margin-bottom:32px"><button class="tabbtn" role="tab" aria-selected="{{recCommunity}}" onClick="{{showCommunity}}" style="{{commStyle}}">Community</button><button class="tabbtn" role="tab" aria-selected="{{recAwards}}" onClick="{{showAwards}}" style="{{awardStyle}}">Awards</button></div>
+<sc-if value="{{recCommunity}}" hint-placeholder-val="{{ true }}">
+<div class="flipin" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;perspective:1000px">
+<div class="lift" style="background:#FFFFFF;border:1px solid #DCD3BD;padding:28px"><div style="font-family:'Lora',serif;font-size:22px;color:#1F4A3A">Power BI Park</div><div style="font-size:15px;color:{{accent}};font-weight:700;margin-bottom:8px">Led by Injae Park</div><div style="color:#33433B">Ranked #1 on the monthly leaderboard January–March 2025, then selected as moderator.</div></div>
+<div class="lift" style="background:#FFFFFF;border:1px solid #DCD3BD;padding:28px"><div style="font-family:'Lora',serif;font-size:22px;color:#1F4A3A">Fabric Dojo</div><div style="font-size:15px;color:{{accent}};font-weight:700;margin-bottom:8px">Led by Will Needham</div><div style="color:#33433B">Ranked #1 on the April 2025 leaderboard in this data engineering community.</div></div>
+<div class="lift" style="background:#FFFFFF;border:1px solid #DCD3BD;padding:28px"><div style="font-family:'Lora',serif;font-size:22px;color:#1F4A3A">The Data Vis Forge</div><div style="font-size:15px;color:{{accent}};font-weight:700;margin-bottom:8px">Led by Gustaw Dudek</div><div style="color:#33433B">Active member, praised by Gustaw Dudek, Injae Park and Nick Desbarats for dashboard work.</div></div>
+</div></sc-if>
+<sc-if value="{{recAwards}}" hint-placeholder-val="{{ false }}">
+<div class="flipin" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;perspective:1000px">
+<div class="lift" style="background:#FFFFFF;border:1px solid #DCD3BD;padding:28px"><div style="font-family:'Lora',serif;font-size:32px;color:{{accent}}">2011</div>Best Employee, Network Performance Team</div>
+<div class="lift" style="background:#FFFFFF;border:1px solid #DCD3BD;padding:28px"><div style="font-family:'Lora',serif;font-size:32px;color:{{accent}}">2009</div>Appreciation from directors and VPs for a GIS live monitoring tool used in the West Sumatra earthquake recovery</div>
+<div class="lift" style="background:#FFFFFF;border:1px solid #DCD3BD;padding:28px"><div style="font-family:'Lora',serif;font-size:32px;color:{{accent}}">2007</div>Best Employee, Service Quality Assurance Team</div>
+<div class="lift" style="background:#FFFFFF;border:1px solid #DCD3BD;padding:28px"><div style="font-family:'Lora',serif;font-size:32px;color:{{accent}}">★</div>Appreciation from a customer's top management</div>
+</div></sc-if>
+</section>
+
+<!-- CONTACT -->
+<section id="h-contact" class="contact" style="background:#1F4A3A;color:#FAF6EC;text-align:center">
+<div style="max-width:800px;margin:0 auto;padding:64px 32px 72px">
+<div style="position:relative;width:200px;height:220px;margin:0 auto 6px">
+<div style="position:absolute;left:112px;top:0;background:#FAF6EC;color:#1F4A3A;font-family:'Lora',serif;font-style:italic;padding:6px 16px;border-radius:99px;animation:pop 4s ease-in-out infinite">Hello!</div>
+<svg viewBox="0 0 120 200" width="140" height="220" fill="none" stroke="#FAF6EC" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:30px;top:10px" role="img" aria-label="Waving stickman">
+<ellipse cx="60" cy="196" rx="28" ry="5" fill="#000" stroke="none" opacity=".3"/>
+<g class="body">
+<path d="M60 46 V106"/><path d="M60 106 L48 140 L44 192 L58 192"/><path d="M60 106 L74 140 L78 192 L92 192"/>
+<path d="M60 58 L44 86 L50 108"/><circle cx="50" cy="111" r="4" fill="#FAF6EC"/>
+<path d="M60 58 L88 50"/><g style="transform-origin:88px 50px;animation:wave .45s ease-in-out infinite alternate"><path d="M88 50 L96 22"/><circle cx="97" cy="18" r="5" fill="#FAF6EC"/></g>
+<path d="M60 52 L55 66 L60 82 L65 66 Z" fill="#D9B66A" stroke="none"/>
+<circle cx="60" cy="28" r="17" fill="#1F4A3A"/>
+<path d="M43 24 Q60 2 77 24 Z" fill="#D9B66A" stroke="none"/><path d="M39 25 H81" stroke="#D9B66A" stroke-width="4"/>
+</g></svg></div>
+<h2 style="font-family:'Lora',serif;font-weight:600;font-size:40px;margin:0 0 16px">Let's work together.</h2>
+<div style="width:64px;height:2px;background:#D9B66A;margin:0 auto 28px"></div>
+<div style="display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:center;align-items:center;font-size:19px"><a class="lnk" href="mailto:achmadfarizky@gmail.com">achmadfarizky@gmail.com</a><button class="btn" onClick="{{copy}}" style="background:#D9B66A;color:#1F2A24;border:0;padding:10px 24px;font-weight:700">{{copyLabel}}</button><a class="lnk" href="https://linkedin.com/in/achmad-farizky">linkedin.com/in/achmad-farizky</a></div>
+</div>
+</section>
+
+<!-- scroll narrator: faceless stickman fixed in the corner -->
+<div class="narr" aria-hidden="true">
+<div style="position:absolute;left:-30px;bottom:-40px;width:160px;height:160px;border-radius:50%;background:#FAF6EC;border:2px solid #D9B66A;box-shadow:0 10px 24px -12px rgba(0,0,0,.5)"></div>
+
+<div class="pose pPush">
+<svg viewBox="0 0 120 200" width="100" height="167" fill="none" stroke="#1F4A3A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:0;top:0;overflow:visible">
+<ellipse cx="60" cy="196" rx="26" ry="4" fill="#000" stroke="none" opacity=".2"/>
+<g transform="rotate(6 60 196)"><g class="body">
+<g class="leg-b"><path d="M60 106 V138"/><g class="knee-b"><path d="M60 138 V170 L73 172"/></g></g>
+<path d="M60 46 V108"/>
+<g class="pushArms"><path d="M60 58 L78 36 L74 10"/><circle cx="74" cy="7" r="4" fill="#1F4A3A"/><path d="M60 58 L42 36 L46 10"/><circle cx="46" cy="7" r="4" fill="#1F4A3A"/></g>
+<circle cx="60" cy="28" r="17" fill="#FAF6EC"/>
+<g class="leg-f"><path d="M60 106 V138"/><g class="knee-f"><path d="M60 138 V170 L73 172"/></g></g>
+</g></g>
+<g stroke="#8A6A1F" stroke-width="4"><path class="mline" d="M40 -4 l6 -8 l6 8"/><path class="mline" style="animation-delay:.35s" d="M68 -4 l6 -8 l6 8"/><path class="mline" style="animation-delay:.7s" d="M54 -16 l6 -8 l6 8"/></g>
+</svg><div class="bub">Meet Achmad ↑</div></div>
+
+<div class="pose pPoint">
+<svg viewBox="0 0 120 200" width="100" height="167" fill="none" stroke="#1F4A3A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:0;top:0;overflow:visible">
+<ellipse cx="60" cy="196" rx="26" ry="4" fill="#000" stroke="none" opacity=".2"/>
+<g class="body">
+<path d="M60 106 L52 138 L50 176 L38 176"/><path d="M60 106 L68 138 L72 176 L84 176"/>
+<path d="M60 46 V108"/>
+<path d="M60 58 L44 82 L54 100"/><circle cx="55" cy="103" r="4" fill="#1F4A3A"/>
+<g class="ptArm"><path d="M60 58 L86 52 L108 40"/><circle cx="111" cy="38" r="4" fill="#1F4A3A"/></g>
+<circle cx="60" cy="28" r="17" fill="#FAF6EC"/>
+</g></svg><div class="bub">Follow the road →</div></div>
+
+<div class="pose pPull">
+<svg viewBox="0 0 120 200" width="100" height="167" fill="none" stroke="#1F4A3A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:0;top:0;overflow:visible">
+<ellipse cx="60" cy="196" rx="30" ry="4" fill="#000" stroke="none" opacity=".2"/>
+<g class="body">
+<path d="M60 106 L44 140 L40 176 L52 178"/><path d="M60 106 L78 140 L84 176 L96 178"/>
+<path d="M60 46 V108"/>
+<g class="tugG"><path d="M60 58 L50 32 L44 8"/><circle cx="44" cy="5" r="4" fill="#1F4A3A"/><line x1="44" y1="2" x2="44" y2="-900" stroke="#8A6A1F" stroke-width="3"/></g>
+<path d="M60 58 L74 84 L68 106"/><circle cx="67" cy="109" r="4" fill="#1F4A3A"/>
+<circle cx="60" cy="28" r="17" fill="#FAF6EC"/>
+</g></svg><div class="bub">Now, the catalog ↑</div></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8A6A1F","options":["#8A6A1F","#8C3B2A","#2F5D8A"]},"$preview":{"width":1360,"height":6800}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { job: 'ericsson', idx: 0, rec: 'community', act: false, tx: 0, ty: 0, jump: false, copied: false };
+}
+renderVals() {
+const s = this.state;
+const accent = this.props.accent ?? '#8A6A1F';
+const jobsData = [
+{ id: 'kanzway', years: '2023–2025', company: 'Kanzway', place: 'Jeddah', role: 'Business and Data Management Manager', points: ['Built a Python and advanced SQL process to acquire complex catalog data from partner websites with full accuracy.', 'Wrote Business Requirements Documents and Entity Relationship Diagrams for the data catalog.', 'Created Power BI dashboards and reports for management.'] },
+{ id: 'ericsson', years: '2010–2023', company: 'Ericsson', place: 'Riyadh & Jeddah', role: 'Data Solution Professional', points: ['Supported Tawal, STC, Mobily, Zain and MTN Benin.', 'Built live network performance dashboards and GIS systems, used during multiple Hajj events for Mobily.', 'Streamlined complex data flows across several telecom providers.', 'Developed performance monitoring and reporting tools that remain in use.'] },
+{ id: 'telkomsel', years: '2005–2009', company: 'Telkomsel', place: 'Medan & Jakarta', role: 'Radio Telecom Operation & Network Performance Engineer', points: ['Earned Super User status for the Ericsson OSS tool within one year.', 'Automated operational workflows through scripting.', 'Built a data warehouse for 2G and 3G radio and core network data across all vendors.'] }
+];
+const data = [
+{ id: 'pm', n: '01', title: 'Project Management', desc: 'A dashboard and report tracking task status across backlog, in progress, on hold and blocked, plus recent completions and new tasks.' },
+{ id: 'ceo', n: '02', title: 'CEO Dashboard', desc: 'Tactical monitoring of key business metrics, inspired by Nick Desbarats.' },
+{ id: 'hr', n: '03', title: 'HR Overview', desc: 'Workforce analytics dashboards, built as a Power BI Park classroom experiment.' },
+{ id: 'web', n: '04', title: 'Web-Style Report', desc: 'A modern, website-style Power BI report, a Power BI Park experiment.' },
+{ id: 'svg', n: '05', title: 'Animated SVG', desc: 'SVG animation inside Power BI, a Power BI Park experiment.' },
+{ id: 'forge', n: '06', title: 'Data Vis Forge', desc: 'Advanced community challenges: dynamic heatmap, KPI card, number formatting, waterfall and Pareto chart.' }
+];
+const N = data.length;
+const heatOp = [.3,.7,.9,.4,.8,.35,.85,.4,.55,1,.5,.7];
+const cards = data.map((d, i) => {
+const sel = i === s.idx;
+return { ...d, pm: d.id === 'pm', ceo: d.id === 'ceo', hr: d.id === 'hr', web: d.id === 'web', svg: d.id === 'svg', forge: d.id === 'forge',
+pick: () => this.setState({ idx: i }),
+style: 'position:absolute;left:50%;top:0;margin-left:-170px;width:340px;height:250px;box-sizing:border-box;padding:20px;text-align:left;color:#23302A;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1.5px solid ' + (sel ? '#1F4A3A' : '#DCD3BD') + ';background:#FFFFFF;opacity:' + (sel ? 1 : .6) + ';transform:rotateY(' + (i * 360 / N) + 'deg) translateZ(430px);box-shadow:0 30px 50px -28px rgba(31,74,58,.5)' };
+});
+const rx = s.act ? (-s.ty * 22 + 5) : 0;
+const ry = s.act ? (s.tx * 38) : 0;
+const tabOn = 'background:#1F4A3A;color:#FAF6EC;border:1.5px solid #1F4A3A;';
+const tabOff = 'background:none;color:#1F4A3A;border:1.5px solid #CBBF9F;';
+return {
+accent,
+jobs: jobsData.map((j) => ({ ...j, sel: s.job === j.id, pick: () => this.setState({ job: j.id }),
+style: 'padding:12px 26px;text-align:center;' + (s.job === j.id ? 'background:#FAF6EC;color:#1F4A3A;border:1.5px solid #FAF6EC;' : 'background:none;color:#FAF6EC;border:1.5px solid #4B7566;') })),
+cj: jobsData.find((j) => j.id === s.job) || jobsData[0],
+cards,
+cur: data[s.idx],
+ringStyle: 'transform:translateZ(-430px) rotateY(' + (-s.idx * 360 / N) + 'deg)',
+prev: () => this.setState({ idx: (s.idx + N - 1) % N }),
+next: () => this.setState({ idx: (s.idx + 1) % N }),
+heat: heatOp.map((o) => ({ style: 'height:30px;background:#1F4A3A;opacity:' + o })),
+tilt: (e) => { const r = e.currentTarget.getBoundingClientRect(); this.setState({ act: true, tx: (e.clientX - r.left) / r.width - 0.5, ty: (e.clientY - r.top) / r.height - 0.5 }); },
+untilt: () => this.setState({ act: false }),
+rigStyle: s.act ? 'animation:none;transition:transform .15s ease-out;transform:rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)' : '',
+doJump: () => { this.setState({ jump: true }); setTimeout(() => this.setState({ jump: false }), 800); },
+jumpStyle: s.jump ? 'animation:jump .75s ease-out' : '',
+recCommunity: s.rec === 'community', recAwards: s.rec === 'awards',
+showCommunity: () => this.setState({ rec: 'community' }), showAwards: () => this.setState({ rec: 'awards' }),
+commStyle: 'padding:10px 26px;' + (s.rec === 'community' ? tabOn : tabOff),
+awardStyle: 'padding:10px 26px;' + (s.rec === 'awards' ? tabOn : tabOff),
+copy: () => { try { navigator.clipboard.writeText('achmadfarizky@gmail.com'); } catch (e) {} this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1800); },
+copyLabel: s.copied ? 'Copied ✓' : 'Copy email'
+};
+}
+}
+</script>
+</body>
+</html>
