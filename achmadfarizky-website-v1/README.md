@@ -28,3 +28,23 @@ Then open <http://localhost:8000/>. Views have their own links: `#/home/1` … `
 | `design/` | Design brief and view-by-view content map |
 
 All story and section links point to `#` for now.
+
+## My story · University
+
+`university.html` is section 2.1 (V1.01–V1.09, links `#/university/1` … `#/university/9`). Home's last view, its article and the Chapters sheet link to it.
+
+Each view is drawn by the design canvas's own scene engine, so it matches the boards exactly:
+
+| Path | What it is |
+|---|---|
+| `university.html` | The nine views, HUD, timeline, phone layout |
+| `assets/js/university.js` | Views, input, theme; turns the scene into HTML |
+| `assets/css/university.css` | Scene covers the screen, text and cards fit inside it; phone puts the text in a sheet |
+| `assets/js/canvas-diorama.js`, `assets/css/diorama.css` | Generated copy of the canvas scene engine (`project/Diorama.dc.html`) |
+| `tools/sync-diorama.mjs` | Regenerates those two files after the canvas changes |
+
+After changing the campus on the canvas, download `project/Diorama.dc.html` and run:
+
+```bash
+node tools/sync-diorama.mjs path/to/Diorama.dc.html
+```

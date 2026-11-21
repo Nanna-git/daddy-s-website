@@ -214,7 +214,7 @@ function setBackgroundInert(on) {
 /* ================================================================ Chapters sheet */
 const chapters = $('#chapters');
 $('#phase-list').innerHTML = PHASES.map((p) =>
-  `<a class="phase-row" href="#"><span class="phase-dot" aria-hidden="true"></span><span class="phase-name">${esc(p.name)}</span><span class="phase-years">${p.years}</span></a>`).join('');
+  `<a class="phase-row" href="${p.id === 'university' ? 'university.html' : '#'}"><span class="phase-dot" aria-hidden="true"></span><span class="phase-name">${esc(p.name)}</span><span class="phase-years">${p.years}</span></a>`).join('');
 $('#more-grid').innerHTML = MORE.map((m) => `<a href="#">${esc(m.name)}</a>`).join('');
 
 function openChapters() {

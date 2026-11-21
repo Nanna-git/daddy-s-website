@@ -1,0 +1,71 @@
+/* My story · University. The views reuse site.css (HUD, dial, Next link, phone bar);
+   this file adds the board layers: scene (covers the screen) and overlay (fits inside it). */
+.u-page #views { position: fixed; inset: 0; z-index: 1; outline: none; }
+.u-view { position: absolute; inset: 0; pointer-events: none; visibility: hidden; opacity: 0; transition: opacity 600ms var(--ease-camera), visibility 0s linear 600ms; }
+.u-view.is-active { visibility: visible; opacity: 1; transition: opacity 600ms var(--ease-camera), visibility 0s; }
+.reduce-motion .u-view { transition-duration: 200ms; }
+html:not(.u-ready) .u-view { transition: none; } /* the first view appears at once */
+
+.u-scene { position: absolute; inset: 0; overflow: hidden; background: var(--paper); }
+.u-board, .u-over { position: absolute; left: 50%; top: 50%; width: 1440px; height: 900px; transform-origin: 50% 50%; }
+.u-board { transform: translate(-50%, -50%) scale(var(--cover, 1)); }
+.u-over { transform: translate(-50%, -50%) scale(var(--contain, 1)); color: var(--ink); }
+.u-over > * { pointer-events: auto; }
+.u-view [tabindex="-1"]:focus { outline: none; } /* headings get focus on a view change for screen readers; no ring */
+.u-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(var(--paper-rgb), 0.86) 0%, rgba(var(--paper-rgb), 0.8) 38%, rgba(var(--paper-rgb), 0.4) 50%, rgba(var(--paper-rgb), 0) 62%); }
+
+/* the plain Next link at the bottom centre, with a soft glow (V1.01–V1.05, V1.08, V1.09) */
+.u-next { position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%); text-shadow: 0 0 12px var(--halo), 0 0 4px var(--halo); }
+.u-next .next-link, .u-col .next-link { white-space: nowrap; }
+
+/* V1.06, V1.07: text column on the left (Home V01 format) */
+.u-col { position: absolute; left: 112px; top: 0; height: 900px; width: 600px; display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+.u-col h2 { margin: 0 0 4px; font: 800 64px/1.02 var(--font-head); letter-spacing: -0.025em; }
+.u-col .u-point { display: flex; flex-direction: column; gap: 8px; }
+.u-col h3 { font: 800 28px/1.25 var(--font-head); }
+.u-col p { font: 400 22px/1.5 var(--font-body); }
+.u-col .next-row { margin-top: 10px; }
+
+/* V1.09: related stories */
+.u-card { position: absolute; right: 56px; top: 108px; width: 340px; padding: 28px 28px 30px; border-radius: 28px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 24px 60px rgba(19, 32, 58, 0.16); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); display: flex; flex-direction: column; gap: 20px; }
+[data-theme="dark"] .u-card { background: rgba(14, 22, 40, 0.88); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4); }
+.u-card > h2 { font: 800 22px/1.2 var(--font-head); }
+.u-stories { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.u-story { display: flex; flex-direction: column; border-radius: 20px; overflow: hidden; background: #F4F1EA; color: var(--ink); text-decoration: none; }
+[data-theme="dark"] .u-story { background: rgba(238, 242, 248, 0.07); }
+.u-thumb { height: 124px; overflow: hidden; display: flex; justify-content: center; }
+.u-story-body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 6px; }
+.u-story-body span { font: 700 12px/1 var(--font-head); color: var(--ink-2); }
+.u-story-body strong { font: 800 18px/1.3 var(--font-head); color: var(--accent-ink); }
+.u-story:hover strong { text-decoration: underline; }
+
+/* timeline of the seven chapters, bottom left (HUD) */
+.u-spine { position: fixed; z-index: 20; left: 36px; bottom: 34px; width: 384px; text-shadow: 0 0 10px var(--halo), 0 0 3px var(--halo); }
+.u-spine ol { position: relative; display: flex; justify-content: space-between; margin: 0; padding: 0; list-style: none; }
+.u-spine ol::before { content: ''; position: absolute; left: 20px; right: 20px; top: 7px; height: 2px; border-radius: 2px; background: var(--hud-line); }
+.u-spine a, .u-spine span.u-node { position: relative; width: 40px; display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--ink-2); font: 600 11px/1 var(--font-body); text-decoration: none; }
+.u-spine i { height: 16px; display: flex; align-items: center; }
+.u-spine i::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--dot-bg); border: 2px solid var(--ink-2); }
+.u-spine [aria-current] { color: var(--ink); }
+.u-spine [aria-current] i::before { width: 16px; height: 16px; background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(255, 106, 77, 0.28); }
+
+/* desktop: the written copy is for screen readers only (the scene shows it) */
+.u-copy { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: normal; }
+.u-copy strong { font-weight: 800; }
+
+/* ================================================================ phone: scene on top, text in the sheet */
+@media (max-width: 819px) {
+  .u-spine { display: none; }
+  .u-page #views { overflow: visible; }
+  .u-scene { position: fixed; inset: 0 0 auto 0; height: 44svh; }
+  .u-scrim { display: none; }
+  .u-over { position: fixed; left: 0; right: 0; top: 40svh; bottom: 0; width: auto; height: auto; transform: none; overflow-y: auto; overscroll-behavior: contain; background: var(--sheet); border-radius: 28px 28px 0 0; padding: 26px 20px 120px; }
+  .u-next, .u-col .next-row { display: none; }
+  .u-copy { position: static; width: auto; height: auto; overflow: visible; clip: auto; display: flex; flex-direction: column; gap: 12px; font: 400 19px/1.55 var(--font-body); }
+  .u-copy h1 { font: 800 30px/1.12 var(--font-head); letter-spacing: -0.02em; }
+  .u-col { position: static; width: auto; height: auto; gap: 14px; }
+  .u-col h2 { font-size: 36px; }
+  .u-col h3 { font-size: 22px; }
+  .u-col p { font-size: 19px; line-height: 1.55; }
+  .u-card { position: static; width: auto; padding: 0; background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}

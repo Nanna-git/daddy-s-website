@@ -16,6 +16,12 @@
    "port": 4321
   },
   {
+   "name": "website-v1",
+   "runtimeExecutable": "sh",
+   "runtimeArgs": ["-c", "cd '/private/tmp/claude-502/-Users-nanna-Desktop-Coding-Dad-s-website/9531ef51-f755-4461-ba02-baee4f2a6ad8/scratchpad/site-preview' && exec python3 -m http.server 8000"],
+   "port": 8000
+  },
+  {
    "name": "story-design",
    "runtimeExecutable": "sh",
    "runtimeArgs": [
