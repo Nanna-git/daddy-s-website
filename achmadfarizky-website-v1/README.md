@@ -1,6 +1,6 @@
 # achmadfarizky.com
 
-Achmad Farizky's story-telling website. This first build is the **Home** section (views V01–V06), built from the design canvas (Claude Design) in `design/` and its view map.
+Achmad Farizky's story-telling website. It has **Home** (V01–V06), **University** and **Telkomsel**, built from the design canvas (Claude Design) in `design/` and its view map.
 
 ## Run it
 
@@ -18,12 +18,11 @@ Then open <http://localhost:8000/>. Views have their own links: `#/home/1` … `
 |---|---|
 | `index.html` | Home V01–V06, HUD, Chapters sheet, Story library, Read as article |
 | `assets/css/site.css` | Design tokens (light/dark), layout for desktop, tablet and phone |
-| `assets/js/app.js` | Views and input (wheel, keys, swipe), theme, reduced motion, menus, library, article mode |
-| `assets/js/scene.js` | Three.js student's room at eye level: cameras, day/night, props in motion |
-| `assets/js/diorama.js` | Scene library ported from the design canvas: every diorama's objects, colours and cameras |
-| `assets/js/still.js` | SVG renderer for the same scenes: library thumbnails, article illustration, no-WebGL still |
+| `assets/js/app.js` | Home's six views (scene props copied from boards H01–H05), input (wheel, keys, swipe), theme, reduced motion, menus, library, article mode |
+| `assets/js/board.js` | Turns a canvas scene into HTML; used by Home and the section pages |
+| `assets/js/diorama.js` | Older port of the scene library, used only by `still.js` |
+| `assets/js/still.js` | SVG renderer for library thumbnails and the article illustration |
 | `assets/js/data.js` | Stories (33), topics (9), career phases and sections used by the menus |
-| `assets/vendor/three/` | Three.js 0.170 (MIT) |
 | `achmadfarizky-content/` | All written content (source of truth for the text) |
 | `design/` | Design brief and view-by-view content map |
 
@@ -38,12 +37,16 @@ Each view is drawn by the design canvas's own scene engine, so it matches the bo
 | Path | What it is |
 |---|---|
 | `university.html` | The nine views, HUD, timeline, phone layout |
-| `assets/js/university.js` | Views, input, theme; turns the scene into HTML |
+| `assets/js/section.js` | Views, input, theme; turns the scene into HTML (shared with Telkomsel) |
 | `assets/css/university.css` | Scene covers the screen, text and cards fit inside it; phone puts the text in a sheet |
 | `assets/js/canvas-diorama.js`, `assets/css/diorama.css` | Generated copy of the canvas scene engine (`project/Diorama.dc.html`) |
 | `tools/sync-diorama.mjs` | Regenerates those two files after the canvas changes |
 
-After changing the campus on the canvas, download `project/Diorama.dc.html` and run:
+## My story · Telkomsel
+
+`telkomsel.html` is section 2.2 (V2.01–V2.10, links `#/telkomsel/1` … `#/telkomsel/10`), built the same way from boards TK01–TK10. It shares `section.js` and `university.css`; the page picks its section with `<body data-section="telkomsel">`. University's last view, the timeline and Home's Chapters sheet link to it. Everything after Telkomsel points to `#`.
+
+After changing the campus or the Telkomsel set on the canvas, download `project/Diorama.dc.html` and run:
 
 ```bash
 node tools/sync-diorama.mjs path/to/Diorama.dc.html

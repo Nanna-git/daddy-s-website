@@ -27,7 +27,7 @@
   <link rel="stylesheet" href="assets/css/diorama.css">
   <link rel="stylesheet" href="assets/css/university.css">
 </head>
-<body class="u-page">
+<body class="u-page" data-section="university">
   <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
@@ -158,11 +158,11 @@
         <div class="u-card">
           <h2>→ Related stories:</h2>
           <ul class="u-stories">
-            <li><a class="u-story" href="#"><div class="u-thumb" data-cam="studio" aria-hidden="true"></div><div class="u-story-body"><span>Story · University</span><strong>PowerPoint: my first "Power Platform"</strong></div></a></li>
-            <li><a class="u-story" href="#"><div class="u-thumb" data-cam="flash" aria-hidden="true"></div><div class="u-story-body"><span>Story · University</span><strong>SVG animation took me back to Macromedia Flash</strong></div></a></li>
+            <li><a class="u-story" href="#"><div class="u-thumb" data-scene="campus" data-cam="studio" aria-hidden="true"></div><div class="u-story-body"><span>Story · University</span><strong>PowerPoint: my first "Power Platform"</strong></div></a></li>
+            <li><a class="u-story" href="#"><div class="u-thumb" data-scene="campus" data-cam="flash" aria-hidden="true"></div><div class="u-story-body"><span>Story · University</span><strong>SVG animation took me back to Macromedia Flash</strong></div></a></li>
           </ul>
         </div>
-        <div class="u-next next-row"><a class="next-link" href="#"><span>Next section</span><svg class="ic ic-18"><use href="#i-down"/></svg></a><span class="kbd-hint">Telkomsel, coming soon</span></div>
+        <div class="u-next next-row"><a class="next-link" href="telkomsel.html"><span>Next section</span><svg class="ic ic-18"><use href="#i-down"/></svg></a><span class="kbd-hint">or press Enter</span></div>
       </div>
     </section>
   </main>
@@ -170,12 +170,12 @@
   <nav class="u-spine" aria-label="Timeline">
     <ol>
       <li><a href="university.html" aria-current="page" aria-label="University (2000)"><i></i>2000</a></li>
-      <li><span class="u-node" aria-label="Telkomsel (2005), coming soon"><i></i>2005</span></li>
-      <li><span class="u-node" aria-label="A year of trying (2009), coming soon"><i></i>2009</span></li>
-      <li><span class="u-node" aria-label="Ericsson (2010), coming soon"><i></i>2010</span></li>
-      <li><span class="u-node" aria-label="Kanzway (2023), coming soon"><i></i>2023</span></li>
-      <li><span class="u-node" aria-label="Learning through community (2025), coming soon"><i></i>2025</span></li>
-      <li><span class="u-node" aria-label="Johns Hopkins Aramco Healthcare (now), coming soon"><i></i>now</span></li>
+      <li><a href="telkomsel.html" aria-label="Telkomsel (2005)"><i></i>2005</a></li>
+      <li><a href="#" aria-label="A year of trying (2009), coming soon"><i></i>2009</a></li>
+      <li><a href="#" aria-label="Ericsson (2010), coming soon"><i></i>2010</a></li>
+      <li><a href="#" aria-label="Kanzway (2023), coming soon"><i></i>2023</a></li>
+      <li><a href="#" aria-label="Learning through community (2025), coming soon"><i></i>2025</a></li>
+      <li><a href="#" aria-label="Johns Hopkins Aramco Healthcare (now), coming soon"><i></i>now</a></li>
     </ol>
   </nav>
 
@@ -187,11 +187,11 @@
   <div class="phone-bar">
     <span class="phone-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
     <button type="button" class="btn-coral" data-next data-phone-next>Next<svg class="ic ic-18"><use href="#i-down"/></svg></button>
-    <a class="btn-coral" href="#" data-phone-section hidden>Next section</a>
+    <a class="btn-coral" href="telkomsel.html" data-phone-section hidden>Next section</a>
   </div>
 
   <p class="sr-only" aria-live="polite" id="announce"></p>
   <noscript><style>.u-view{position:static;visibility:visible;opacity:1}.u-scene,.u-next,.u-spine,.dial{display:none}.u-over{position:static;transform:none;width:auto;height:auto;padding:24px}.u-copy{position:static;width:auto;height:auto;clip:auto}</style></noscript>
-  <script type="module" src="assets/js/university.js"></script>
+  <script type="module" src="assets/js/section.js"></script>
 </body>
 </html>

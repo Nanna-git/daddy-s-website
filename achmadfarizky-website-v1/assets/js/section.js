@@ -1,9 +1,11 @@
-// My story · 2.1 University (V1.01–V1.09). Each view is the canvas board: the campus scene
+// My story sections (2.1 University, 2.2 Telkomsel). Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
-import { CanvasDiorama } from './canvas-diorama.js';
+// The page picks its section with <body data-section="…">.
+import { sceneHTML } from './board.js';
 
-// cam / uv / ut are copied from the boards U01…U11 (ut = the text painted into the scene).
-const VIEWS = [
+// cam / uv / ut are copied from the boards U01…U11 and TK01…TK10 (ut = the text painted into the scene).
+const SECTIONS = {
+  university: { scene: 'uni', views: [
   { cam: 'u1', uv: 1, ut: '1. University: an engineer|who loved design (2000–2005)||In 2000, I started studying Telecommunication Engineering at Telkom University in Bandung, Indonesia. (Back then, it was called Sekolah Tinggi Teknologi Telkom, or STT Telkom.)' },
   { cam: 'u2', uv: 2, ut: 'My classes were real engineering stuff: switching techniques, traffic engineering, transmission lines, antenna and propagation, digital signal processing, and optical and satellite communication systems.||There was a lot of calculus, physics and lab work, and I enjoyed it. Programming was only a small part: one introduction to computers and one programming lab.' },
   { cam: 'u3', uv: 3, ut: 'But outside the classroom, I spent a lot of my time on something else: design. I taught myself Adobe Photoshop and CorelDraw, then web design with HTML, CSS and JavaScript, and animation with Macromedia Flash.||Nobody asked me to. I just liked making things look good.' },
@@ -13,13 +15,27 @@ const VIEWS = [
   { cam: 'u7t', uv: 7, ut: '' },
   { cam: 'u9', uv: 9, ut: "A moment I'm proud of||Getting paid, as a student, to design my own university's calendar and its academic book. Those were my first real design clients." },
   { cam: 'u11', uv: 11, ut: '' },
-];
+  ] },
+  telkomsel: { scene: 'tsel', views: [
+  { cam: 't1', uv: 1, ut: "2. Telkomsel: the desk guy|who discovered data (2005–2009)||After graduating in 2005, I joined Telkomsel, Indonesia's biggest mobile operator, as a radio network engineer in operations and network performance, first in Medan and later in Jakarta." },
+  { cam: 't2', uv: 2, ut: 'Honestly, I was a bit jealous in my first years. My colleagues travelled for technical training and went to the field with drive test tools. I stayed at my desk with spreadsheets.||One night I begged to join them, and they sent me to a rural site at 2 AM just to make a test call. I was so happy, like a kid in an amusement park.' },
+  { cam: 't3', uv: 3, ut: 'At my desk, I started doing more than delivering numbers. I learned UNIX scripting by myself and used it to build small automations for our daily work. I used my old web skills to build a web dashboard for network performance. Then I combined Google Earth with UNIX scripts to build a live GIS view of our 2G radio network, so management could see how the network was running from their own workstations.' },
+  { cam: 't4', uv: 4, ut: 'In my last year, my manager, Akhmad Madces, brought me into a big data warehouse project. We collected network performance data from all our equipment vendors (Ericsson, Siemens, Nokia, Huawei and more) into one place, and built the dashboards and reports on top of it with Pentaho. I had two great mentors on that project: Reza Lesmana, a solution architect at Nokia, and Feris Thia, CEO of Pentaho Indonesia. It was my first time learning what a data warehouse is, and I still use those concepts today.' },
+  { cam: 't5', uv: 5, ut: "Thread 1 again.||Very few people around me knew even a little programming. That small skill made me useful in a way I didn't expect." },
+  { cam: 't6', uv: 6, ut: 'Thread 2 again.||My team leaders, Petrus Sila and Sorpa EA Togatorop, kept me at my desk with Excel. At the time I didn\'t understand why. Later I realized they saw where my work created real value before I did. I wasn\'t just their "calculator guy." I was helping guide their decisions.' },
+  { cam: 't7', uv: 7, ut: 'Thread 3, for the first time.||Google Earth and a few scripts became a live monitoring tool. No big budget, just tools we already had.' },
+  { cam: 't8', uv: 8, ut: "A moment I'm proud of||In 2009, after the earthquake in West Sumatra, my GIS live monitoring tool was used during the network recovery. I received official appreciation from the company's directors and VPs. I was also named best employee of the service quality assurance team in 2007." },
+  { cam: 't9', uv: 9, ut: '' },
+  { cam: 't10', uv: 10, ut: '' },
+  ] },
+};
+const SLUG = document.body.dataset.section;
+const { scene: SCENE, views: VIEWS } = SECTIONS[SLUG];
 const TOTAL = VIEWS.length;
 
 const root = document.documentElement;
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
@@ -27,25 +43,6 @@ const store = {
 const phoneQuery = matchMedia('(max-width: 819px)');
 const isDark = () => root.dataset.theme === 'dark';
 const reduced = () => root.classList.contains('reduce-motion');
-
-/* ================================================================ scene → HTML (same markup as the Diorama board) */
-export function sceneHTML(props) {
-  const v = new CanvasDiorama(props).renderVals();
-  const box = `position:absolute;left:0;top:0;width:${v.W}px;height:${v.H}px`;
-  let h = `<div class="${v.rootCls}" aria-hidden="true" style="position:relative;width:${v.W}px;height:${v.H}px;overflow:hidden;background:${v.skyBg}">`;
-  if (v.orb.on) h += `<div style="position:absolute;left:${v.orb.l}px;top:${v.orb.t}px;width:${v.orb.s}px;height:${v.orb.s}px;border-radius:50%;background:${v.orb.bg}"></div>`;
-  v.stars.forEach((s) => { h += `<div class="dz-twinkle" style="position:absolute;left:${s.l}px;top:${s.t}px;width:${s.s}px;height:${s.s}px;border-radius:50%;background:#F4F1E6;opacity:${s.o};animation-delay:${s.dl}s"></div>`; });
-  v.clouds.forEach((q) => { h += `<div class="dz-cloud" style="position:absolute;left:${q.l}px;top:${q.t}px;width:${q.w}px;height:${q.h}px;border-radius:50%;background:${q.bg};animation-duration:${q.dur}s"></div>`; });
-  h += `<div style="${box};transform:${v.camT};transform-origin:0 0"><div class="dz-sway" style="${box}">`;
-  v.faces.forEach((f) => {
-    h += `<div class="${f.cls}" style="position:absolute;left:${f.l}px;top:${f.t}px;width:${f.w}px;height:${f.h}px;clip-path:${f.clip};background:${f.bg};border-radius:${f.br};opacity:${f.o};transform:${f.tf};transform-origin:0 0">`;
-    if (f.txt) h += `<span style="position:absolute;left:0;top:0;transform:translate(${f.tx},-50%);white-space:nowrap;font:${f.fw} 20px/1 ${f.ff};color:${f.fc};text-shadow:${f.ts}">${esc(f.txt)}</span>`;
-    h += '</div>';
-  });
-  h += `</div></div><div style="${box};background:${v.fogBg};pointer-events:none"></div>`;
-  if (v.rain) h += `<div class="dz-rain" style="${box};background-image:${v.rainBg};pointer-events:none"></div>`;
-  return h + '</div>';
-}
 
 /* ================================================================ drawing the views */
 const views = $$('.u-view');
@@ -55,8 +52,8 @@ function draw(i) {
   const mode = isDark() ? 'dark' : 'light';
   if (drawn.get(i) === mode) return;
   const v = VIEWS[i];
-  $('.u-board', views[i]).innerHTML = sceneHTML({ scene: 'uni', cam: v.cam, side: 'center', nofog: 'true', uv: v.uv, ut: v.ut, dark: isDark(), w: 1440, h: 900 });
-  $$('.u-thumb', views[i]).forEach((el) => { el.innerHTML = sceneHTML({ scene: 'campus', cam: el.dataset.cam, dark: isDark(), w: 284, h: 124, inset: false }); });
+  $('.u-board', views[i]).innerHTML = sceneHTML({ scene: SCENE, cam: v.cam, side: 'center', nofog: 'true', uv: v.uv, ut: v.ut, dark: isDark(), w: 1440, h: 900 });
+  $$('.u-thumb', views[i]).forEach((el) => { el.innerHTML = sceneHTML({ scene: el.dataset.scene, cam: el.dataset.cam, dark: el.dataset.dark ? true : isDark(), w: +el.dataset.w || 284, h: +el.dataset.h || 124, inset: false }); });
   drawn.set(i, mode);
 }
 
@@ -109,7 +106,7 @@ function setActive(i, { focus = false } = {}) {
   $('[data-phone-next]').hidden = last;
   $('[data-phone-section]').hidden = !last;
   if (prev >= 0) $('#announce').textContent = `View ${i + 1} of ${TOTAL}`;
-  const hash = `#/university/${i + 1}`;
+  const hash = `#/${SLUG}/${i + 1}`;
   if (location.hash !== hash) history.replaceState(null, '', hash);
   if (phoneQuery.matches) $('#views').scrollTop = 0;
   // draw the neighbours once this view is up, so the next move is instant
@@ -148,7 +145,7 @@ document.addEventListener('keydown', (e) => {
   switch (e.key) {
     case 'ArrowDown': case 'ArrowRight': case 'PageDown': e.preventDefault(); step(1, { focus: true }); break;
     case ' ': if (onControl) return; e.preventDefault(); step(e.shiftKey ? -1 : 1, { focus: true }); break;
-    case 'Enter': if (onControl) return; e.preventDefault(); step(1, { focus: true }); break;
+    case 'Enter': if (onControl) return; e.preventDefault(); if (active === TOTAL - 1) $('a.next-link', views[active]).click(); else step(1, { focus: true }); break;
     case 'ArrowUp': case 'ArrowLeft': case 'PageUp': e.preventDefault(); step(-1, { focus: true }); break;
     case 'Home': e.preventDefault(); lockUntil = 0; setActive(0, { focus: true }); break;
     case 'End': e.preventDefault(); lockUntil = 0; setActive(TOTAL - 1, { focus: true }); break;
@@ -183,8 +180,11 @@ hudBtn.addEventListener('click', () => {
 document.addEventListener('pointerdown', (e) => { if (!hudMenu.contains(e.target)) closeHudMenu(); });
 
 /* ================================================================ start */
-const fromHash = () => { const m = /^#\/university\/(\d+)$/.exec(location.hash); return m ? Math.min(TOTAL, Math.max(1, +m[1])) - 1 : 0; };
-window.addEventListener('hashchange', () => { lockUntil = 0; setActive(fromHash()); });
+const viewHash = new RegExp(`^#/${SLUG}/(\\d+)$`);
+const fromHash = () => { const m = viewHash.exec(location.hash); return m ? Math.min(TOTAL, Math.max(1, +m[1])) - 1 : 0; };
+window.addEventListener('hashchange', () => { if (viewHash.test(location.hash)) { lockUntil = 0; setActive(fromHash()); } });
+// links to pages that don't exist yet point to '#': stay on this view
+document.addEventListener('click', (e) => { if (e.target.closest('a[href="#"]')) e.preventDefault(); });
 const start = fromHash();
 fit();
 active = start; // so applyTheme draws the right views

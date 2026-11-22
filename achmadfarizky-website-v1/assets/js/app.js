@@ -1,8 +1,18 @@
 import { TOPICS, STORIES, PHASES, MORE, TOC } from './data.js';
 import { renderDiorama } from './still.js';
+import { sceneHTML } from './board.js';
 
-// Camera per Home view (same names as the design boards and scene.js).
-const HOME_CAMS = ['pov', 'povShelfR', 'povWindow', 'povLaptop', 'povBoard', 'povLamp'];
+// sections that have a page; every other link is '#'
+const PAGES = { university: 'university.html', telkomsel: 'telkomsel.html' };
+// Scene props per Home view, copied from the boards H01, H02, H02b, H03, H04, H05 (the text painted into the room).
+const HOME_VIEWS = [
+  { cam: 'pov', side: 'right' },
+  { cam: 'povShelfWall', side: 'center', focus: 'shelf', wall: "I learned most of what I|know by doing it myself,|from great mentors, and|from online communities.|I'm over 40 and I'm still|a student, which I think|is the best part." },
+  { cam: 'povBoardWall', side: 'center', focus: 'board', bwall: "This website is my home for stories. Here you'll find: what happened, what I learned, and the people who helped me along the way.||If your background is like mine, an engineer from another field, a mid-career learner, or someone starting over, I hope something here helps you." },
+  { cam: 'povLaptopNote', side: 'center', nofog: 'true', blabels: 'Healthcare|PowerPoint|Business Storytelling|Python', btext: "||When I look back at 21 years of work, the same three lessons keep showing up. I'll point to them along the way.", ubwall: 'I studied telecom engineering, but I also taught myself design and programming. Many times, that "extra" skill is what made me useful.', slide: 'Skills I picked up outside my job||x||Telecom,Design,Programming||Design: self-taught|Programming: self-taught|→ extra skills used most', fly: "6.9,2.0,4.55,0.2|1. Learn what you love,|even if it's outside your job." },
+  { cam: 'povStudio', side: 'center', nofog: 'true', studio: 'true', lesson: '2. Stay close to people|who see the business.', page: "Most of my best work started as someone else's idea: a friend, a team leader, a manager. They saw what was needed. I figured out how to build it.", slate: 'Scene 2', say: "I have an idea!|What if we tried…|Can we build that?|Let's do it." },
+  { cam: 'povTools', side: 'center', nofog: 'true', studio: 'true', tlesson: '3. Build it cheap,|with what you|already have.', tpage: 'I rarely had a big budget. Most of my solutions used the tools we already owned, with a small customization to make them do what we needed.' },
+];
 // Scene view → article section (V02 and V03 share one article section).
 const ART_FOR_VIEW = ['a-home-1', 'a-home-2', 'a-home-2', 'a-home-3', 'a-home-4', 'a-home-5'];
 
@@ -22,15 +32,31 @@ const reduced = () => root.classList.contains('reduce-motion');
 
 const sceneMode = $('#scene-mode');
 const viewsEl = $('#views');
-const views = $$('.view', viewsEl);
-const threadsLeft = $('#threads-left');
+const views = $$('.u-view', viewsEl);
 const TOTAL = views.length;
 let active = -1;
 let lockUntil = 0;
-let scene = null;
+
+/* ================================================================ drawing the views (as on the boards, 1440 × 900) */
+const drawn = new Map(); // view index → theme it was drawn in
+function draw(i) {
+  if (i < 0 || i >= TOTAL) return;
+  const mode = isDark() ? 'dark' : 'light';
+  if (drawn.get(i) === mode) return;
+  $('.u-board', views[i]).innerHTML = sceneHTML({ scene: 'room', dark: isDark(), w: 1440, h: 900, ...HOME_VIEWS[i] });
+  drawn.set(i, mode);
+}
+// The scene covers its box; the overlay is fitted inside the viewport (same as the section pages).
+function fit() {
+  const sc = $('.u-scene', views[0]);
+  if (!sc.clientWidth) return; // article mode: nothing to fit
+  root.style.setProperty('--cover', Math.max(sc.clientWidth / 1440, sc.clientHeight / 900));
+  root.style.setProperty('--contain', Math.min(window.innerWidth / 1440, window.innerHeight / 900));
+}
+window.addEventListener('resize', fit);
 
 /* ================================================================ theme */
-function applyTheme(theme, { save = false, instant = false } = {}) {
+function applyTheme(theme, { save = false } = {}) {
   root.dataset.theme = theme;
   $$('[data-theme-set]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeSet === theme)));
   $$('[data-theme-toggle]').forEach((b) => {
@@ -39,7 +65,7 @@ function applyTheme(theme, { save = false, instant = false } = {}) {
   });
   $('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#0B1222' : '#F4F1EA');
   if (save) store.set('theme', theme);
-  scene?.setNight(theme === 'dark', instant || reduced());
+  [active - 1, active, active + 1].forEach(draw);
   refreshDrawings();
 }
 $$('[data-theme-set]').forEach((b) => b.addEventListener('click', () => applyTheme(b.dataset.themeSet, { save: true })));
@@ -51,7 +77,6 @@ function applyReduce(on, { save = false } = {}) {
   root.classList.toggle('reduce-motion', on);
   $('#reduce-toggle').checked = on;
   if (save) store.set('af-reduce', on ? '1' : '0');
-  scene?.setReducedMotion(on);
 }
 $('#reduce-toggle').addEventListener('change', (e) => applyReduce(e.target.checked, { save: true }));
 motionQuery.addEventListener('change', (e) => { if (store.get('af-reduce') === null) applyReduce(e.matches); });
@@ -67,7 +92,7 @@ function applyMode(mode, { save = false } = {}) {
     requestAnimationFrame(() => { if (active > 0) target?.scrollIntoView({ block: 'start' }); else window.scrollTo(0, 0); });
   } else {
     window.scrollTo(0, 0);
-    initScene();
+    fit();
   }
 }
 $$('[data-mode-set]').forEach((b) => b.addEventListener('click', () => { closeHudMenu(); applyMode(b.dataset.modeSet, { save: true }); }));
@@ -76,29 +101,23 @@ $$('[data-mode-set]').forEach((b) => b.addEventListener('click', () => { closeHu
 const circ = 2 * Math.PI * 26;
 const announce = $('#announce');
 
-function setActive(i, { focus = false, instant = false } = {}) {
+function setActive(i, { focus = false } = {}) {
   i = Math.max(0, Math.min(TOTAL - 1, i));
   if (i === active) return;
   const prev = active;
   active = i;
+  draw(i);
   views.forEach((v, k) => {
     const on = k === i;
     v.classList.toggle('is-active', on);
     v.toggleAttribute('inert', !on);
     v.setAttribute('aria-hidden', String(!on));
   });
-  const threads = i >= 3;
-  threadsLeft.classList.toggle('is-held', threads && prev >= 3);
-  threadsLeft.classList.toggle('is-active', threads);
-  threadsLeft.classList.toggle('is-first', i === 3);
-  threadsLeft.toggleAttribute('inert', !threads);
+  $('#hud-sub').hidden = i < 3; // V04–V06: "Three threads in my story" under AF | Home
   const last = i === TOTAL - 1;
-  $('[data-next-threads]').hidden = last;
-  $('[data-next-section]').hidden = !last;
   $('[data-phone-next]').hidden = last;
   $('[data-phone-section]').hidden = !last;
 
-  sceneMode.dataset.scrim = i < 3 ? 'side' : 'full';
   $$('[data-idx]').forEach((el) => (el.textContent = i + 1));
   $('#dial').setAttribute('aria-label', `View ${i + 1} of ${TOTAL}`);
   $('.dial-fill').style.strokeDasharray = `${(circ * (i + 1) / TOTAL).toFixed(1)} 999`;
@@ -107,15 +126,11 @@ function setActive(i, { focus = false, instant = false } = {}) {
   const hash = `#/home/${i + 1}`;
   if (location.hash !== hash) history.replaceState(null, '', hash);
 
-  if (scene) {
-    if (reduced() && prev >= 0) { root.classList.add('cam-cut'); setTimeout(() => root.classList.remove('cam-cut'), 110); }
-    scene.goTo(i, instant);
-  }
-  if (root.classList.contains('no-webgl')) renderSceneStill();
+  // draw the neighbours once this view is up, so the next move has no wait
+  setTimeout(() => { draw(i + 1); draw(i - 1); }, reduced() ? 0 : 700);
   if (phoneQuery.matches) viewsEl.scrollTop = 0;
   if (focus) {
-    const h = views[i].querySelector('h1, h2, h3') || (i >= 3 ? $('#threads-title') : null);
-    const target = h || views[i];
+    const target = $('h1, h2, h3, .u-copy', views[i]);
     if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
     setTimeout(() => target.focus({ preventScroll: true }), reduced() ? 0 : 650);
   }
@@ -154,7 +169,7 @@ document.addEventListener('keydown', (e) => {
   switch (e.key) {
     case 'ArrowDown': case 'ArrowRight': case 'PageDown': e.preventDefault(); step(1, { focus: true }); break;
     case ' ': if (onControl) return; e.preventDefault(); step(e.shiftKey ? -1 : 1, { focus: true }); break;
-    case 'Enter': if (onControl) return; e.preventDefault(); step(1, { focus: true }); break;
+    case 'Enter': if (onControl) return; e.preventDefault(); if (active === TOTAL - 1) $('a.next-link', views[active]).click(); else step(1, { focus: true }); break;
     case 'ArrowUp': case 'ArrowLeft': case 'PageUp': e.preventDefault(); step(-1, { focus: true }); break;
     case 'Home': e.preventDefault(); lockUntil = 0; setActive(0, { focus: true }); break;
     case 'End': e.preventDefault(); lockUntil = 0; setActive(TOTAL - 1, { focus: true }); break;
@@ -214,7 +229,7 @@ function setBackgroundInert(on) {
 /* ================================================================ Chapters sheet */
 const chapters = $('#chapters');
 $('#phase-list').innerHTML = PHASES.map((p) =>
-  `<a class="phase-row" href="${p.id === 'university' ? 'university.html' : '#'}"><span class="phase-dot" aria-hidden="true"></span><span class="phase-name">${esc(p.name)}</span><span class="phase-years">${p.years}</span></a>`).join('');
+  `<a class="phase-row" href="${PAGES[p.id] || '#'}"><span class="phase-dot" aria-hidden="true"></span><span class="phase-name">${esc(p.name)}</span><span class="phase-years">${p.years}</span></a>`).join('');
 $('#more-grid').innerHTML = MORE.map((m) => `<a href="#">${esc(m.name)}</a>`).join('');
 
 function openChapters() {
@@ -309,7 +324,7 @@ library.addEventListener('keydown', (e) => trapFocus(library, e));
 
 /* ================================================================ Article mode */
 $('#art-toc').innerHTML = TOC.map((t) =>
-  `<li><a href="${t.id === 'home' ? '#a-home-1' : '#'}"${t.id === 'home' ? ' aria-current="true"' : ''}>${esc(t.name)}</a></li>`).join('');
+  `<li><a href="${t.id === 'home' ? '#a-home-1' : PAGES[t.id] || '#'}"${t.id === 'home' ? ' aria-current="true"' : ''}>${esc(t.name)}</a></li>`).join('');
 function renderArticleStill() {
   $('#art-still').innerHTML = renderDiorama({ scene: 'room', cam: 'wide', dark: isDark(), w: 700, h: 220, inset: false });
 }
@@ -322,56 +337,13 @@ function refreshDrawings() {
     const mode = isDark() ? 'dark' : 'light';
     $$('.story-thumb[data-drawn]', libGrid).forEach((el) => { if (el.dataset.drawn !== mode) drawThumb(el); });
   }
-  if (root.classList.contains('no-webgl')) renderSceneStill();
 }
-
-/* ================================================================ 3D scene / still fallback */
-function renderSceneStill() {
-  if (active < 0) return;
-  const phone = phoneQuery.matches;
-  const w = window.innerWidth, h = phone ? Math.round(window.innerHeight * 0.44) : window.innerHeight;
-  const svg = renderDiorama({ scene: 'room', cam: HOME_CAMS[active], dark: isDark(), w, h, off: phone ? 0 : undefined, decorative: true });
-  $('#still').innerHTML = svg;
-}
-function toStill() {
-  root.classList.add('no-webgl');
-  scene?.dispose?.(); scene = null;
-  renderSceneStill();
-}
-function webgl2() {
-  try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; }
-}
-let sceneLoading = false;
-async function initScene() {
-  if (scene || sceneLoading || root.dataset.mode !== 'scene' || root.classList.contains('no-webgl')) return;
-  if (!webgl2()) { toStill(); return; }
-  sceneLoading = true;
-  const slow = setTimeout(() => { if (!scene) toStill(); }, 4000); // first frame must come within 4 s
-  try {
-    const { createScene } = await import('./scene.js');
-    if (root.classList.contains('no-webgl')) return;
-    scene = createScene($('#scene-canvas'), { reducedMotion: reduced(), onLost: toStill, startView: Math.max(0, active) });
-    scene.setNight(isDark(), true);
-    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('scene-ready')));
-  } catch (err) {
-    console.warn('3D scene unavailable; showing the still illustration.', err);
-    toStill();
-  } finally {
-    clearTimeout(slow);
-    sceneLoading = false;
-  }
-}
-window.addEventListener('resize', () => { if (root.classList.contains('no-webgl')) renderSceneStill(); });
 
 /* ================================================================ start */
 const m = /^#\/home\/(\d)$/.exec(location.hash);
 const start = m ? Math.min(TOTAL, Math.max(1, +m[1])) - 1 : 0;
-applyTheme(root.dataset.theme, { instant: true });
+applyTheme(root.dataset.theme);
 applyReduce(root.classList.contains('reduce-motion'));
-if (start === 0 && !reduced()) {
-  root.classList.add('intro-pending', 'is-intro');
-  setTimeout(() => root.classList.remove('intro-pending'), 30);
-  setTimeout(() => root.classList.remove('is-intro'), 2600);
-}
-setActive(start, { instant: true });
+setActive(start);
 applyMode(root.dataset.mode === 'article' ? 'article' : 'scene');
+requestAnimationFrame(() => root.classList.add('u-ready'));

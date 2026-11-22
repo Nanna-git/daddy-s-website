@@ -24,13 +24,12 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=Kalam:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/site.css">
-  <script type="importmap">
-    { "imports": { "three": "./assets/vendor/three/three.module.min.js" } }
-  </script>
+  <link rel="stylesheet" href="assets/css/diorama.css">
+  <link rel="stylesheet" href="assets/css/university.css">
 </head>
-<body>
+<body class="u-page">
   <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
@@ -62,23 +61,13 @@
 
   <!-- ================================================================ SCENE MODE -->
   <div class="scene-mode" id="scene-mode">
-    <div class="stage" aria-hidden="true">
-      <div class="sky sky-day"></div>
-      <div class="sky sky-night"></div>
-      <canvas id="scene-canvas"></canvas>
-      <div class="still" id="still"></div>
-      <div class="fog"></div>
-      <div class="scrim scrim-side"></div>
-      <div class="scrim scrim-full"></div>
-      <div class="hud-fade"></div>
-    </div>
-
     <header class="hud-top">
       <div class="hud-id">
         <a class="af-mark" href="#" aria-label="Achmad Farizky, home">AF</a>
         <span class="hud-divider" aria-hidden="true"></span>
         <p class="hud-section"><span>Home</span></p>
       </div>
+      <p class="hud-sub" id="hud-sub" aria-hidden="true" hidden>Three threads in my story</p>
       <div class="hud-menu" id="hud-menu">
         <button type="button" class="hud-glass hud-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="hud-menu-items"><svg class="ic ic-22"><use href="#i-menu"/></svg></button>
         <div class="hud-menu-items" id="hud-menu-items">
@@ -104,100 +93,87 @@
     </header>
 
     <main id="views" tabindex="-1">
-      <!-- V01 · Hero -->
-      <section class="view view-intro" id="home-1" data-view="0" aria-labelledby="v1-title">
-        <div class="block block-left">
-          <h1 id="v1-title" class="t-display" style="--i:0">Hi, I'm Achmad Farizky</h1>
-          <div class="v1-lines" aria-hidden="true">
-            <p class="t-read" style="--i:1">I'm a data specialist who fell in love with storytelling.</p>
-            <p class="t-read" style="--i:2">For 21 years, I've turned messy data into reports, dashboards and stories that help people make decisions: first in telecom in Indonesia and Saudi Arabia, then in retail, and now in healthcare at Johns Hopkins Aramco Healthcare.</p>
-          </div>
-          <p class="sr-only">I'm a data specialist who fell in love with storytelling. For 21 years, I've turned messy data into reports, dashboards and stories that help people make decisions: first in telecom in Indonesia and Saudi Arabia, then in retail, and now in healthcare at Johns Hopkins Aramco Healthcare.</p>
-          <div class="journey" aria-hidden="true" style="--i:3">
-            <span class="ring-icon ring-40"><svg class="ic ic-24"><use href="#i-tower"/></svg></span>
-            <span class="dash"></span>
-            <span class="ring-icon ring-40"><svg class="ic ic-24"><use href="#i-bag"/></svg></span>
-            <span class="dash"></span>
-            <span class="ring-icon ring-40"><svg class="ic ic-24"><use href="#i-heart"/></svg></span>
-          </div>
-          <div class="next-row" style="--i:4">
-            <button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button>
-            <span class="kbd-hint">or press Enter</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- V02 · Learning -->
-      <section class="view view-intro" id="home-2" data-view="1" aria-label="View 2 of 6">
-        <div class="block block-left">
-          <span class="ring-icon ring-64" aria-hidden="true" style="--i:0"><svg class="ic ic-34 thin"><use href="#i-sprout"/></svg></span>
-          <p class="t-read" style="--i:1">I learned most of what I know by doing it myself, from great mentors, and from online communities. I'm over 40 and I'm still a student, which I think is the best part.</p>
-          <div class="next-row" style="--i:2">
-            <button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button>
-            <span class="kbd-hint">or press Enter</span>
+      <!-- V01 · Hero: the room at eye level, greeting on the left -->
+      <section class="u-view" id="home-1" aria-labelledby="v1-title">
+        <div class="u-scene" aria-hidden="true"><div class="u-board"></div><div class="u-scrim"></div><div class="hud-fade"></div></div>
+        <div class="u-over">
+          <div class="u-col u-col-hero">
+            <h1 id="v1-title">Welcome, I'm Achmad Farizky</h1>
+            <div class="u-point">
+              <p>Data specialist. Data storyteller. I believe good data is only useful when people understand it, so I make it easy to follow.</p>
+              <p>For 21 years, I've turned messy data into reports, dashboards and stories that help people make decisions: first in telecom in Indonesia and Saudi Arabia, then in retail, and now in healthcare at Johns Hopkins Aramco Healthcare.</p>
+            </div>
+            <div class="journey" aria-hidden="true">
+              <span class="ring-icon ring-40"><svg class="ic ic-24"><use href="#i-tower"/></svg></span>
+              <span class="dash"></span>
+              <span class="ring-icon ring-40"><svg class="ic ic-24"><use href="#i-bag"/></svg></span>
+              <span class="dash"></span>
+              <span class="ring-icon ring-40"><svg class="ic ic-24"><use href="#i-heart"/></svg></span>
+            </div>
+            <div class="next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
           </div>
         </div>
       </section>
 
-      <!-- V03 · Home for stories -->
-      <section class="view view-intro" id="home-3" data-view="2" aria-label="View 3 of 6">
-        <div class="block block-left">
-          <span class="ring-icon ring-64" aria-hidden="true" style="--i:0"><svg class="ic ic-34 thin"><use href="#i-home-book"/></svg></span>
-          <p class="t-read" style="--i:1">This website is my home for stories. Here you'll find: what happened, what I learned, and the people who helped me along the way. If your background is like mine, an engineer from another field, a mid-career learner, or someone starting over, I hope something here helps you.</p>
-          <div class="next-row" style="--i:2">
-            <button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button>
-            <span class="kbd-hint">or press Enter</span>
+      <!-- V02 · Learning: the text is painted on the wall beside the bookshelf -->
+      <section class="u-view" id="home-2" aria-label="View 2 of 6">
+        <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+        <div class="u-over">
+          <div class="u-copy">
+            <p>I learned most of what I know by doing it myself, from great mentors, and from online communities. I'm over 40 and I'm still a student, which I think is the best part.</p>
           </div>
+          <div class="u-next u-next-left next-row" style="bottom: 120px"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
         </div>
       </section>
 
-      <!-- V04–V06 share the left side: it stays put while the point on the right changes -->
-      <div class="threads-left" id="threads-left">
-        <div class="block block-left">
-          <h2 class="t-h2" id="threads-title" style="--i:0">Three threads in my story</h2>
-          <p class="t-read" style="--i:1">When I look back at 21 years of work, the same three lessons keep showing up. I'll point to them along the way.</p>
-          <div class="next-row" style="--i:2">
-            <button type="button" class="next-link" data-next data-next-threads><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button>
-            <a class="next-link" href="university.html" data-next-section hidden><span>Next section</span><svg class="ic ic-18"><use href="#i-down"/></svg></a>
-            <span class="kbd-hint">or press Enter</span>
+      <!-- V03 · Home for stories: the text is on the back wall under the board -->
+      <section class="u-view" id="home-3" aria-label="View 3 of 6">
+        <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+        <div class="u-over">
+          <div class="u-copy">
+            <p>This website is my home for stories. Here you'll find: what happened, what I learned, and the people who helped me along the way. If your background is like mine, an engineer from another field, a mid-career learner, or someone starting over, I hope something here helps you.</p>
           </div>
-        </div>
-        <span class="split-line" aria-hidden="true"></span>
-      </div>
-
-      <section class="view view-thread" id="home-4" data-view="3" aria-label="View 4 of 6, Thread 1">
-        <div class="block block-right">
-          <span class="ring-icon ring-64" aria-hidden="true" style="--i:0"><svg class="ic ic-34 thin"><use href="#i-thread-1"/></svg></span>
-          <ol class="thread-point" start="1">
-            <li>
-              <h3 class="t-point" style="--i:1"><span class="num" aria-hidden="true">1.</span><span>Learn what you love, even if it's outside your job.</span></h3>
-              <p class="t-read" style="--i:2">I studied telecom engineering, but I also taught myself design and programming. Many times, that "extra" skill is what made me useful.</p>
-            </li>
-          </ol>
+          <div class="u-next u-next-left next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
         </div>
       </section>
 
-      <section class="view view-thread" id="home-5" data-view="4" aria-label="View 5 of 6, Thread 2">
-        <div class="block block-right">
-          <span class="ring-icon ring-64" aria-hidden="true" style="--i:0"><svg class="ic ic-34 thin"><use href="#i-thread-2"/></svg></span>
-          <ol class="thread-point" start="2">
-            <li>
-              <h3 class="t-point" style="--i:1"><span class="num" aria-hidden="true">2.</span><span>Stay close to people who see the business.</span></h3>
-              <p class="t-read" style="--i:2">Most of my best work started as someone else's idea: a friend, a team leader, a manager. They saw what was needed. I figured out how to build it.</p>
-            </li>
-          </ol>
+      <!-- V04 · Thread 1: board, floating lesson and the laptop slide -->
+      <section class="u-view" id="home-4" aria-label="View 4 of 6, Thread 1">
+        <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+        <div class="u-over">
+          <div class="u-copy">
+            <h2>Three threads in my story</h2>
+            <p>When I look back at 21 years of work, the same three lessons keep showing up. I'll point to them along the way.</p>
+            <h3>1. Learn what you love, even if it's outside your job.</h3>
+            <p>I studied telecom engineering, but I also taught myself design and programming. Many times, that "extra" skill is what made me useful.</p>
+          </div>
+          <div class="u-next u-next-left next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
         </div>
       </section>
 
-      <section class="view view-thread" id="home-6" data-view="5" aria-label="View 6 of 6, Thread 3">
-        <div class="block block-right">
-          <span class="ring-icon ring-64" aria-hidden="true" style="--i:0"><svg class="ic ic-34 thin"><use href="#i-thread-3"/></svg></span>
-          <ol class="thread-point" start="3">
-            <li>
-              <h3 class="t-point" style="--i:1"><span class="num" aria-hidden="true">3.</span><span>Build it cheap, with what you already have.</span></h3>
-              <p class="t-read" style="--i:2">I rarely had a big budget. Most of my solutions used the tools we already owned, with a small customization to make them do what we needed.</p>
-            </li>
-          </ol>
+      <!-- V05 · Thread 2: the film crew on the studio floor -->
+      <section class="u-view" id="home-5" aria-label="View 5 of 6, Thread 2">
+        <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+        <div class="u-over">
+          <div class="u-copy">
+            <h2>Three threads in my story</h2>
+            <h3>2. Stay close to people who see the business.</h3>
+            <p>Most of my best work started as someone else's idea: a friend, a team leader, a manager. They saw what was needed. I figured out how to build it.</p>
+          </div>
+          <div class="u-next u-next-left next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+        </div>
+      </section>
+
+      <!-- V06 · Thread 3: the tool corner -->
+      <section class="u-view" id="home-6" aria-label="View 6 of 6, Thread 3">
+        <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+        <div class="u-over">
+          <div class="u-copy">
+            <h2>Three threads in my story</h2>
+            <h3>3. Build it cheap, with what you already have.</h3>
+            <p>I rarely had a big budget. Most of my solutions used the tools we already owned, with a small customization to make them do what we needed.</p>
+          </div>
+          <div class="u-next u-next-left next-row"><a class="next-link" href="university.html"><span>Next section</span><svg class="ic ic-18"><use href="#i-down"/></svg></a><span class="kbd-hint">or press Enter</span></div>
         </div>
       </section>
     </main>
@@ -237,8 +213,8 @@
         <div class="art-still" id="art-still"></div>
         <section id="a-home-1" class="art-sec">
           <a class="art-anchor" href="#a-home-1" aria-label="Link to view 1"><svg class="ic ic-15"><use href="#i-link"/></svg></a>
-          <h1>Hi, I'm Achmad Farizky</h1>
-          <p>I'm a data specialist who fell in love with storytelling. For 21 years, I've turned messy data into reports, dashboards and stories that help people make decisions: first in telecom in Indonesia and Saudi Arabia, then in retail, and now in healthcare at Johns Hopkins Aramco Healthcare.</p>
+          <h1>Welcome, I'm Achmad Farizky</h1>
+          <p>Data specialist. Data storyteller. I believe good data is only useful when people understand it, so I make it easy to follow. For 21 years, I've turned messy data into reports, dashboards and stories that help people make decisions: first in telecom in Indonesia and Saudi Arabia, then in retail, and now in healthcare at Johns Hopkins Aramco Healthcare.</p>
         </section>
         <section id="a-home-2" class="art-sec">
           <a class="art-anchor" href="#a-home-2" aria-label="Link to view 2"><svg class="ic ic-15"><use href="#i-link"/></svg></a>

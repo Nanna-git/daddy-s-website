@@ -834,12 +834,13 @@ export class CanvasDiorama {
       ['u3', 'u4', 'u5', 'u6', 'u6t', 'u7', 'u7t', 'u8', 'u10'].forEach(function (k) { const p = def.cams[k].pov, e = smap(p.eye[0], p.eye[1]), a = smap(p.at[0], p.at[1]); p.eye = [e[0], e[1], p.eye[2]]; p.at = [a[0], a[1], p.at[2]]; });
     } else if (id === 'tsel') {
       // Telkomsel at human scale (same scale as 'uni': desk 2.4 = 0.75 m, a man about 5.3 units), eye-level walk. A film lot on the studio floor
-      // with a painted dawn sky backdrop. Four sets, left to right: the operations office front (V2.01), a rural tower site at 2 AM (V2.02),
-      // the operations floor (server corner, Achmad's desk, the NOC wall, open-plan desks: V2.03-V2.05, V2.07-V2.09) and a meeting room (V2.06).
+      // under an open dawn sky. Two patches of ground joined by a road: out in the countryside on the left,
+      // a rural tower site at 2 AM (V2.02); in the city block on the right, the operations office front (V2.01), the operations floor (server corner, Achmad's desk, the NOC wall, open-plan desks: V2.03-V2.05, V2.07-V2.09) and a meeting room (V2.06).
       // Every camera looks toward -y, so each set is authored back (small y) to front. Each view passes uv (1-10) and its text in ut ("||").
       def.label = 'Telkomsel set: the operations office front, a rural tower site with a drive-test car, the operations floor and a meeting room, on a studio floor';
       def.sky = ['#F3C8A8', '#F7E8D6']; def.nsky = ['#070E24', '#1B2A52']; def.orb = true; def.stars = true; def.fog = 0;
       const TV = Number(opt.uv || 0), TT = String(opt.ut || '').split('||');
+      if (TV === 10) def.tmin = 0.05; // the overview keeps even the small painted texts (notice board, signposts) instead of dropping them
       const wrap = function (txt, ch) { const ws = String(txt || '').trim().split(/\s+/), o = []; let cur = ''; ws.forEach(function (w) { if (!w) return; if (cur && (cur + ' ' + w).length > ch) { o.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }); if (cur) o.push(cur); return o; };
       const INK = '#13203A', INK2 = '#44506A', OXm = { u: [0, 1, 0], v: [0, 0, -1], n: [-1, 0, 0] };
       const say = function (txt, x, y, z, s, o) { add(T(x, y, z, s, txt, Object.assign({ al: 'l', wt: 500, ff: 'Inter, sans-serif', c: INK, nc: INK }, o || {}))); };
@@ -858,11 +859,14 @@ export class CanvasDiorama {
         for (let r = 0; r < 5; r++) for (let q = 0; q < 4; q++) add(B(x + 0.03 + q * w / 4, y + 0.002, z + 0.04 + r * (h * 0.8) / 5, w / 4 - 0.06, 0.004, (h * 0.8) / 5 - 0.05, r === hl ? '#CFE8D6' : '#FFFFFF', { nc: r === hl ? '#CFE8D6' : '#E8ECF2' }));
       };
       const chair = function (x, y, c) { add(L.chair(x, y, 0.25, c || '#3D4A63')); };
-      // Studio floor and the painted sky backdrop.
-      add(B(-110, -50, -0.66, 240, 170, 0.06, '#5B606B', { nc: '#2A2F3D' }));
-      add(B(-104, -45, -0.6, 230, 0.6, 80, '#F2D3B6', { nc: '#141F42' }));
-      add(B(-102, -16, -0.6, 112, 60, 0.6, '#A9C08F', { nc: '#3E5240' }), B(12, -4, -0.6, 108, 46, 0.6, '#A9C08F', { nc: '#3E5240' }));
+      // Studio floor; behind it, the open sky (no backdrop wall).
+      add(B(-160, -50, -0.66, 290, 300, 0.06, '#5B606B', { nc: '#2A2F3D' }));
+      // Ground: an irregular patch of countryside (left) and a paved city block (right), joined by a dirt road that leaves the city street.
+      add(C(0, 0, -0.6, 0, 0.6, '#A9C08F', { nc: '#3E5240', pts: [[-130, -34], [-86, -38], [-60, -12], [-60, 20], [-100, 28], [-142, 18], [-142, -4]] }));
+      add(C(0, 0, -0.6, 0, 0.6, '#CFC8B8', { nc: '#2F333D', pts: [[-58, -24], [118, -24], [124, -14], [124, 32], [112, 46], [-48, 46], [-58, 34]] }));
+      add(C(0, 0, 0, 0, 0.04, '#B59A7A', { nc: '#3A3328', pts: [[-50, 20.4], [-50, 30.4], [-60, 30.4], [-74, 16], [-74, 6], [-64, 6]] }));
 
+      const O0 = I.length; // Set 1 is authored at x -100..-48 and moved 50 right, into the city block
       // ---- Set 1 (V2.01): the operations office front at dawn. A tower stands beside it; the heading is painted on the facade,
       // the context on the notice board; a signpost points to Medan (first) and Jakarta (later).
       add(K(-50, -16, 0, 2.6, 34, '#AEB5C1', { n: 4, rot: Q }), B(-51.3, -15.6, 26, 1.4, 0.3, 3.2, '#E8E2D6'), B(-49.3, -17.4, 24.5, 0.3, 1.4, 3.2, '#E8E2D6'), B(-50.7, -15.3, 21, 1.3, 0.3, 2.8, '#E8E2D6'));
@@ -890,23 +894,58 @@ export class CanvasDiorama {
       add(B(-100, 18, 0, 52, 2.4, 0.08, '#D9D2C4'), B(-100, 20.4, 0, 52, 10, 0.04, '#8E949E', { nc: '#2E323A' }));
       for (let i = 0; i < 9; i++) add(B(-98 + i * 6, 25.2, 0.05, 2.6, 0.25, 0.005, '#EDE7D8'));
       add(L.lampPost(-95, 19, 0, 11), L.lampPost(-55, 19, 0, 11));
+      for (let i = O0; i < I.length; i++) I[i].x += 50;
 
       // ---- Set 2 (V2.02): a rural tower site at 2 AM. The shelter wall carries the first half (the desk years), the warung's sign board the
-      // second (the night he got to go). The drive-test car is parked under the tower, facing us with its headlights on; one ring of
-      // signal dots runs from the tower's antennas to its roof antenna. String lights along the fence: the amusement-park joy.
-      const TX = -17.8;
+      // second (the night he got to go). The drive-test car is parked under the tower, facing us with its headlights on; signal waves
+      // ripple out from the tower's antennas and over its roof antenna. String lights along the fence: the amusement-park joy.
+      const R0 = I.length, TX = -17.8; // Set 2 is authored at x -48..12 and moved 82 left and 14 back, onto the countryside patch
       add(L.palm(-41, -4, 0, 4.4), L.palm(6, -3, 0, 3.8), L.tree(-28, -8, 0, 3.4));
       add(K(TX, 1, 0, 2.6, 34, '#AEB5C1', { n: 4, rot: Q }), B(TX - 1.3, 1.4, 27, 1.4, 0.3, 3.2, '#E8E2D6'), B(TX + 0.7, -0.4, 25.5, 0.3, 1.4, 3.2, '#E8E2D6'), B(TX - 0.7, 1.7, 22, 1.3, 0.3, 2.8, '#E8E2D6'));
+      [4, 8, 12, 16, 20].forEach(function (z) { const hw = 2.6 * (1 - z / 34) + 0.05; add(B(TX - hw, 1 - hw, z, hw * 2, hw * 2, 0.16, '#7E8796', { nc: '#4A5262' })); }); // lattice bands
+      add(L.D(TX + 0.9, 2.5, 17.5, 0.85, '#E8E2D6', { nc: '#9AA3B2', n: 14 }), L.D(TX + 0.9, 2.52, 17.5, 0.35, '#B8C2D0', { nc: '#7E8796', n: 10 })); // microwave dish
       add(S(TX, 1, 34.3, 0.5, '#D9573F', { e: 1, nc: '#FF6B5A', a: 'dz-blink' }), G(TX, 1, 34.3, 3.4, '#FF6B5A', { a: 'dz-blink' }));
-      add(B(-37.5, 1, 0, 15, 9, 1.0, '#C9C2B4'), B(-37, 1.5, 1.0, 14, 8, 9.6, '#EDEFF2', { nc: '#8C93A3' }), B(-37.3, 1.2, 10.6, 14.6, 8.6, 0.35, '#9AA3B2'));
-      add(T(-36.4, 9.53, 1.75, 0.42, 'BTS · MDN-0412', { al: 'l', wt: 600, ff: 'IBM Plex Mono, monospace', c: '#6E7686', nc: '#B4BFD2' }));
-      add(B(-27.6, 9.5, 2.2, 3.4, 0.06, 1.3, '#20242E', { nc: '#20242E' }), T(-25.9, 9.58, 2.85, 0.7, '02:00', { wt: 600, ff: 'IBM Plex Mono, monospace', c: '#E5533D', nc: '#FF6B5A', a: 'dz-pulse' }));
-      { const U2 = SU(2); para(U2[0], 40, -36.4, 9.53, 9.95, 0.6, 0.95); }
+      // Equipment shelter. The overview looks from the front left, where the shelter stands in front of the car's back corner,
+      // so there it is drawn again after the car.
+      const shelter = function () {
+        add(B(-37.5, 1, 0, 15, 9, 1.0, '#C9C2B4'), B(-37, 1.5, 1.0, 14, 8, 9.6, '#EDEFF2', { nc: '#8C93A3' }), B(-37.3, 1.2, 10.6, 14.6, 8.6, 0.35, '#9AA3B2'));
+        add(T(-36.4, 9.53, 1.75, 0.42, 'BTS · MDN-0412', { al: 'l', wt: 600, ff: 'IBM Plex Mono, monospace', c: '#6E7686', nc: '#B4BFD2' }));
+        add(B(-27.6, 9.5, 2.2, 3.4, 0.06, 1.3, '#20242E', { nc: '#20242E' }), T(-25.9, 9.58, 2.85, 0.7, '02:00', { wt: 600, ff: 'IBM Plex Mono, monospace', c: '#E5533D', nc: '#FF6B5A', a: 'dz-pulse' }));
+        { const U2 = SU(2); para(U2[0], 40, -36.4, 9.53, 9.95, 0.6, 0.95); }
+        add(B(-32.2, 9.5, 1.0, 2.8, 0.06, 4.4, '#9AA3B2', { nc: '#5C6475' }), B(-29.85, 9.58, 3.0, 0.15, 0.06, 0.5, '#3D4A63'), B(-31.3, 9.58, 4.2, 1.0, 0.03, 0.9, '#F2C14E', { nc: '#C9A040' }), T(-30.8, 9.62, 4.65, 0.55, '!', { wt: 800, ff: 'Manrope, sans-serif', c: '#20242E', nc: '#20242E' })); // equipment door, high-voltage sign
+      };
+      shelter();
+      add(B(-23.1, 4.6, 8.2, 4.0, 0.6, 0.18, '#7E8796', { nc: '#4A5262' }), B(-21.0, 4.8, 0, 0.16, 0.16, 8.2, '#7E8796', { nc: '#4A5262' })); // cable bridge from the shelter to the tower
       // Warung (a small roadside stall) with a lit window; its sign board carries the second half.
-      add(B(-12.5, 3, 0, 13, 9, 8.0, '#D9C3A0', { nc: '#6B5E4C' }), K(-6, 7.5, 8.0, 9.2, 3.4, '#8C5A48', { n: 4, rot: Q }));
+      add(B(-12.5, 3, 0, 13, 9, 8.0, '#D9C3A0', { nc: '#6B5E4C' }));
       add(B(-2.6, 12.0, 2.2, 1.8, 0.05, 2.2, GL, { nc: LITW, e: 1 }), G(-1.7, 13, 3.2, 3.0, '#FFD27A'));
       add(B(-12.0, 12.0, 0.9, 8.8, 0.16, 6.8, '#B98E62', { nc: '#5E4A38' }), B(-11.7, 12.16, 1.2, 8.2, 0.03, 6.2, '#F4EEDF', { nc: '#C9CEDA' }));
       { const U2 = SU(2); para(U2[1], 27, -11.3, 12.2, 6.75, 0.5, 0.78); }
+      // Gable roof, ridge running front to back with the gable facing us: one solid prism (two half-prisms showed their inner face
+      // through the front wall), then the gable end in wall colour.
+      add(C(-6, 7.5, 7.6, 0, 0, '#8C5A48', { nc: '#4E3A30', pts: [[-7.4, -5.7], [0, -5.7], [7.4, -5.7], [7.4, 5.7], [0, 5.7], [-7.4, 5.7]], hs: [0.3, 4.05, 0.3, 0.3, 4.05, 0.3] }));
+      add(C(-6, 13.25, 7.6, 0, 0, '#D9C3A0', { nc: '#6B5E4C', pts: [[-6.5, 0], [0, 0], [6.5, 0], [6.5, 0.05], [0, 0.05], [-6.5, 0.05]], hs: [0.36, 3.7, 0.36, 0.36, 3.7, 0.36] }));
+      add(B(-10.0, 13.3, 7.75, 8.0, 0.12, 0.8, '#5E4A38', { nc: '#3A2E24' }), T(-6.0, 13.44, 8.15, 0.44, 'WARUNG KOPI · 24 JAM', { wt: 800, ff: 'Manrope, sans-serif', c: '#F7E3B0', nc: '#FFD27A' }));
+      add(L.bench(-2.9, 13.4, 0, '#8C6A4A'));
+      // Warung details, all kept low in front of the story board: bamboo posts under the eave, a kerosene lantern and strips of coffee
+      // sachets hanging from it, a low bale-bale table with a kerupuk tin, a flask, two glasses of kopi and a plate of gorengan, a slate
+      // price board, a red plastic stool, shutters on the lit window, firewood against the side wall.
+      (function () { const BAM = '#C9A864', WOOD = '#8C6A4A', DK = '#3D4A63';
+        add(B(-13.4, 4.4, 0, 0.9, 6.0, 1.8, '#7A5A3C', { nc: '#3A2E24' }));
+        for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) add(L.D(-13.18 + k * 0.45, 10.42, 0.3 + r * 0.55, 0.2, '#C9A27A', { nc: '#6B5A48', n: 10 }));
+        add(B(-13.1, 12.9, 0, 0.28, 0.28, 7.65, BAM, { nc: '#6B5A3A' }), B(0.32, 12.9, 0, 0.28, 0.28, 7.65, BAM, { nc: '#6B5A3A' }));
+        add(B(-3.15, 12.02, 2.1, 0.5, 0.08, 2.4, '#6B4A33', { nc: '#3A2E24' }), B(-0.75, 12.02, 2.1, 0.5, 0.08, 2.4, '#6B4A33', { nc: '#3A2E24' }));
+        [['#B0413E', -2.5], ['#6B3E2A', -2.0], ['#D9A441', -1.5]].forEach(function (st, k) { add(B(st[1] + 0.15, 13.0, 7.35, 0.04, 0.04, 0.3, DK));
+          for (let j = 0; j < 6; j++) add(B(st[1], 13.0, 7.0 - j * 0.38, 0.34, 0.03, 0.34, j % 2 ? '#F4EEDF' : st[0], { nc: j % 2 ? '#B5AE96' : st[0] })); });
+        add(B(-12.62, 13.03, 7.0, 0.04, 0.04, 0.6, DK), K(-12.6, 13.05, 6.7, 0.35, 0.3, DK, { n: 4, rot: Q }), B(-12.85, 12.85, 5.95, 0.5, 0.4, 0.75, '#FFE7A8', { nc: '#FFD27A', e: 1 }), B(-12.9, 12.82, 5.85, 0.6, 0.46, 0.1, DK), G(-12.6, 13.6, 6.3, 2.6, '#FFD27A'));
+        add(B(-10.8, 12.6, 1.0, 5.2, 1.3, 0.16, WOOD, { nc: '#4A3A2C' }), B(-10.7, 13.7, 0, 0.16, 0.16, 1.0, WOOD), B(-5.76, 13.7, 0, 0.16, 0.16, 1.0, WOOD));
+        add(B(-10.4, 12.75, 1.16, 0.95, 0.85, 1.05, '#D9D4C7', { nc: '#8E8A80' }), B(-10.3, 13.61, 1.3, 0.75, 0.02, 0.6, '#BFE3FF', { nc: '#9FB4CC' }), S(-10.1, 13.45, 1.55, 0.17, '#F4E3B0'), S(-10.5, 13.45, 1.6, 0.16, '#F7EAD3'), B(-10.42, 12.73, 2.21, 0.99, 0.89, 0.06, RED));
+        add(C(-8.6, 13.2, 1.16, 0.24, 0.85, '#3E7A5A', { n: 12 }), C(-8.6, 13.2, 2.01, 0.16, 0.14, '#D9D4C7', { n: 10 }));
+        [-7.7, -7.2].forEach(function (x) { add(C(x, 13.4, 1.16, 0.13, 0.36, '#3A2418', { n: 10 }), C(x, 13.4, 1.52, 0.13, 0.03, '#C9A27A', { n: 10 }), S(x, 13.4, 1.85, 0.07, '#FFFFFF', { a: 'dz-float', op: 0.7 })); });
+        add(C(-6.4, 13.25, 1.16, 0.45, 0.05, '#F4EEDF', { n: 14 }), S(-6.55, 13.2, 1.32, 0.16, '#C98A3E'), S(-6.25, 13.3, 1.32, 0.16, '#D9A441'), S(-6.4, 13.05, 1.38, 0.15, '#B7791F'));
+        add(B(-5.4, 14.0, 0, 1.6, 0.08, 1.5, '#2E3A33', { nc: '#20282A' }), T(-4.6, 14.1, 1.12, 0.24, 'kopi 1.500', { wt: 700, ff: 'Kalam, cursive', c: '#F4EEDF', nc: '#F4EEDF' }), T(-4.6, 14.1, 0.72, 0.24, 'teh 1.000', { wt: 700, ff: 'Kalam, cursive', c: '#F4EEDF', nc: '#F4EEDF' }));
+        add(C(-11.6, 14.6, 0, 0.42, 1.4, '#C0392B', { n: 12, nc: '#7A2A22' }));
+      })();
       // Drive-test car (about 4.2 m long, so 13 units), parked under the tower facing us: headlights, a GPS puck and a test antenna on the roof,
       // the drive-test laptop glowing behind the windscreen, a DRIVE TEST card on the dashboard.
       (function () { const x = TX - 2.8, y = 2.4, CC = '#E8E2D6', W2 = 5.6;
@@ -918,18 +957,32 @@ export class CanvasDiorama {
         add(G(x + 1.05, y + 14.4, 2.3, 3.0, '#FFE7A8'), G(x + W2 - 1.05, y + 14.4, 2.3, 3.0, '#FFE7A8'));
         add(C(x + 1.6, y + 5.0, 5.8, 0.45, 0.25, '#20242E', { n: 10 }), C(x + 3.8, y + 4.0, 5.8, 0.06, 2.4, '#3D4A63', { n: 6 }), S(x + 3.8, y + 4.0, 8.3, 0.14, '#3D4A63'));
       })();
+      if (TV === 10) shelter();
+      // Achmad beside the car making the test call: phone to his ear, glowing, and a speech bubble.
+      (function () { const px = -14.6, py = 14.4, SH = '#5C7FA8';
+        add(B(px - 0.45, py - 0.25, 0.05, 0.38, 0.5, 2.5, '#3D4A63'), B(px + 0.07, py - 0.25, 0.05, 0.38, 0.5, 2.5, '#3D4A63'));
+        add(B(px - 0.62, py - 0.35, 2.5, 1.24, 0.7, 1.95, SH, { nc: '#3E5470' }), B(px - 0.95, py - 0.2, 2.75, 0.3, 0.4, 1.65, SH, { nc: '#3E5470' }), B(px + 0.62, py - 0.2, 3.5, 0.3, 0.4, 1.2, SH, { nc: '#3E5470' }));
+        add(S(px, py - 0.12, 5.3, 0.4, '#20242E'), S(px, py, 5.05, 0.45, '#B07A55', { nc: '#8A6248' }), B(px + 0.42, py + 0.02, 4.75, 0.14, 0.12, 0.5, '#20242E'), G(px + 0.5, py + 0.3, 5.0, 0.9, '#9FD4FF', { day: 1, a: 'dz-pulse' }));
+        add(B(px - 2.6, py + 0.3, 5.7, 1.9, 0.04, 0.8, '#FFFFFF', { nc: '#F4F6FA' }), B(px - 0.85, py + 0.3, 5.55, 0.25, 0.04, 0.25, '#FFFFFF', { nc: '#F4F6FA' }), T(px - 1.65, py + 0.36, 6.1, 0.38, 'Halo?', { wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK }));
+      })();
       // Site fence with string lights along its top rail.
-      for (let i = 0; i <= 6; i++) add(B(-40 + i * 4.4, 16, 0, 0.14, 0.14, 4.4, '#8E949E'));
-      add(B(-40, 16, 2.2, 26.5, 0.06, 0.06, '#8E949E'), B(-40, 16, 4.3, 26.5, 0.06, 0.06, '#8E949E'));
-      for (let i = 0; i < 27; i++) { const c = ['#FF6B5A', '#FFD27A', '#7FD8CB', '#B3C1FF'][i % 4]; add(S(-39.6 + i * 1.0, 16.1, 4.05 - Math.abs(Math.sin(i * 0.8)) * 0.3, 0.12, c, { e: 1, nc: c, a: i % 3 ? 'dz-twinkle' : 'dz-pulse' })); }
+      for (let i = 0; i <= 6; i++) add(B(-40 + i * 4.2, 16, 0, 0.14, 0.14, 4.4, '#8E949E')); // ends short of the warung board, so no post crosses its text from V2.02
+      add(B(-40, 16, 2.2, 25.3, 0.06, 0.06, '#8E949E'), B(-40, 16, 4.3, 25.3, 0.06, 0.06, '#8E949E'));
+      for (let i = 0; i < 26; i++) { const c = ['#FF6B5A', '#FFD27A', '#7FD8CB', '#B3C1FF'][i % 4]; add(S(-39.6 + i * 1.0, 16.1, 4.05 - Math.abs(Math.sin(i * 0.8)) * 0.3, 0.12, c, { e: 1, nc: c, a: i % 3 ? 'dz-twinkle' : 'dz-pulse' })); }
       add(B(-48, 20, 0, 60, 10, 0.05, '#B59A7A', { nc: '#3A3328' }));
-      // The test call: one ring of dots from the tower's antennas down to the car's roof antenna.
-      for (let t = 1; t < 14; t++) { const f = t / 14, ax = TX + 0.6 + (1.0 - 0.6) * f, ay = 1.4 + (6.4 - 1.4) * f, az = 26 + (8.6 - 26) * f, bow = Math.sin(f * Math.PI) * 5; add(S(ax + bow * 0.9, ay + bow * 0.5, az, 0.18, '#7FD8CB', { e: 1, nc: '#7FD8CB', a: t % 2 ? 'dz-pulse' : 'dz-twinkle' })); }
+      // The test call: signal waves (three arcs either side) off the tower's antennas, and two small arcs over the car's roof antenna
+      // receiving it. Each arc is a run of small overlapping squares facing the camera; the arcs pulse in turn.
+      (function () { const arc = function (cx, cy, cz, r, a0, a1, k) { const n = Math.ceil(r * (a1 - a0) / 0.11);
+          for (let j = 0; j <= n; j++) { const a = a0 + (a1 - a0) * j / n; add(B(cx + r * Math.cos(a) - 0.09, cy, cz + r * Math.sin(a) - 0.09, 0.18, 0.03, 0.18, '#7FD8CB', { e: 1, nc: '#7FD8CB', a: k % 2 ? 'dz-twinkle' : 'dz-pulse' })); } };
+        [1.2, 2.0, 2.8].forEach(function (r, k) { arc(TX + 0.7, 2.2, 22.6, r, -0.75, 0.75, k); arc(TX - 0.7, 2.2, 22.6, r, Math.PI - 0.75, Math.PI + 0.75, k); }); // low on the antennas, so V2.02's frame catches them
+        [0.6, 1.1].forEach(function (r, k) { arc(TX + 1.0, 6.6, 8.5, r, 0.75, Math.PI - 0.75, k); });
+      })();
+      for (let i = R0; i < I.length; i++) { I[i].x -= 82; I[i].y -= 14; }
 
       // ---- Set 4 (V2.06): the meeting room. Thread 2 painted on the wall, the Excel chart on the projector screen with an arrow to a decision,
       // name cards for the two team leaders at the head of the table, a calculator beside Achmad's laptop.
       add(B(84, 0, 0, 32, 26, 0.25, '#C9B79A', { nc: '#4A4236' }));
-      add(B(83.6, -0.4, 0.25, 32.8, 0.4, 10.5, '#E7DFD0', { nc: '#67625B' }), B(83.6, 0, 0.25, 0.4, 26, 10.5, '#EFE8DA', { nc: '#6F6A63' }), B(116, 0, 0.25, 0.4, 26, 10.5, '#EFE8DA', { nc: '#6F6A63' }));
+      add(B(83.6, -0.4, 0.25, 32.8, 0.4, 10.5, '#E7DFD0', { nc: '#67625B' }), TV === 10 ? null : B(83.6, 0, 0.25, 0.4, 26, 10.5, '#EFE8DA', { nc: '#6F6A63' }), B(116, 0, 0.25, 0.4, 26, 10.5, '#EFE8DA', { nc: '#6F6A63' }));
       { const U6 = SU(6); hand(U6[0], 85.0, 0.03, 9.9, 0.62, OCHRE); para(U6[1], 30, 85.0, 0.03, 8.9, 0.44, 0.72); }
       add(B(97.4, 0.03, 9.6, 12.4, 0.2, 0.3, '#9AA3B2'), B(97.8, 0.05, 3.9, 11.6, 0.04, 5.7, '#FFFFFF', { nc: '#E8ECF2', e: 1 }), G(103.6, 1.0, 6.7, 6.0, '#FFF1C4', { op: 0.6 }));
       { const sy = 0.1;
@@ -940,18 +993,21 @@ export class CanvasDiorama {
         add(T(106.0, sy + 0.012, 8.4, 0.5, '→', { wt: 700, ff: 'Kalam, cursive', c: OCHRE, nc: OCHRE }), B(106.6, sy, 7.9, 2.8, 0.004, 1.0, '#F7EAD3', { nc: '#F7EAD3' }), T(108.0, sy + 0.012, 8.4, 0.3, 'add 3 sites', { wt: 700, ff: 'Kalam, cursive', c: OCHRE, nc: OCHRE }));
         add(T(108.0, sy + 0.012, 7.55, 0.2, 'decision', { wt: 600, ff: 'Inter, sans-serif', c: INK2, nc: INK2 }));
       }
-      chair(96.6, 5.0, '#5C6E91'); chair(104.6, 5.0, '#5C6E91');
-      add(L.desk(91.6, 7.0, 0.25, 18.0, 6.0, 2.4, '#8C6A4A'));
-      add(L.laptop(93.0, 9.6, 2.65), B(93.1, 9.56, 3.0, 1.6, 0.02, 0.6, '#EEF1F5', { nc: '#E1E6EE', e: 1 }));
-      add(B(95.4, 10.1, 2.65, 1.0, 1.3, 0.18, '#3D4A63'), B(95.5, 10.2, 2.84, 0.8, 0.4, 0.02, '#A9C08F', { nc: '#7FD8A0', e: 1 }));
-      for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) add(B(95.52 + i * 0.27, 10.7 + j * 0.22, 2.84, 0.2, 0.16, 0.04, '#9AA3B2'));
-      add(B(95.2, 11.43, 2.84, 1.6, 0.01, 0.4, '#F6EDCF', { nc: '#B5AE96' }), T(96.0, 11.45, 3.04, 0.17, '"calculator guy"', { wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK }));
-      [[103.8, 'Petrus Sila'], [107.0, 'Sorpa EA Togatorop']].forEach(function (n) { add(B(n[0] - 1.3, 9.9, 2.65, 2.6, 0.5, 0.75, '#F7F3EA', { nc: '#C9CEDA' }), T(n[0], 10.42, 3.05, 0.19, n[1], { wt: 700, ff: 'Manrope, sans-serif', c: INK, nc: INK })); });
-      [[92.4, 13.2], [98.6, 13.2], [104.8, 13.2]].forEach(function (c) { chair(c[0], c[1], '#5C6E91'); });
+      // Meeting table: everyone sits on the near side facing the projected chart. Achmad's laptop (lid toward the screen, it drives
+      // the projector) and his calculator at the left seat; tent cards with the two leaders' names at theirs.
+      add(L.desk(92.6, 7.5, 0.25, 14.0, 4.5, 2.4, '#8C6A4A'));
+      add(B(93.4, 10.45, 2.65, 1.8, 1.25, 0.08, '#C9CED8'), B(93.4, 10.37, 2.73, 1.8, 0.08, 1.15, '#596379', { nc: '#3E4556' }), B(94.15, 10.36, 3.2, 0.3, 0.01, 0.2, '#9AA3B2'));
+      add(B(95.7, 10.5, 2.65, 1.0, 1.3, 0.18, '#3D4A63'), B(95.8, 10.6, 2.84, 0.8, 0.4, 0.02, '#A9C08F', { nc: '#7FD8A0', e: 1 }));
+      for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) add(B(95.82 + i * 0.27, 11.1 + j * 0.22, 2.84, 0.2, 0.16, 0.04, '#9AA3B2'));
+      [[101.7, 'Petrus Sila'], [105.5, 'Sorpa EA Togatorop']].forEach(function (n) { add(B(n[0] - 1.15, 11.2, 2.65, 2.3, 0.14, 0.44, '#F7F3EA', { nc: '#C9CED8' }), T(n[0], 11.36, 2.87, 0.16, n[1], { wt: 700, ff: 'Manrope, sans-serif', c: INK, nc: INK })); });
+      [[93.6, 12.3], [97.4, 12.3], [101.0, 12.3], [104.8, 12.3]].forEach(function (c) { chair(c[0], c[1], '#5C6E91'); });
+      add(B(93.45, 13.74, 2.0, 1.7, 0.02, 0.55, '#F6EDCF', { nc: '#B5AE96' }), T(94.3, 13.77, 2.27, 0.16, '"calculator guy"', { wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK })); // taped to the back of Achmad's chair
+
+      if (TV === 10) add(B(83.6, 0, 0.25, 0.4, 26, 10.5, '#EFE8DA', { nc: '#6F6A63' })); // overview, from the front left: the left wall goes in front of the room's contents
 
       // ---- Set 3: the operations floor, a cutaway room (back wall y 0, side walls at x 15 and 75, open to the front).
       add(B(15, 0, 0, 60, 40, 0.25, '#B4BAC5', { nc: '#3E4556' }));
-      add(B(14.6, -0.4, 0.25, 60.8, 0.4, 10.5, '#E9E4D8', { nc: '#67625B' }), B(14.6, 0, 0.25, 0.4, 40, 10.5, '#EFE8DA', { nc: '#6F6A63' }), B(75, 0, 0.25, 0.4, 40, 10.5, '#EFE8DA', { nc: '#6F6A63' }));
+      add(B(14.6, -0.4, 0.25, 60.8, 0.4, 10.5, '#E9E4D8', { nc: '#67625B' }), TV === 10 ? null : B(14.6, 0, 0.25, 0.4, 40, 10.5, '#EFE8DA', { nc: '#6F6A63' }), B(75, 0, 0.25, 0.4, 40, 10.5, '#EFE8DA', { nc: '#6F6A63' }));
       add(B(15, 0, 0.25, 60, 0.03, 0.9, '#C9C2B4', { nc: '#55504A' }));
       // Server corner (V2.04): four vendor cabinets feed one data-warehouse rack; a Pentaho dashboard sits on a side table. Paragraph on the wall above.
       { const U4 = SU(4); para(U4[0], 58, 17.0, 0.03, 10.15, 0.38, 0.6); }
@@ -960,14 +1016,15 @@ export class CanvasDiorama {
         add(B(x, 1.0, 0.25, 2.4, 2.4, 4.2, '#3D4A63', { nc: '#2A3142' }), B(x + 0.2, 3.4, 3.4, 2.0, 0.03, 0.75, v[1], { nc: v[1] }));
         add(T(x + 1.2, 3.45, 3.78, 0.3, v[0], { wt: 800, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
         for (let j = 0; j < 3; j++) add(B(x + 0.4 + (j % 2) * 0.9, 3.42, 1.1 + j * 0.7, 0.6, 0.02, 0.12, j % 2 ? '#7FD8A0' : '#9FD4FF', { e: 1, a: (i + j) % 3 === 0 ? 'dz-blink' : '' }));
-        add(B(x + 1.0, 3.4, 0.26, 0.35, 3.6 - i * 0.55, 0.06, v[1], { nc: v[1] }), B(x + 1.0, 6.65 - i * 0.55, 0.26, 28.6 - x, 0.35, 0.06, v[1], { nc: v[1] }));
+        add(B(x + 1.0, 3.4, 0.26, 0.35, 3.6 - i * 0.55, 0.06, v[1], { nc: v[1] }), B(x + 1.0, 6.65 - i * 0.55, 0.26, 29.35 + (3 - i) * 0.8 - x, 0.35, 0.06, v[1], { nc: v[1] }), B(30.0 + (3 - i) * 0.8, 3.8, 0.26, 0.35, 3.2 - i * 0.55, 0.06, v[1], { nc: v[1] })); // each cable turns back and plugs into the rack's front
       });
-      add(B(27.8, 1.6, 0.25, 1.4, 1.4, 1.8, '#5C6475'), T(28.5, 3.05, 1.2, 0.26, '+ more', { wt: 700, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
+      add(L.desk(39.6, 0.6, 0.25, 13.4, 4.0, 2.4, '#B98B5E')); // Achmad's desk first: from V2.04 its back-left leg sits behind the Pentaho table
+      add(L.desk(33.6, 1.2, 0.25, 4.2, 2.8, 2.4, '#B98B5E')); // before the rack, which hides its back-left corner from V2.04
       add(B(29.4, 0.8, 0.25, 3.6, 3.0, 5.6, '#20242E', { nc: '#161B28' }), B(29.7, 3.8, 4.4, 3.0, 0.03, 0.9, '#C7A35A', { nc: '#E0A84A' }));
       add(T(31.2, 3.85, 5.05, 0.28, 'Data', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }), T(31.2, 3.85, 4.7, 0.28, 'warehouse', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }));
       for (let j = 0; j < 5; j++) for (let k = 0; k < 4; k++) add(B(29.9 + k * 0.7, 3.82, 0.9 + j * 0.72, 0.4, 0.02, 0.1, '#7FD8A0', { e: 1, a: (j + k) % 4 === 1 ? 'dz-blink' : '' }));
-      add(L.desk(33.6, 1.2, 0.25, 4.2, 2.8, 2.4, '#B98B5E'));
-      { const sy = crt(34.4, 1.6, 2.65, 2.6, '#F4F6FA', '#D9E2F0'); add(B(34.75, sy, 4.38, 1.9, 0.004, 0.22, '#B0662E', { nc: '#E0A84A' })); [0.55, 0.9, 0.7, 1.2, 1.0].forEach(function (h, i) { add(B(34.85 + i * 0.36, sy, 2.95, 0.24, 0.004, h, i % 2 ? '#7A93B8' : '#C7A35A', { nc: i % 2 ? '#93A8FF' : '#F0B860' })); }); add(T(35.7, sy + 0.01, 4.49, 0.15, 'Pentaho', { wt: 800, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' })); }
+      add(B(27.8, 1.6, 0.25, 1.4, 1.4, 1.8, '#5C6475'), T(28.5, 3.05, 1.2, 0.26, '+ more', { wt: 700, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' })); // after the rack: it stands in front of the rack's back-left corner
+      { const sy = crt(34.4, 1.6, 2.65, 2.6, '#F4F6FA', '#D9E2F0'); add(B(34.75, sy, 4.38, 1.9, 0.004, 0.22, '#B0662E', { nc: '#E0A84A' })); [0.45, 0.72, 0.56, 0.96, 0.8].forEach(function (h, i) { add(B(34.85 + i * 0.36, sy, 3.15, 0.24, 0.004, h, i % 2 ? '#7A93B8' : '#C7A35A', { nc: i % 2 ? '#93A8FF' : '#F0B860' })); }); add(T(35.7, sy + 0.01, 4.49, 0.15, 'Pentaho', { wt: 800, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' })); }
       // Achmad's desk (V2.03, V2.07, V2.09): three CRTs (a UNIX terminal, the web dashboard, Google Earth), a printed sheet, the wall poster and a whiteboard.
       add(B(38.4, 0.03, 4.9, 9.6, 0.05, 5.4, '#F4EEDF', { nc: '#C9CEDA' }));
       if (TV === 9) {
@@ -979,15 +1036,14 @@ export class CanvasDiorama {
         });
       } else { const U3 = SU(3); head('What I did', 39.0, 0.1, 9.75, 0.36); para(U3[0], 60, 39.0, 0.1, 9.15, 0.27, 0.44); }
       add(B(48.6, 0.03, 5.6, 6.6, 0.06, 4.4, '#FAFAF7', { nc: '#C9CEDA' }), B(48.5, 0.03, 5.45, 6.8, 0.25, 0.15, '#9AA3B2'));
-      { const U7 = SU(7); hand(U7[0], 48.95, 0.12, 9.45, 0.36, BLUE); para(U7[1], 40, 48.95, 0.12, 8.8, 0.24, 0.4);
+      if (TV === 7) { const U7 = SU(7); hand(U7[0], 48.95, 0.12, 9.45, 0.36, BLUE); para(U7[1], 40, 48.95, 0.12, 8.8, 0.24, 0.4);
         // Marker sketch: Google Earth + scripts = live monitoring.
         add(L.D(49.7, 0.1, 6.6, 0.42, '#2E7A5A', { nc: '#2E7A5A', n: 14 }), T(50.5, 0.12, 6.6, 0.4, '+', { wt: 700, ff: 'Kalam, cursive', c: BLUE, nc: BLUE }), B(50.95, 0.1, 6.3, 0.95, 0.01, 0.6, '#20242E', { nc: '#20242E' }), T(51.42, 0.12, 6.6, 0.24, '$_', { wt: 600, ff: 'IBM Plex Mono, monospace', c: '#7FD3A8', nc: '#7FD3A8' }));
         add(T(52.35, 0.12, 6.6, 0.4, '=', { wt: 700, ff: 'Kalam, cursive', c: BLUE, nc: BLUE }), T(52.75, 0.12, 6.62, 0.3, 'live map', { al: 'l', wt: 700, ff: 'Kalam, cursive', c: BLUE, nc: BLUE }));
         add(T(49.0, 0.12, 5.95, 0.24, 'budget: Rp 0', { al: 'l', wt: 700, ff: 'Kalam, cursive', c: '#C0504D', nc: '#C0504D' })); }
-      add(L.desk(39.6, 0.6, 0.25, 13.4, 4.0, 2.4, '#B98B5E'));
       { // terminal
         const sy = crt(40.2, 1.0, 2.65, 2.8, '#14201A', '#14201A');
-        ['$ crontab -l', '0 6 * * * kpi_daily.sh', '$ ./drop_calls.sh MDN', '> mail sent: 06:02'].forEach(function (ln, i) { add(T(40.55, sy, 4.5 - i * 0.36, 0.2, ln, { al: 'l', wt: 600, ff: 'IBM Plex Mono, monospace', c: '#7FD3A8', nc: '#7FD3A8' })); });
+        ['$ crontab -l', '0 6 * * * kpi_daily.sh', '$ ./drop_calls.sh MDN', '> mail sent: 06:02'].forEach(function (ln, i) { add(T(40.6, sy, 4.4 - i * 0.3, 0.15, ln, { al: 'l', wt: 600, ff: 'IBM Plex Mono, monospace', c: '#7FD3A8', nc: '#7FD3A8' })); });
         if (TV === 5) add(G(41.6, sy + 0.5, 4.0, 5.0, '#5FC7B0', { day: 1, a: 'dz-pulse' }), T(41.6, 3.8, 7.6, 0.9, '$_', { wt: 700, ff: 'IBM Plex Mono, monospace', c: TEAL, nc: '#7FD8CB', a: 'dz-float' }));
       }
       { // web dashboard
@@ -997,13 +1053,13 @@ export class CanvasDiorama {
       }
       { // Google Earth
         const sy = crt(49.4, 1.0, 2.65, 2.8, '#0B1530', '#0B1530');
-        add(L.D(50.8, sy, 3.75, 0.82, '#2E6FA8', { nc: '#2E6FA8', n: 18 }), B(50.35, sy + 0.003, 3.6, 0.5, 0.004, 0.55, '#4F9A5A', { nc: '#4F9A5A' }), B(50.85, sy + 0.003, 3.25, 0.4, 0.004, 0.4, '#4F9A5A', { nc: '#4F9A5A' }));
-        [[50.4, 4.0], [50.6, 3.75], [50.95, 3.5], [51.15, 3.3], [50.55, 3.95], [51.0, 3.45]].forEach(function (d, i) { add(S(d[0], sy + 0.02, d[1], 0.06, i % 2 ? '#7FD8A0' : '#FFD27A', { e: 1, a: i % 2 ? 'dz-blink' : 'dz-pulse' })); });
+        add(L.D(50.8, sy, 3.72, 0.6, '#2E6FA8', { nc: '#2E6FA8', n: 18 }), B(50.47, sy + 0.003, 3.61, 0.37, 0.004, 0.4, '#4F9A5A', { nc: '#4F9A5A' }), B(50.84, sy + 0.003, 3.35, 0.3, 0.004, 0.3, '#4F9A5A', { nc: '#4F9A5A' })); // globe inside the screen, under the title
+        [[50.5, 3.91], [50.65, 3.72], [50.91, 3.54], [51.06, 3.39], [50.61, 3.87], [50.95, 3.5]].forEach(function (d, i) { add(S(d[0], sy + 0.02, d[1], 0.05, i % 2 ? '#7FD8A0' : '#FFD27A', { e: 1, a: i % 2 ? 'dz-blink' : 'dz-pulse' })); });
         add(T(49.62, sy + 0.01, 4.55, 0.13, 'Google Earth · 2G sites', { al: 'l', wt: 700, ff: 'Inter, sans-serif', c: '#EEF2F8', nc: '#EEF2F8' }));
       }
-      [['UNIX scripts', 41.6], ['Web dashboard', 46.2], ['Live GIS', 50.8]].forEach(function (lb) { add(B(lb[1] - 1.0, 3.75, 2.68, 2.0, 0.01, 0.34, '#F6EDCF', { nc: '#B5AE96' }), T(lb[1], 3.77, 2.85, 0.2, lb[0], { wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK })); });
+      [['UNIX scripts', 41.6], ['Web dashboard', 46.2], ['Live GIS', 50.8]].forEach(function (lb) { add(B(lb[1] - 1.0, 3.75, 2.79, 2.0, 0.01, 0.22, '#F6EDCF', { nc: '#B5AE96' }), T(lb[1], 3.77, 2.9, 0.17, lb[0], { wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK })); });
       add(B(40.3, 3.9, 2.65, 1.5, 0.6, 0.02, '#FFFFFF'), B(40.4, 3.92, 2.67, 1.3, 0.02, 0.01, '#2E7D4F'));
-      add(B(45.0, 3.6, 2.65, 2.4, 0.8, 0.12, '#D9D4C7'), C(52.4, 3.9, 2.65, 0.3, 0.6, '#C9785E', { n: 10 }));
+      add(B(45.0, 3.85, 2.65, 2.4, 0.7, 0.12, '#D9D4C7'), C(52.4, 3.9, 2.65, 0.3, 0.6, '#C9785E', { n: 10 }));
       chair(45.3, 5.4, '#3D4A63');
       // NOC wall (V2.08): the live GIS on a 2 x 2 video wall (Sumatra, sites coming back green), the appreciation letter in a frame and the 2007 trophy on a shelf; the paragraph under the screens.
       add(B(63.6, 0.03, 4.9, 10.6, 0.1, 5.6, '#20242E', { nc: '#161B28' }));
@@ -1019,23 +1075,39 @@ export class CanvasDiorama {
       [8.7, 8.4, 8.1].forEach(function (z) { add(B(57.6, 0.17, z, 4.0, 0.005, 0.06, '#9AA3B2')); });
       add(L.D(61.2, 0.17, 7.45, 0.32, RED, { nc: RED }), T(57.6, 0.18, 7.5, 0.16, 'Directors & VPs', { al: 'l', wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK }));
       add(B(56.8, 0.03, 4.2, 5.6, 1.1, 0.18, '#8C6A4A'), B(58.7, 0.4, 4.38, 1.4, 0.7, 0.3, '#3D4A63'), C(59.4, 0.75, 4.68, 0.12, 0.5, '#C7A35A', { n: 8 }), C(59.4, 0.75, 5.1, 0.5, 0.7, '#E0B44A', { n: 10 }), S(58.85, 0.75, 5.5, 0.16, '#E0B44A'), S(59.95, 0.75, 5.5, 0.16, '#E0B44A'));
-      add(B(58.75, 1.11, 4.44, 1.3, 0.01, 0.18, '#F4EEDF'), T(59.4, 1.13, 4.53, 0.13, 'Best employee · 2007', { wt: 700, ff: 'Manrope, sans-serif', c: INK, nc: INK }));
-      { const U8 = SU(8); head(U8[0], 63.8, 0.04, 4.35, 0.34, { c: INK, nc: INK }); para(U8[1], 66, 63.8, 0.04, 3.75, 0.25, 0.4); }
+      add(B(58.75, 1.11, 4.44, 1.3, 0.01, 0.18, '#F4EEDF'), T(59.4, 1.13, 4.535, 0.09, 'Best employee · 2007', { wt: 700, ff: 'Manrope, sans-serif', c: INK, nc: INK }));
+      if (!TV || TV >= 8) { const U8 = SU(8); head(U8[0], 63.8, 0.04, 4.35, 0.34, { c: INK, nc: INK }); para(U8[1], 66, 63.8, 0.04, 3.75, 0.25, 0.4); }
       // Open-plan desks (V2.05), with Thread 1 painted big on the left wall: every screen shows a spreadsheet except Achmad's terminal at the back.
       { const U5 = SU(5); head('What I learned', 74.97, 16, 10.0, 0.7, OXm); hand(U5[0], 74.97, 16, 8.75, 1.2, TEAL, OXm); para(U5[1], 30, 74.97, 16, 7.2, 0.82, 1.25, OXm); }
       const ROWS = [];
       [18, 26, 34].forEach(function (y, r) { [20, 31, 42, 53].forEach(function (x, q) { if (r || x > 40) ROWS.push([x, y, r, q]); }); }); // the first row leaves the server corner clear, the last column the Thread 1 wall
+      // Painter's order for the V2.05 camera (x 40): back rows first; in a row, desks left of the camera left to right, desks right of it
+      // right to left, so the nearer desk always covers its neighbour's divider.
+      // The overview (V2.10) looks from the front left instead: there the desks go farthest first along its view (back right to front
+      // left) and every divider, on the near (left) side of its desk, after its own desk and chair.
+      if (TV === 10) ROWS.sort(function (a, b) { return (0.4 * b[0] - 0.92 * b[1]) - (0.4 * a[0] - 0.92 * a[1]); });
+      else ROWS.sort(function (a, b) { const k = function (d) { return d[0] < 40 ? d[0] : 1000 - d[0]; }; return a[1] - b[1] || k(a) - k(b); });
       ROWS.forEach(function (d) { const x = d[0], y = d[1];
-        add(B(x - 0.2, y - 0.2, 0.25, 0.2, 3.4, 4.2, '#B8C2D0', { nc: '#4A5468' }));
+        // cubicle divider: fabric panel about 1 m above the desk, dark top rail and front post. The V2.05 camera stands at x 40:
+        // a divider right of it is in front of its own desk and chair, so it is drawn after them; one left of it, before.
+        const divider = function () { add(B(x - 0.2, y - 0.2, 0.25, 0.2, 3.4, 3.3, '#8592A8', { nc: '#3E4859' }), B(x - 0.24, y - 0.24, 3.55, 0.28, 3.48, 0.12, '#3A4150', { nc: '#242A36' }), B(x - 0.24, y + 3.14, 0.25, 0.28, 0.1, 3.42, '#3A4150', { nc: '#242A36' })); };
+        const late = TV === 10 || x > 40;
+        if (!late) divider();
         add(L.desk(x, y, 0.25, 7.0, 3.0, 2.4, '#C9B08E'));
         const sy = crt(x + 2.1, y + 0.2, 2.65, 2.4, '#F4F6FA', '#D9E2F0'); sheet(x + 2.35, sy, 2.98, 1.9, 1.3, (d[2] + d[3]) % 5);
         add(B(x + 4.8, y + 2.0, 2.65, 1.3, 0.8, 0.05, '#FFFFFF'));
         chair(x + 2.7, y + 3.4, ['#5C6E91', '#6E7686', '#7A5C5C'][(d[2] + d[3]) % 3]);
+        if (late) divider();
       });
 
+      // The overview looks in from the front left, so the left wall stands in front of the room: there it is drawn (full height)
+      // after everything inside it, so nothing shows through.
+      if (TV === 10) add(B(14.6, 0, 0.25, 0.4, 40, 10.5, '#EFE8DA', { nc: '#6F6A63' }));
+      if (TV === 10) add(L.lampPost(-5, 19, 0, 11)); // the office's right lamp post stands in front of that wall from the overview: drawn again on top
+
       def.cams = {
-        t1: { pov: { eye: [-75.5, 39, 4.8], at: [-75.5, 10, 8.6], fov: 74, off: 0 } },
-        t2: { pov: { eye: [-18.6, 38, 4.8], at: [-18.6, 8, 7.0], fov: 74, off: 0 } },
+        t1: { pov: { eye: [-25.5, 39, 4.8], at: [-25.5, 10, 8.6], fov: 74, off: 0 } },
+        t2: { pov: { eye: [-118, 40, 6.5], at: [-99, -6, 6.4], fov: 52, off: 0 } },
         t3: { pov: { eye: [46.4, 15.5, 5.2], at: [46.4, 0, 6.0], fov: 64, off: 0 } },
         t4: { pov: { eye: [26.6, 21, 6.4], at: [26.6, 0, 5.0], fov: 66, off: 0 } },
         t5: { pov: { eye: [40, 42, 6.2], at: [75, 18, 5.4], fov: 72, off: 0 } },
@@ -1043,7 +1115,7 @@ export class CanvasDiorama {
         t7: { pov: { eye: [51.0, 13.5, 5.2], at: [51.0, 0, 6.4], fov: 56, off: 0 } },
         t8: { pov: { eye: [65.4, 15, 5.2], at: [65.4, 0, 6.2], fov: 66, off: 0 } },
         t9: { pov: { eye: [46.4, 15.5, 5.2], at: [46.4, 0, 6.0], fov: 64, off: 0 } },
-        t10: { pov: { eye: [44, 168, 56], at: [30, 4, 7], fov: 70, off: -0.08 } }
+        t10: { pov: { eye: [-190, 185, 56], at: [-30, -8, 20], fov: 40, off: 0 } }
       };
     } else if (id === 'server') {
       def.label = 'Server room diorama: server racks, a wall clock, a today vs. yesterday board, a desk with a roll of duct tape and three post cards on a small stage';
@@ -1298,7 +1370,7 @@ export class CanvasDiorama {
         const cu = toC(add3(p0, it.u)), cv = toC(add3(p0, it.v)); if (cu[2] < NEAR || cv[2] < NEAR) return;
         const s0 = scr(c0), su = scr(cu), sv = scr(cv);
         const ax = (su[0] - s0[0]) / 20, ay = (su[1] - s0[1]) / 20, bx = (sv[0] - s0[0]) / 20, by = (sv[1] - s0[1]) / 20;
-        if (Math.hypot(bx, by) < 0.22) return;
+        if (Math.hypot(bx, by) < (sc.tmin || 0.22)) return; // too small to read: skipped, unless the scene lowers the limit (sc.tmin)
         if (s0[0] < -400 || s0[0] > W + 400 || s0[1] < -200 || s0[1] > H + 200) return;
         faces.push({ it: it, label: true, m: 'matrix(' + [ax, ay, bx, by, s0[0], s0[1]].map(function (q) { return q.toFixed(4); }).join(', ') + ')' });
         return;
@@ -1310,14 +1382,16 @@ export class CanvasDiorama {
         addF(it, [[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], 1.07, [0, 0, 1]);
         if (pov) { addF(it, [[x, y, z], [x + w, y, z], [x + w, y, z + h], [x, y, z + h]], 0.86, [0, -1, 0]); addF(it, [[x, y, z], [x, y + d, z], [x, y + d, z + h], [x, y, z + h]], 0.7, [-1, 0, 0]); }
       } else if (it.t === 'c' || it.t === 'k') {
-        const n = it.n || 8, r = it.r, rot = it.rot || 0, cx = it.x, cy = it.y, z = it.z, h = it.h, v = [];
-        for (let i = 0; i < n; i++) { const a = rot + i * 2 * Math.PI / n; v.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
+        const r = it.r, rot = it.rot || 0, cx = it.x, cy = it.y, z = it.z, h = it.h, v = [];
+        if (it.pts) it.pts.forEach(function (p) { v.push([cx + p[0], cy + p[1]]); }); // custom footprint (ground patches): points relative to x, y
+        else for (let i = 0; i < (it.n || 8); i++) { const a = rot + i * 2 * Math.PI / (it.n || 8); v.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
+        const n = v.length, sg = it.pts ? Math.sign(v.reduce(function (t, p, i) { const q = v[(i + 1) % n]; return t + p[0] * q[1] - q[0] * p[1]; }, 0)) || 1 : 1;
         for (let i = 0; i < n; i++) {
-          const a = v[i], b = v[(i + 1) % n], m = rot + (i + 0.5) * 2 * Math.PI / n, nx = Math.cos(m), ny = Math.sin(m);
-          if (it.t === 'c') { if (!pov && nx + ny <= 0.01) continue; addF(it, [[a[0], a[1], z], [b[0], b[1], z], [b[0], b[1], z + h], [a[0], a[1], z + h]], 0.82 + 0.09 * (ny - nx), [nx, ny, 0]); }
+          const a = v[i], b = v[(i + 1) % n], m = it.pts ? Math.atan2(-(b[0] - a[0]) * sg, (b[1] - a[1]) * sg) : rot + (i + 0.5) * 2 * Math.PI / n, nx = Math.cos(m), ny = Math.sin(m);
+          if (it.t === 'c') { if (!pov && nx + ny <= 0.01) continue; addF(it, [[a[0], a[1], z], [b[0], b[1], z], [b[0], b[1], z + (it.hs ? it.hs[(i + 1) % n] : h)], [a[0], a[1], z + (it.hs ? it.hs[i] : h)]], 0.82 + 0.09 * (ny - nx), [nx, ny, 0]); }
           else { if (!pov && h * (nx + ny) + r <= 0.01) continue; addF(it, [[a[0], a[1], z], [b[0], b[1], z], [cx, cy, z + h]], 0.9 + 0.09 * (ny - nx), [nx * h, ny * h, r]); }
         }
-        if (it.t === 'c') addF(it, v.map(function (p) { return [p[0], p[1], z + h]; }), 1.07, [0, 0, 1]);
+        if (it.t === 'c') addF(it, v.map(function (p, i) { return [p[0], p[1], z + (it.hs ? it.hs[i] : h)]; }), 1.07, [0, 0, 1]);
       } else if (it.t === 'd') {
         const n = it.n || 16, v = [];
         // ax 'x': the disc stands in the y-z plane facing +x (a disc from the rotated studio); otherwise in the x-z plane facing +y.
