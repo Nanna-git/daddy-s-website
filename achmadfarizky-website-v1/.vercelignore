@@ -1,0 +1,7 @@
+# Only the site itself goes online
+*.zip
+design
+tools
+achmadfarizky-content
+README.md
+.DS_Store
