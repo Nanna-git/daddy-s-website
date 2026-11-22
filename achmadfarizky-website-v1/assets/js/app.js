@@ -374,7 +374,11 @@ applyTheme(root.dataset.theme);
 applyReduce(root.classList.contains('reduce-motion'));
 setActive(start);
 // First visit to Home in this tab: the camera takes one slow step into the room, then the greeting appears.
-if (start === 0 && !reduced() && root.dataset.mode === 'scene' && !store.session('af-in')) {
+const slate = window.Slate; // arriving behind the slate (slate.js): no step in, the greeting appears as the board drops away
+if (slate?.arriving) {
+  store.session('af-in', '1');
+  if (!reduced()) root.classList.add('is-moving');
+} else if (start === 0 && !reduced() && root.dataset.mode === 'scene' && !store.session('af-in')) {
   store.session('af-in', '1');
   const to = povOf(viewProps(0)), back = [0, 1, 2].map((k) => to.eye[k] - (to.at[k] - to.eye[k]) * 0.12);
   root.classList.add('is-moving');
@@ -386,4 +390,5 @@ if (start === 0 && !reduced() && root.dataset.mode === 'scene' && !store.session
   });
 }
 applyMode(root.dataset.mode === 'article' ? 'article' : 'scene');
+slate?.land(() => { if (slate.arriving) root.classList.remove('is-moving'); });
 requestAnimationFrame(() => root.classList.add('u-ready'));

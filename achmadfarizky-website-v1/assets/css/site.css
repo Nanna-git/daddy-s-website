@@ -442,3 +442,34 @@ h1, h2, h3, p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   .chapters-sheet, .chapters-scrim, .library, .story-card { animation-duration: 1ms !important; }
 }
+
+/* ================================================================ slate: the transition between pages (slate.js) */
+/* One look by day and by night: navy board, paper lettering, coral and paper stripes. */
+.slate { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; overflow: hidden; }
+.slate-dim { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 42%, #1A2440 0%, #0B1222 75%); opacity: 0; transition: opacity 340ms ease 280ms; } /* lights down between takes */
+.slate-board { position: relative; container-type: inline-size; width: min(86vw, max(50vw, 320px), 720px); transform: translateY(115vh) rotate(-5deg); transition: transform 560ms cubic-bezier(.2, .9, .3, 1.04); filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.35)); }
+.slate-clap, .slate-bar { height: 9cqw; border: 0.6cqw solid #13203A; border-radius: 1.2cqw; background: repeating-linear-gradient(-60deg, #FF6A4D 0 7cqw, #F4F1EA 7cqw 14cqw); }
+.slate-clap { transform-origin: 3% 100%; transform: rotate(-17deg); transition: transform 110ms cubic-bezier(.6, 0, 1, .5); } /* the top stick, open */
+.slate-bar { margin-top: 0.4cqw; }
+.slate-body { margin-top: 0.4cqw; padding: 3cqw 4cqw 3.4cqw; border-radius: 0 0 2.4cqw 2.4cqw; background: #13203A; border: 0.5cqw solid #F4F1EA; color: #F4F1EA; display: flex; flex-direction: column; gap: 2.4cqw; font-family: var(--font-head); }
+.slate-row { display: flex; gap: 4cqw; padding-bottom: 2.2cqw; border-bottom: 0.3cqw solid rgba(244, 241, 234, 0.3); }
+.slate-row:last-child { padding-bottom: 0; border-bottom: 0; }
+.slate-cell { display: flex; flex-direction: column; gap: 1.2cqw; }
+.slate-cell i { font: 700 2.5cqw/1 var(--font-head); letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.7; }
+.slate-cell b { font: 800 5.4cqw/1 var(--font-head); white-space: nowrap; }
+.slate-title { font: 800 13cqw/1 var(--font-head); letter-spacing: -0.02em; padding-bottom: 2.4cqw; border-bottom: 0.3cqw solid rgba(244, 241, 234, 0.3); }
+/* in: the board is up and the lights are down · shut: the sticks have clapped */
+.slate.is-in .slate-dim { opacity: 1; }
+.slate.is-in .slate-board { transform: none; }
+.slate.is-shut .slate-clap { transform: none; }
+.slate.is-shut .slate-board { animation: slate-jolt 170ms ease-out 100ms; }
+@keyframes slate-jolt { 40% { transform: translateY(5px); } }
+/* arriving on the next page: the closed board is simply there */
+.slate.is-arrive .slate-dim, .slate.is-arrive .slate-board, .slate.is-arrive .slate-clap { transition: none; animation: none; }
+/* out: the board drops away and the lights come up */
+.slate.is-out { pointer-events: none; }
+.slate.is-out .slate-dim { opacity: 0; transition: opacity 520ms ease 120ms; }
+.slate.is-out .slate-board { transform: translateY(115vh) rotate(4deg); transition: transform 520ms cubic-bezier(.6, 0, .9, .5); animation: none; }
+/* reduced motion: no board, the pages fade through the paper colour */
+.slate.is-plain .slate-board { display: none; }
+.slate.is-plain .slate-dim { background: var(--paper); transition: opacity 250ms ease; }

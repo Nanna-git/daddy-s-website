@@ -36,6 +36,12 @@ Going to the next or previous view, the camera travels from one view's position 
 
 University and Telkomsel move the same way. Each has a `moves` list in `section.js`: `'travel'` (1.5 s), `'cut'` for spots too far apart (walk, cut, walk in 1.8 s: the old picture steps forward and fades while the new one fades in and settles, without redrawing), `'crane'` for the slow rise to the last view (2.4 s) or `'fade'`. A move that a device cannot keep up with cross-fades from then on.
 
+### The slate (between pages)
+
+Going from one page to another plays a film slate instead of a plain page load: a clapperboard is lifted into the frame, the lights go down, the sticks clap, the next page loads behind the closed board, then the board drops away, the lights come up and the first view's text comes in. The board reads the page it is going to ("Scene 2 · Telkomsel · 2005–2009", director Achmad Farizky; Home reads "Home").
+
+`assets/js/slate.js` is a plain script loaded at the top of `<body>` on every page; its `PAGES` list holds what the board reads and its timings are at the top. The styles are the "slate" block at the end of `site.css`. It plays on any link between the pages, always lands on the first view, and does not play on a first visit, a refresh, a direct link or the Back button. With reduced motion on, the pages fade through the paper colour.
+
 ## My story · University
 
 `university.html` is section 2.1 (V1.01–V1.09, links `#/university/1` … `#/university/9`). Home's last view, its article and the Chapters sheet link to it.

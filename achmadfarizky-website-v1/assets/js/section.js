@@ -244,4 +244,12 @@ active = start; // so applyTheme draws the right views
 applyTheme(root.dataset.theme);
 active = -1;
 setActive(start);
+// Arriving behind the slate (slate.js): as the board drops away, this view's text comes in.
+const slate = window.Slate;
+if (slate?.arriving && !reduced()) root.classList.add('is-moving');
+slate?.land(() => {
+  if (!root.classList.contains('is-moving')) return;
+  $('.u-board', views[active]).innerHTML = sceneHTML({ ...viewProps(active), enter: true });
+  root.classList.remove('is-moving');
+});
 requestAnimationFrame(() => root.classList.add('u-ready'));
