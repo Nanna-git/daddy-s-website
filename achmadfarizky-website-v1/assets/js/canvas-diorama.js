@@ -565,7 +565,7 @@ export class CanvasDiorama {
       })();
       // Studio views: the back-wall poster and pin-board card carry the V1.03 text, drawn here in scene order so nearer props cover them.
       { const W3 = SU(3);
-        label('What I did', -8.85, 30.06, 8.85, 0.34, OY); const w3a = wrap(W3[0], 29); lines(w3a, -8.75, 30.06, 8.15, 0.28, 0.44, OY); lines(wrap(W3[1], 29), -8.75, 30.06, 8.15 - w3a.length * 0.44 - 0.25, 0.28, 0.44, OY); }
+        label('What I did', -8.85, 30.06, 8.85, 0.34, OY); const w3a = wrap(W3[0], 33); lines(w3a, -8.85, 30.06, 8.2, 0.245, 0.4, OY); lines(wrap(W3[1], 33), -8.85, 30.06, 8.2 - w3a.length * 0.4 - 0.22, 0.245, 0.4, OY); }
       // Every view hangs the calendar at 0.6 scale from its top centre, so the team photo fits under it in V1.04, V1.05 and V1.07.
       (function (B0, S0, T0) { const cs = 0.6, cx = 7.0, cz = 9.4, X = function (x) { return cx + (x - cx) * cs; }, Z = function (z) { return cz + (z - cz) * cs; };
         const B = function (x, y, z, w, d, h, c, o) { return B0(X(x), y, Z(z), w * cs, d, h * cs, c, o); }, S = function (x, y, z, r, c, o) { return S0(X(x), y, Z(z), r * cs, c, o); }, T = function (x, y, z, s, t, o) { return T0(X(x), y, Z(z), s * cs, t, o); };
@@ -632,7 +632,7 @@ export class CanvasDiorama {
           [['Ps', 'Photoshop', 'images', '#2F5C99'], ['Cd', 'CorelDraw', 'vector', '#3D8A3A'], ['</>', 'HTML, CSS, JS', 'web', '#C9785E'], ['Fl', 'Flash', 'animation', '#B0413E']].forEach(function (r, i) {
             const z = 4.3 - i * 0.34;
             add(B(-1.5, y + 0.005, z - 0.28, 0.36, 0.01, 0.28, r[3], E(r[3])), T(-1.32, y + 0.02, z - 0.06, 0.15, r[0], { wt: 800, c: '#F7F3EA', nc: '#F7F3EA' }));
-            add(T(-1.05, y + 0.02, z - 0.04, 0.17, r[1], { al: 'l', wt: 700, c: INK, nc: INK }), T(0.05, y + 0.02, z - 0.07, 0.12, r[2], { al: 'l', wt: 500, c: INK2, nc: INK2 }));
+            add(T(-1.05, y + 0.02, z - 0.05, 0.14, r[1], { al: 'l', wt: 700, c: INK, nc: INK }), T(0.1, y + 0.02, z - 0.06, 0.1, r[2], { al: 'l', wt: 500, c: INK2, nc: INK2 }));
           });
         }
       })();
@@ -832,6 +832,219 @@ export class CanvasDiorama {
       { const p = def.cams.u2.pov; p.eye = [p.eye[0] + LDX, p.eye[1] + LDY, p.eye[2]]; p.at = [p.at[0] + LDX, p.at[1] + LDY, p.at[2]]; }
       { const p = def.cams.u9.pov; p.eye = [p.eye[0] + PDX, p.eye[1] + PDY, p.eye[2]]; p.at = [p.at[0] + PDX, p.at[1] + PDY, p.at[2]]; }
       ['u3', 'u4', 'u5', 'u6', 'u6t', 'u7', 'u7t', 'u8', 'u10'].forEach(function (k) { const p = def.cams[k].pov, e = smap(p.eye[0], p.eye[1]), a = smap(p.at[0], p.at[1]); p.eye = [e[0], e[1], p.eye[2]]; p.at = [a[0], a[1], p.at[2]]; });
+    } else if (id === 'tsel') {
+      // Telkomsel at human scale (same scale as 'uni': desk 2.4 = 0.75 m, a man about 5.3 units), eye-level walk. A film lot on the studio floor
+      // with a painted dawn sky backdrop. Four sets, left to right: the operations office front (V2.01), a rural tower site at 2 AM (V2.02),
+      // the operations floor (server corner, Achmad's desk, the NOC wall, open-plan desks: V2.03-V2.05, V2.07-V2.09) and a meeting room (V2.06).
+      // Every camera looks toward -y, so each set is authored back (small y) to front. Each view passes uv (1-10) and its text in ut ("||").
+      def.label = 'Telkomsel set: the operations office front, a rural tower site with a drive-test car, the operations floor and a meeting room, on a studio floor';
+      def.sky = ['#F3C8A8', '#F7E8D6']; def.nsky = ['#070E24', '#1B2A52']; def.orb = true; def.stars = true; def.fog = 0;
+      const TV = Number(opt.uv || 0), TT = String(opt.ut || '').split('||');
+      const wrap = function (txt, ch) { const ws = String(txt || '').trim().split(/\s+/), o = []; let cur = ''; ws.forEach(function (w) { if (!w) return; if (cur && (cur + ' ' + w).length > ch) { o.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }); if (cur) o.push(cur); return o; };
+      const INK = '#13203A', INK2 = '#44506A', OXm = { u: [0, 1, 0], v: [0, 0, -1], n: [-1, 0, 0] };
+      const say = function (txt, x, y, z, s, o) { add(T(x, y, z, s, txt, Object.assign({ al: 'l', wt: 500, ff: 'Inter, sans-serif', c: INK, nc: INK }, o || {}))); };
+      const para = function (txt, ch, x, y, z, s, step, o) { const ls = wrap(txt, ch); ls.forEach(function (ln, k) { say(ln, x, y, z - k * step, s, o); }); return ls.length * step; };
+      const head = function (txt, x, y, z, s, o) { say(txt, x, y, z, s, Object.assign({ wt: 800, ff: 'Manrope, sans-serif', c: INK2, nc: INK2 }, o || {})); };
+      const hand = function (txt, x, y, z, s, c, o) { say(txt, x, y, z, s, Object.assign({ wt: 700, ff: 'Kalam, cursive', c: c, nc: c }, o || {})); };
+      // Each set shows its own view's text; seen from another view it shows the board copy, so the lot reads the same from every camera.
+      const SX = {"1": ["2. Telkomsel: the desk guy|who discovered data (2005–2009)", "After graduating in 2005, I joined Telkomsel, Indonesia's biggest mobile operator, as a radio network engineer in operations and network performance, first in Medan and later in Jakarta."], "2": ["Honestly, I was a bit jealous in my first years. My colleagues travelled for technical training and went to the field with drive test tools. I stayed at my desk with spreadsheets.", "One night I begged to join them, and they sent me to a rural site at 2 AM just to make a test call. I was so happy, like a kid in an amusement park."], "3": ["At my desk, I started doing more than delivering numbers. I learned UNIX scripting by myself and used it to build small automations for our daily work. I used my old web skills to build a web dashboard for network performance. Then I combined Google Earth with UNIX scripts to build a live GIS view of our 2G radio network, so management could see how the network was running from their own workstations."], "4": ["In my last year, my manager, Akhmad Madces, brought me into a big data warehouse project. We collected network performance data from all our equipment vendors (Ericsson, Siemens, Nokia, Huawei and more) into one place, and built the dashboards and reports on top of it with Pentaho. I had two great mentors on that project: Reza Lesmana, a solution architect at Nokia, and Feris Thia, CEO of Pentaho Indonesia. It was my first time learning what a data warehouse is, and I still use those concepts today."], "5": ["Thread 1 again.", "Very few people around me knew even a little programming. That small skill made me useful in a way I didn't expect."], "6": ["Thread 2 again.", "My team leaders, Petrus Sila and Sorpa EA Togatorop, kept me at my desk with Excel. At the time I didn't understand why. Later I realized they saw where my work created real value before I did. I wasn't just their \"calculator guy.\" I was helping guide their decisions."], "7": ["Thread 3, for the first time.", "Google Earth and a few scripts became a live monitoring tool. No big budget, just tools we already had."], "8": ["A moment I'm proud of", "In 2009, after the earthquake in West Sumatra, my GIS live monitoring tool was used during the network recovery. I received official appreciation from the company's directors and VPs. I was also named best employee of the service quality assurance team in 2007."]}, SU = function (n) { return TV === n ? TT : SX[n]; };
+      const RED = '#C0392B', TEAL = '#1D8A7A', OCHRE = '#B7791F', BLUE = '#2F5C99', GL = '#A9C6E8', LITW = '#FFD27A';
+      const crt = function (x, y, z, s, scr, nscr) { // beige 2005 CRT facing +y; screen face at y + 0.9s + 0.02
+        add(B(x + s * 0.15, y + 0.1 * s, z, s * 0.7, s * 0.6, s * 0.1, '#CFC9BB'), B(x + s * 0.12, y, z + s * 0.1, s * 0.76, s * 0.7, s * 0.62, '#D9D4C7', { nc: '#8E8A80' }), B(x, y + s * 0.7, z + s * 0.06, s, s * 0.2, s * 0.78, '#E2DDD0', { nc: '#9A958A' }));
+        add(B(x + s * 0.08, y + s * 0.9, z + s * 0.13, s * 0.84, 0.02, s * 0.62, scr, { nc: nscr || scr, e: 1 }));
+        return y + s * 0.9 + 0.025; };
+      const sheet = function (x, y, z, w, h, hl) { // a spreadsheet grid on a screen face at y
+        add(B(x, y, z + h - h * 0.14, w, 0.004, h * 0.14, '#2E7D4F', { nc: '#2E7D4F' }));
+        for (let r = 0; r < 5; r++) for (let q = 0; q < 4; q++) add(B(x + 0.03 + q * w / 4, y + 0.002, z + 0.04 + r * (h * 0.8) / 5, w / 4 - 0.06, 0.004, (h * 0.8) / 5 - 0.05, r === hl ? '#CFE8D6' : '#FFFFFF', { nc: r === hl ? '#CFE8D6' : '#E8ECF2' }));
+      };
+      const chair = function (x, y, c) { add(L.chair(x, y, 0.25, c || '#3D4A63')); };
+      // Studio floor and the painted sky backdrop.
+      add(B(-110, -50, -0.66, 240, 170, 0.06, '#5B606B', { nc: '#2A2F3D' }));
+      add(B(-104, -45, -0.6, 230, 0.6, 80, '#F2D3B6', { nc: '#141F42' }));
+      add(B(-102, -16, -0.6, 112, 60, 0.6, '#A9C08F', { nc: '#3E5240' }), B(12, -4, -0.6, 108, 46, 0.6, '#A9C08F', { nc: '#3E5240' }));
+
+      // ---- Set 1 (V2.01): the operations office front at dawn. A tower stands beside it; the heading is painted on the facade,
+      // the context on the notice board; a signpost points to Medan (first) and Jakarta (later).
+      add(K(-50, -16, 0, 2.6, 34, '#AEB5C1', { n: 4, rot: Q }), B(-51.3, -15.6, 26, 1.4, 0.3, 3.2, '#E8E2D6'), B(-49.3, -17.4, 24.5, 0.3, 1.4, 3.2, '#E8E2D6'), B(-50.7, -15.3, 21, 1.3, 0.3, 2.8, '#E8E2D6'));
+      add(S(-50, -16, 34.3, 0.5, '#D9573F', { e: 1, nc: '#FF6B5A', a: 'dz-blink' }), G(-50, -16, 34.3, 3.4, '#FF6B5A', { a: 'dz-blink' }));
+      add(L.palm(-99, -8, 0, 4.6), L.palm(-53, -4, 0, 4.0));
+      add(B(-94, -10, 0, 38, 20, 16.4, '#E3DACB', { nc: '#8E887C' }), B(-94.4, -10.4, 16.4, 38.8, 20.8, 0.6, '#9AA3B2'), B(-94, 10, 11.0, 38, 0.06, 0.5, RED));
+      [1.6, 6.4].forEach(function (z, f) { [-91.5, -87, -82.5, -67, -62.5, -58].forEach(function (x, i) { const lit = (i + f) % 3 !== 1; add(B(x - 0.15, 10, z - 0.15, 2.9, 0.05, 3.3, '#B8BEC8'), B(x, 10.05, z, 2.6, 0.04, 3.0, GL, { nc: lit ? LITW : '#2A3858', e: lit ? 1 : 0 })); }); });
+      add(B(-78, 10, 0, 6, 0.06, 7.2, '#3D4A63'), B(-77.7, 10.06, 0.2, 2.6, 0.03, 6.6, GL, { nc: LITW, e: 1 }), B(-74.9, 10.06, 0.2, 2.6, 0.03, 6.6, GL, { nc: LITW, e: 1 }));
+      add(B(-80, 10, 7.4, 10, 3.2, 0.7, RED), B(-79.6, 12.9, 0.25, 0.25, 0.25, 7.2, '#9AA3B2'), B(-70.6, 12.9, 0.25, 0.25, 0.25, 7.2, '#9AA3B2'));
+      add(T(-75, 13.22, 7.75, 0.42, 'Network Operations & Performance', { wt: 700, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
+      { const U1 = SU(1), hd = String(U1[0] || '').replace('|', ' '), hm = hd.match(/^(\d+)\.\s*([^:]+):\s*(.*?)\s*\((.*)\)\s*$/);
+        if (hm) {
+          add(T(-75, 10.1, 15.4, 0.62, hm[1] + '  ·  ' + hm[4], { wt: 700, ff: 'Manrope, sans-serif', c: RED, nc: '#E8A49B' }));
+          add(T(-75, 10.1, 14.1, 1.55, hm[2], { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: '#EEF2F8' }));
+          add(T(-75, 10.1, 12.3, 0.72, hm[3], { wt: 600, ff: 'Manrope, sans-serif', c: INK2, nc: '#D6DCE8' }));
+        } else String(U1[0] || '').split('|').forEach(function (ln, k) { add(T(-75, 10.1, 14.6 - k * 1.2, 0.9, ln.trim(), { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: '#EEF2F8' })); });
+        // Notice board right of the door: "Context" and its paragraph.
+        add(B(-69.2, 12.4, 0, 0.35, 0.35, 8.6, '#6B4A33'), B(-56.9, 12.4, 0, 0.35, 0.35, 8.6, '#6B4A33'), B(-69.4, 12.75, 1.6, 12.9, 0.18, 6.9, '#C4A27A'), B(-69.1, 12.93, 1.85, 12.3, 0.03, 6.4, '#F7F3EA', { nc: '#C9CEDA' }));
+        head('Context', -68.5, 12.97, 7.55, 0.5);
+        para(U1[1], 45, -68.5, 12.97, 6.7, 0.42, 0.72);
+      }
+      // Signpost: Medan first, Jakarta later.
+      add(C(-85, 16, 0, 0.16, 7.6, '#9AA3B2', { n: 8 }), B(-90.4, 16.2, 5.9, 5.4, 0.14, 1.1, '#2F5C99'), B(-85, 16.2, 4.4, 5.8, 0.14, 1.1, '#5C6E91'));
+      add(T(-90.1, 16.36, 6.45, 0.5, '← Medan · 2005', { al: 'l', wt: 700, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }), T(-84.7, 16.36, 4.95, 0.5, 'Jakarta · later →', { al: 'l', wt: 700, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
+      add(B(-100, 18, 0, 52, 2.4, 0.08, '#D9D2C4'), B(-100, 20.4, 0, 52, 10, 0.04, '#8E949E', { nc: '#2E323A' }));
+      for (let i = 0; i < 9; i++) add(B(-98 + i * 6, 25.2, 0.05, 2.6, 0.25, 0.005, '#EDE7D8'));
+      add(L.lampPost(-95, 19, 0, 11), L.lampPost(-55, 19, 0, 11));
+
+      // ---- Set 2 (V2.02): a rural tower site at 2 AM. The shelter wall carries the first half (the desk years), the warung's sign board the
+      // second (the night he got to go). The drive-test car is parked under the tower, facing us with its headlights on; one ring of
+      // signal dots runs from the tower's antennas to its roof antenna. String lights along the fence: the amusement-park joy.
+      const TX = -17.8;
+      add(L.palm(-41, -4, 0, 4.4), L.palm(6, -3, 0, 3.8), L.tree(-28, -8, 0, 3.4));
+      add(K(TX, 1, 0, 2.6, 34, '#AEB5C1', { n: 4, rot: Q }), B(TX - 1.3, 1.4, 27, 1.4, 0.3, 3.2, '#E8E2D6'), B(TX + 0.7, -0.4, 25.5, 0.3, 1.4, 3.2, '#E8E2D6'), B(TX - 0.7, 1.7, 22, 1.3, 0.3, 2.8, '#E8E2D6'));
+      add(S(TX, 1, 34.3, 0.5, '#D9573F', { e: 1, nc: '#FF6B5A', a: 'dz-blink' }), G(TX, 1, 34.3, 3.4, '#FF6B5A', { a: 'dz-blink' }));
+      add(B(-37.5, 1, 0, 15, 9, 1.0, '#C9C2B4'), B(-37, 1.5, 1.0, 14, 8, 9.6, '#EDEFF2', { nc: '#8C93A3' }), B(-37.3, 1.2, 10.6, 14.6, 8.6, 0.35, '#9AA3B2'));
+      add(T(-36.4, 9.53, 1.75, 0.42, 'BTS · MDN-0412', { al: 'l', wt: 600, ff: 'IBM Plex Mono, monospace', c: '#6E7686', nc: '#B4BFD2' }));
+      add(B(-27.6, 9.5, 2.2, 3.4, 0.06, 1.3, '#20242E', { nc: '#20242E' }), T(-25.9, 9.58, 2.85, 0.7, '02:00', { wt: 600, ff: 'IBM Plex Mono, monospace', c: '#E5533D', nc: '#FF6B5A', a: 'dz-pulse' }));
+      { const U2 = SU(2); para(U2[0], 40, -36.4, 9.53, 9.95, 0.6, 0.95); }
+      // Warung (a small roadside stall) with a lit window; its sign board carries the second half.
+      add(B(-12.5, 3, 0, 13, 9, 8.0, '#D9C3A0', { nc: '#6B5E4C' }), K(-6, 7.5, 8.0, 9.2, 3.4, '#8C5A48', { n: 4, rot: Q }));
+      add(B(-2.6, 12.0, 2.2, 1.8, 0.05, 2.2, GL, { nc: LITW, e: 1 }), G(-1.7, 13, 3.2, 3.0, '#FFD27A'));
+      add(B(-12.0, 12.0, 0.9, 8.8, 0.16, 6.8, '#B98E62', { nc: '#5E4A38' }), B(-11.7, 12.16, 1.2, 8.2, 0.03, 6.2, '#F4EEDF', { nc: '#C9CEDA' }));
+      { const U2 = SU(2); para(U2[1], 27, -11.3, 12.2, 6.75, 0.5, 0.78); }
+      // Drive-test car (about 4.2 m long, so 13 units), parked under the tower facing us: headlights, a GPS puck and a test antenna on the roof,
+      // the drive-test laptop glowing behind the windscreen, a DRIVE TEST card on the dashboard.
+      (function () { const x = TX - 2.8, y = 2.4, CC = '#E8E2D6', W2 = 5.6;
+        add(B(x - 0.15, y + 1.6, 0.05, 0.6, 2.0, 2.0, '#20242E'), B(x + W2 - 0.45, y + 1.6, 0.05, 0.6, 2.0, 2.0, '#20242E'), B(x - 0.15, y + 9.6, 0.05, 0.6, 2.0, 2.0, '#20242E'), B(x + W2 - 0.45, y + 9.6, 0.05, 0.6, 2.0, 2.0, '#20242E'));
+        add(B(x, y, 0.9, W2, 13, 2.6, CC, { nc: '#9A958A' }), B(x + 0.3, y + 2.6, 3.5, W2 - 0.6, 7.0, 2.1, '#9FB4CC', { nc: '#3E4C66' }), B(x + 0.2, y + 2.5, 5.6, W2 - 0.4, 7.2, 0.2, CC, { nc: '#9A958A' }));
+        add(B(x + 1.0, y + 9.0, 3.6, 2.2, 0.3, 1.0, '#BFE3FF', { nc: '#9FD4FF', e: 1 }), B(x + 0.5, y + 9.62, 3.6, W2 - 1.0, 0.02, 1.8, '#9FB4CC', { nc: '#2A3858', op: 0.55 }));
+        add(B(x + 0.4, y + 13.0, 2.0, 1.3, 0.04, 0.6, '#FFF1C4', { nc: '#FFE7A8', e: 1 }), B(x + W2 - 1.7, y + 13.0, 2.0, 1.3, 0.04, 0.6, '#FFF1C4', { nc: '#FFE7A8', e: 1 }), B(x + 1.9, y + 13.0, 1.4, 1.8, 0.03, 0.9, '#9AA3B2'));
+        add(B(x + 1.6, y + 13.0, 0.95, 2.4, 0.04, 0.55, '#F4EEDF'), T(x + W2 / 2, y + 13.06, 1.22, 0.3, 'DRIVE TEST', { wt: 800, ff: 'Manrope, sans-serif', c: RED, nc: RED }));
+        add(G(x + 1.05, y + 14.4, 2.3, 3.0, '#FFE7A8'), G(x + W2 - 1.05, y + 14.4, 2.3, 3.0, '#FFE7A8'));
+        add(C(x + 1.6, y + 5.0, 5.8, 0.45, 0.25, '#20242E', { n: 10 }), C(x + 3.8, y + 4.0, 5.8, 0.06, 2.4, '#3D4A63', { n: 6 }), S(x + 3.8, y + 4.0, 8.3, 0.14, '#3D4A63'));
+      })();
+      // Site fence with string lights along its top rail.
+      for (let i = 0; i <= 6; i++) add(B(-40 + i * 4.4, 16, 0, 0.14, 0.14, 4.4, '#8E949E'));
+      add(B(-40, 16, 2.2, 26.5, 0.06, 0.06, '#8E949E'), B(-40, 16, 4.3, 26.5, 0.06, 0.06, '#8E949E'));
+      for (let i = 0; i < 27; i++) { const c = ['#FF6B5A', '#FFD27A', '#7FD8CB', '#B3C1FF'][i % 4]; add(S(-39.6 + i * 1.0, 16.1, 4.05 - Math.abs(Math.sin(i * 0.8)) * 0.3, 0.12, c, { e: 1, nc: c, a: i % 3 ? 'dz-twinkle' : 'dz-pulse' })); }
+      add(B(-48, 20, 0, 60, 10, 0.05, '#B59A7A', { nc: '#3A3328' }));
+      // The test call: one ring of dots from the tower's antennas down to the car's roof antenna.
+      for (let t = 1; t < 14; t++) { const f = t / 14, ax = TX + 0.6 + (1.0 - 0.6) * f, ay = 1.4 + (6.4 - 1.4) * f, az = 26 + (8.6 - 26) * f, bow = Math.sin(f * Math.PI) * 5; add(S(ax + bow * 0.9, ay + bow * 0.5, az, 0.18, '#7FD8CB', { e: 1, nc: '#7FD8CB', a: t % 2 ? 'dz-pulse' : 'dz-twinkle' })); }
+
+      // ---- Set 4 (V2.06): the meeting room. Thread 2 painted on the wall, the Excel chart on the projector screen with an arrow to a decision,
+      // name cards for the two team leaders at the head of the table, a calculator beside Achmad's laptop.
+      add(B(84, 0, 0, 32, 26, 0.25, '#C9B79A', { nc: '#4A4236' }));
+      add(B(83.6, -0.4, 0.25, 32.8, 0.4, 10.5, '#E7DFD0', { nc: '#67625B' }), B(83.6, 0, 0.25, 0.4, 26, 10.5, '#EFE8DA', { nc: '#6F6A63' }), B(116, 0, 0.25, 0.4, 26, 10.5, '#EFE8DA', { nc: '#6F6A63' }));
+      { const U6 = SU(6); hand(U6[0], 85.0, 0.03, 9.9, 0.62, OCHRE); para(U6[1], 30, 85.0, 0.03, 8.9, 0.44, 0.72); }
+      add(B(97.4, 0.03, 9.6, 12.4, 0.2, 0.3, '#9AA3B2'), B(97.8, 0.05, 3.9, 11.6, 0.04, 5.7, '#FFFFFF', { nc: '#E8ECF2', e: 1 }), G(103.6, 1.0, 6.7, 6.0, '#FFF1C4', { op: 0.6 }));
+      { const sy = 0.1;
+        add(B(98.2, sy, 8.85, 4.2, 0.004, 0.36, '#2E7D4F', { nc: '#2E7D4F' }), T(98.35, sy + 0.01, 9.03, 0.22, 'Drop calls by site · Excel', { al: 'l', wt: 700, ff: 'Inter, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
+        for (let r = 0; r < 4; r++) for (let q = 0; q < 3; q++) add(B(98.2 + q * 1.4, sy, 7.85 - r * 0.62, 1.3, 0.004, 0.52, r === 1 ? '#F6D9C8' : '#EEF1F5', { nc: r === 1 ? '#F6D9C8' : '#E1E6EE' }));
+        [1.2, 2.6, 1.7, 3.9, 2.2].forEach(function (h, i) { add(B(103.2 + i * 0.75, sy, 4.4, 0.5, 0.004, h * 0.9, i === 3 ? '#C0504D' : '#7A93B8', { nc: i === 3 ? '#E07A6A' : '#93A8FF' })); });
+        add(B(103.0, sy, 4.35, 4.0, 0.004, 0.04, '#44506A'));
+        add(T(106.0, sy + 0.012, 8.4, 0.5, '→', { wt: 700, ff: 'Kalam, cursive', c: OCHRE, nc: OCHRE }), B(106.6, sy, 7.9, 2.8, 0.004, 1.0, '#F7EAD3', { nc: '#F7EAD3' }), T(108.0, sy + 0.012, 8.4, 0.3, 'add 3 sites', { wt: 700, ff: 'Kalam, cursive', c: OCHRE, nc: OCHRE }));
+        add(T(108.0, sy + 0.012, 7.55, 0.2, 'decision', { wt: 600, ff: 'Inter, sans-serif', c: INK2, nc: INK2 }));
+      }
+      chair(96.6, 5.0, '#5C6E91'); chair(104.6, 5.0, '#5C6E91');
+      add(L.desk(91.6, 7.0, 0.25, 18.0, 6.0, 2.4, '#8C6A4A'));
+      add(L.laptop(93.0, 9.6, 2.65), B(93.1, 9.56, 3.0, 1.6, 0.02, 0.6, '#EEF1F5', { nc: '#E1E6EE', e: 1 }));
+      add(B(95.4, 10.1, 2.65, 1.0, 1.3, 0.18, '#3D4A63'), B(95.5, 10.2, 2.84, 0.8, 0.4, 0.02, '#A9C08F', { nc: '#7FD8A0', e: 1 }));
+      for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) add(B(95.52 + i * 0.27, 10.7 + j * 0.22, 2.84, 0.2, 0.16, 0.04, '#9AA3B2'));
+      add(B(95.2, 11.43, 2.84, 1.6, 0.01, 0.4, '#F6EDCF', { nc: '#B5AE96' }), T(96.0, 11.45, 3.04, 0.17, '"calculator guy"', { wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK }));
+      [[103.8, 'Petrus Sila'], [107.0, 'Sorpa EA Togatorop']].forEach(function (n) { add(B(n[0] - 1.3, 9.9, 2.65, 2.6, 0.5, 0.75, '#F7F3EA', { nc: '#C9CEDA' }), T(n[0], 10.42, 3.05, 0.19, n[1], { wt: 700, ff: 'Manrope, sans-serif', c: INK, nc: INK })); });
+      [[92.4, 13.2], [98.6, 13.2], [104.8, 13.2]].forEach(function (c) { chair(c[0], c[1], '#5C6E91'); });
+
+      // ---- Set 3: the operations floor, a cutaway room (back wall y 0, side walls at x 15 and 75, open to the front).
+      add(B(15, 0, 0, 60, 40, 0.25, '#B4BAC5', { nc: '#3E4556' }));
+      add(B(14.6, -0.4, 0.25, 60.8, 0.4, 10.5, '#E9E4D8', { nc: '#67625B' }), B(14.6, 0, 0.25, 0.4, 40, 10.5, '#EFE8DA', { nc: '#6F6A63' }), B(75, 0, 0.25, 0.4, 40, 10.5, '#EFE8DA', { nc: '#6F6A63' }));
+      add(B(15, 0, 0.25, 60, 0.03, 0.9, '#C9C2B4', { nc: '#55504A' }));
+      // Server corner (V2.04): four vendor cabinets feed one data-warehouse rack; a Pentaho dashboard sits on a side table. Paragraph on the wall above.
+      { const U4 = SU(4); para(U4[0], 58, 17.0, 0.03, 10.15, 0.38, 0.6); }
+      const VEND = [['Ericsson', '#4F6BA8'], ['Siemens', '#2E7A6A'], ['Nokia', '#3D5FA0'], ['Huawei', '#B0413E']];
+      VEND.forEach(function (v, i) { const x = 16.8 + i * 2.75;
+        add(B(x, 1.0, 0.25, 2.4, 2.4, 4.2, '#3D4A63', { nc: '#2A3142' }), B(x + 0.2, 3.4, 3.4, 2.0, 0.03, 0.75, v[1], { nc: v[1] }));
+        add(T(x + 1.2, 3.45, 3.78, 0.3, v[0], { wt: 800, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
+        for (let j = 0; j < 3; j++) add(B(x + 0.4 + (j % 2) * 0.9, 3.42, 1.1 + j * 0.7, 0.6, 0.02, 0.12, j % 2 ? '#7FD8A0' : '#9FD4FF', { e: 1, a: (i + j) % 3 === 0 ? 'dz-blink' : '' }));
+        add(B(x + 1.0, 3.4, 0.26, 0.35, 3.6 - i * 0.55, 0.06, v[1], { nc: v[1] }), B(x + 1.0, 6.65 - i * 0.55, 0.26, 28.6 - x, 0.35, 0.06, v[1], { nc: v[1] }));
+      });
+      add(B(27.8, 1.6, 0.25, 1.4, 1.4, 1.8, '#5C6475'), T(28.5, 3.05, 1.2, 0.26, '+ more', { wt: 700, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
+      add(B(29.4, 0.8, 0.25, 3.6, 3.0, 5.6, '#20242E', { nc: '#161B28' }), B(29.7, 3.8, 4.4, 3.0, 0.03, 0.9, '#C7A35A', { nc: '#E0A84A' }));
+      add(T(31.2, 3.85, 5.05, 0.28, 'Data', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }), T(31.2, 3.85, 4.7, 0.28, 'warehouse', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }));
+      for (let j = 0; j < 5; j++) for (let k = 0; k < 4; k++) add(B(29.9 + k * 0.7, 3.82, 0.9 + j * 0.72, 0.4, 0.02, 0.1, '#7FD8A0', { e: 1, a: (j + k) % 4 === 1 ? 'dz-blink' : '' }));
+      add(L.desk(33.6, 1.2, 0.25, 4.2, 2.8, 2.4, '#B98B5E'));
+      { const sy = crt(34.4, 1.6, 2.65, 2.6, '#F4F6FA', '#D9E2F0'); add(B(34.75, sy, 4.38, 1.9, 0.004, 0.22, '#B0662E', { nc: '#E0A84A' })); [0.55, 0.9, 0.7, 1.2, 1.0].forEach(function (h, i) { add(B(34.85 + i * 0.36, sy, 2.95, 0.24, 0.004, h, i % 2 ? '#7A93B8' : '#C7A35A', { nc: i % 2 ? '#93A8FF' : '#F0B860' })); }); add(T(35.7, sy + 0.01, 4.49, 0.15, 'Pentaho', { wt: 800, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' })); }
+      // Achmad's desk (V2.03, V2.07, V2.09): three CRTs (a UNIX terminal, the web dashboard, Google Earth), a printed sheet, the wall poster and a whiteboard.
+      add(B(38.4, 0.03, 4.9, 9.6, 0.05, 5.4, '#F4EEDF', { nc: '#C9CEDA' }));
+      if (TV === 9) {
+        head('Tools I picked up', 39.0, 0.1, 9.75, 0.42, { c: INK, nc: INK });
+        [['UNIX shell scripting', '$_', '#3D4A63'], ['Excel', 'Xl', '#5E8A5A'], ['Ericsson OSS', 'OS', '#4F6BA8'], ['Google Earth (KML)', 'GE', '#2E7A5A'], ['HTML/JavaScript', 'JS', '#A8892E'], ['Pentaho (Kettle)', 'Pk', '#B0662E'], ['Data warehousing', 'DW', '#7A5C99']].forEach(function (r, i) {
+          const cx = 39.0 + (i % 2) * 4.6, z = 8.75 - Math.floor(i / 2) * 0.95;
+          add(B(cx, 0.08, z - 0.32, 0.7, 0.01, 0.62, r[2], { nc: r[2] }), T(cx + 0.35, 0.1, z - 0.01, 0.26, r[1], { wt: 800, c: '#F7F3EA', nc: '#F7F3EA' }));
+          say(r[0], cx + 0.9, 0.1, z, 0.3, { wt: 600 });
+        });
+      } else { const U3 = SU(3); head('What I did', 39.0, 0.1, 9.75, 0.36); para(U3[0], 60, 39.0, 0.1, 9.15, 0.27, 0.44); }
+      add(B(48.6, 0.03, 5.6, 6.6, 0.06, 4.4, '#FAFAF7', { nc: '#C9CEDA' }), B(48.5, 0.03, 5.45, 6.8, 0.25, 0.15, '#9AA3B2'));
+      { const U7 = SU(7); hand(U7[0], 48.95, 0.12, 9.45, 0.36, BLUE); para(U7[1], 40, 48.95, 0.12, 8.8, 0.24, 0.4);
+        // Marker sketch: Google Earth + scripts = live monitoring.
+        add(L.D(49.7, 0.1, 6.6, 0.42, '#2E7A5A', { nc: '#2E7A5A', n: 14 }), T(50.5, 0.12, 6.6, 0.4, '+', { wt: 700, ff: 'Kalam, cursive', c: BLUE, nc: BLUE }), B(50.95, 0.1, 6.3, 0.95, 0.01, 0.6, '#20242E', { nc: '#20242E' }), T(51.42, 0.12, 6.6, 0.24, '$_', { wt: 600, ff: 'IBM Plex Mono, monospace', c: '#7FD3A8', nc: '#7FD3A8' }));
+        add(T(52.35, 0.12, 6.6, 0.4, '=', { wt: 700, ff: 'Kalam, cursive', c: BLUE, nc: BLUE }), T(52.75, 0.12, 6.62, 0.3, 'live map', { al: 'l', wt: 700, ff: 'Kalam, cursive', c: BLUE, nc: BLUE }));
+        add(T(49.0, 0.12, 5.95, 0.24, 'budget: Rp 0', { al: 'l', wt: 700, ff: 'Kalam, cursive', c: '#C0504D', nc: '#C0504D' })); }
+      add(L.desk(39.6, 0.6, 0.25, 13.4, 4.0, 2.4, '#B98B5E'));
+      { // terminal
+        const sy = crt(40.2, 1.0, 2.65, 2.8, '#14201A', '#14201A');
+        ['$ crontab -l', '0 6 * * * kpi_daily.sh', '$ ./drop_calls.sh MDN', '> mail sent: 06:02'].forEach(function (ln, i) { add(T(40.55, sy, 4.5 - i * 0.36, 0.2, ln, { al: 'l', wt: 600, ff: 'IBM Plex Mono, monospace', c: '#7FD3A8', nc: '#7FD3A8' })); });
+        if (TV === 5) add(G(41.6, sy + 0.5, 4.0, 5.0, '#5FC7B0', { day: 1, a: 'dz-pulse' }), T(41.6, 3.8, 7.6, 0.9, '$_', { wt: 700, ff: 'IBM Plex Mono, monospace', c: TEAL, nc: '#7FD8CB', a: 'dz-float' }));
+      }
+      { // web dashboard
+        const sy = crt(44.8, 1.0, 2.65, 2.8, '#F4F6FA', '#D9E2F0');
+        add(B(45.05, sy, 4.6, 2.3, 0.004, 0.22, '#2F5C99', { nc: '#4A6FA8' }), T(46.2, sy + 0.01, 4.71, 0.14, 'Network KPI · today', { wt: 700, ff: 'Inter, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
+        [0.6, 0.95, 0.8, 1.25, 1.05, 1.35].forEach(function (h, i) { add(B(45.15 + i * 0.36, sy, 3.0, 0.24, 0.004, h, i === 5 ? '#C0504D' : '#7A93B8', { nc: i === 5 ? '#E07A6A' : '#93A8FF' })); });
+      }
+      { // Google Earth
+        const sy = crt(49.4, 1.0, 2.65, 2.8, '#0B1530', '#0B1530');
+        add(L.D(50.8, sy, 3.75, 0.82, '#2E6FA8', { nc: '#2E6FA8', n: 18 }), B(50.35, sy + 0.003, 3.6, 0.5, 0.004, 0.55, '#4F9A5A', { nc: '#4F9A5A' }), B(50.85, sy + 0.003, 3.25, 0.4, 0.004, 0.4, '#4F9A5A', { nc: '#4F9A5A' }));
+        [[50.4, 4.0], [50.6, 3.75], [50.95, 3.5], [51.15, 3.3], [50.55, 3.95], [51.0, 3.45]].forEach(function (d, i) { add(S(d[0], sy + 0.02, d[1], 0.06, i % 2 ? '#7FD8A0' : '#FFD27A', { e: 1, a: i % 2 ? 'dz-blink' : 'dz-pulse' })); });
+        add(T(49.62, sy + 0.01, 4.55, 0.13, 'Google Earth · 2G sites', { al: 'l', wt: 700, ff: 'Inter, sans-serif', c: '#EEF2F8', nc: '#EEF2F8' }));
+      }
+      [['UNIX scripts', 41.6], ['Web dashboard', 46.2], ['Live GIS', 50.8]].forEach(function (lb) { add(B(lb[1] - 1.0, 3.75, 2.68, 2.0, 0.01, 0.34, '#F6EDCF', { nc: '#B5AE96' }), T(lb[1], 3.77, 2.85, 0.2, lb[0], { wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK })); });
+      add(B(40.3, 3.9, 2.65, 1.5, 0.6, 0.02, '#FFFFFF'), B(40.4, 3.92, 2.67, 1.3, 0.02, 0.01, '#2E7D4F'));
+      add(B(45.0, 3.6, 2.65, 2.4, 0.8, 0.12, '#D9D4C7'), C(52.4, 3.9, 2.65, 0.3, 0.6, '#C9785E', { n: 10 }));
+      chair(45.3, 5.4, '#3D4A63');
+      // NOC wall (V2.08): the live GIS on a 2 x 2 video wall (Sumatra, sites coming back green), the appreciation letter in a frame and the 2007 trophy on a shelf; the paragraph under the screens.
+      add(B(63.6, 0.03, 4.9, 10.6, 0.1, 5.6, '#20242E', { nc: '#161B28' }));
+      for (let r = 0; r < 2; r++) for (let q = 0; q < 2; q++) add(B(63.8 + q * 5.15, 0.13, 5.1 + r * 2.65, 5.05, 0.02, 2.55, '#0B1530', { nc: '#0B1530', e: 1 }));
+      { const sy = 0.16; // Sumatra: a NW-to-SE island across the four screens
+        [[64.6, 9.2, 1.6, 0.7], [65.6, 8.6, 1.9, 0.8], [66.8, 7.9, 2.1, 0.9], [68.2, 7.2, 2.2, 0.9], [69.6, 6.5, 2.1, 0.85], [70.9, 5.8, 1.8, 0.8], [72.0, 5.3, 1.3, 0.6]].forEach(function (s) { add(B(s[0], sy, s[1], s[2], 0.004, s[3], '#3E7A50', { nc: '#3E7A50' })); });
+        [[65.2, 9.5], [66.2, 8.9], [67.4, 8.4], [68.1, 7.6], [69.0, 7.8], [70.2, 6.9], [71.3, 6.2], [72.3, 5.7], [66.6, 8.2], [70.6, 6.4]].forEach(function (d, i) { add(S(d[0], sy + 0.02, d[1], 0.09, i === 3 || i === 4 ? '#FFD27A' : '#7FD8A0', { e: 1, a: i % 3 === 0 ? 'dz-blink' : 'dz-pulse' })); });
+        add(T(64.1, sy + 0.01, 10.35, 0.2, 'Live GIS · West Sumatra · network recovery', { al: 'l', wt: 700, ff: 'Inter, sans-serif', c: '#EEF2F8', nc: '#EEF2F8' }));
+        [1.0, 1.6, 2.2].forEach(function (r, i) { add(L.D(68.6, sy + 0.01 + i * 0.002, 7.75, r, i % 2 ? '#7FD8A0' : '#5FC7B0', { nc: '#7FD8A0', op: 0.18, a: 'dz-pulse' })); });
+      }
+      add(B(56.6, 0.03, 6.6, 6.0, 0.12, 4.0, '#B98E62'), B(56.9, 0.15, 6.9, 5.4, 0.02, 3.4, '#FFFDF6', { nc: '#E6E9EF' }));
+      add(T(59.6, 0.18, 9.8, 0.24, 'Certificate of Appreciation', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }), T(59.6, 0.18, 9.3, 0.17, 'Network recovery · West Sumatra · 2009', { wt: 500, c: INK2, nc: INK2 }));
+      [8.7, 8.4, 8.1].forEach(function (z) { add(B(57.6, 0.17, z, 4.0, 0.005, 0.06, '#9AA3B2')); });
+      add(L.D(61.2, 0.17, 7.45, 0.32, RED, { nc: RED }), T(57.6, 0.18, 7.5, 0.16, 'Directors & VPs', { al: 'l', wt: 700, ff: 'Kalam, cursive', c: INK, nc: INK }));
+      add(B(56.8, 0.03, 4.2, 5.6, 1.1, 0.18, '#8C6A4A'), B(58.7, 0.4, 4.38, 1.4, 0.7, 0.3, '#3D4A63'), C(59.4, 0.75, 4.68, 0.12, 0.5, '#C7A35A', { n: 8 }), C(59.4, 0.75, 5.1, 0.5, 0.7, '#E0B44A', { n: 10 }), S(58.85, 0.75, 5.5, 0.16, '#E0B44A'), S(59.95, 0.75, 5.5, 0.16, '#E0B44A'));
+      add(B(58.75, 1.11, 4.44, 1.3, 0.01, 0.18, '#F4EEDF'), T(59.4, 1.13, 4.53, 0.13, 'Best employee · 2007', { wt: 700, ff: 'Manrope, sans-serif', c: INK, nc: INK }));
+      { const U8 = SU(8); head(U8[0], 63.8, 0.04, 4.35, 0.34, { c: INK, nc: INK }); para(U8[1], 66, 63.8, 0.04, 3.75, 0.25, 0.4); }
+      // Open-plan desks (V2.05), with Thread 1 painted big on the left wall: every screen shows a spreadsheet except Achmad's terminal at the back.
+      { const U5 = SU(5); head('What I learned', 74.97, 16, 10.0, 0.7, OXm); hand(U5[0], 74.97, 16, 8.75, 1.2, TEAL, OXm); para(U5[1], 30, 74.97, 16, 7.2, 0.82, 1.25, OXm); }
+      const ROWS = [];
+      [18, 26, 34].forEach(function (y, r) { [20, 31, 42, 53].forEach(function (x, q) { if (r || x > 40) ROWS.push([x, y, r, q]); }); }); // the first row leaves the server corner clear, the last column the Thread 1 wall
+      ROWS.forEach(function (d) { const x = d[0], y = d[1];
+        add(B(x - 0.2, y - 0.2, 0.25, 0.2, 3.4, 4.2, '#B8C2D0', { nc: '#4A5468' }));
+        add(L.desk(x, y, 0.25, 7.0, 3.0, 2.4, '#C9B08E'));
+        const sy = crt(x + 2.1, y + 0.2, 2.65, 2.4, '#F4F6FA', '#D9E2F0'); sheet(x + 2.35, sy, 2.98, 1.9, 1.3, (d[2] + d[3]) % 5);
+        add(B(x + 4.8, y + 2.0, 2.65, 1.3, 0.8, 0.05, '#FFFFFF'));
+        chair(x + 2.7, y + 3.4, ['#5C6E91', '#6E7686', '#7A5C5C'][(d[2] + d[3]) % 3]);
+      });
+
+      def.cams = {
+        t1: { pov: { eye: [-75.5, 39, 4.8], at: [-75.5, 10, 8.6], fov: 74, off: 0 } },
+        t2: { pov: { eye: [-18.6, 38, 4.8], at: [-18.6, 8, 7.0], fov: 74, off: 0 } },
+        t3: { pov: { eye: [46.4, 15.5, 5.2], at: [46.4, 0, 6.0], fov: 64, off: 0 } },
+        t4: { pov: { eye: [26.6, 21, 6.4], at: [26.6, 0, 5.0], fov: 66, off: 0 } },
+        t5: { pov: { eye: [40, 42, 6.2], at: [75, 18, 5.4], fov: 72, off: 0 } },
+        t6: { pov: { eye: [98.6, 25, 6.8], at: [98.6, 0, 5.6], fov: 68, off: 0 } },
+        t7: { pov: { eye: [51.0, 13.5, 5.2], at: [51.0, 0, 6.4], fov: 56, off: 0 } },
+        t8: { pov: { eye: [65.4, 15, 5.2], at: [65.4, 0, 6.2], fov: 66, off: 0 } },
+        t9: { pov: { eye: [46.4, 15.5, 5.2], at: [46.4, 0, 6.0], fov: 64, off: 0 } },
+        t10: { pov: { eye: [44, 168, 56], at: [30, 4, 7], fov: 70, off: -0.08 } }
+      };
     } else if (id === 'server') {
       def.label = 'Server room diorama: server racks, a wall clock, a today vs. yesterday board, a desk with a roll of duct tape and three post cards on a small stage';
       def.sky = ['#F1DFC4', '#F6EFE3']; def.nsky = ['#0E1530', '#2A2F55']; def.fog = 0.12;
