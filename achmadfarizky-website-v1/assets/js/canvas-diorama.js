@@ -565,7 +565,7 @@ export class CanvasDiorama {
       })();
       // Studio views: the back-wall poster and pin-board card carry the V1.03 text, drawn here in scene order so nearer props cover them.
       { const W3 = SU(3);
-        label('What I did', -8.85, 30.06, 8.85, 0.34, OY); const w3a = wrap(W3[0], 33); lines(w3a, -8.85, 30.06, 8.2, 0.245, 0.4, OY); lines(wrap(W3[1], 33), -8.85, 30.06, 8.2 - w3a.length * 0.4 - 0.22, 0.245, 0.4, OY); }
+        label('What I did', -8.85, 30.06, 8.85, 0.34, OY); const w3a = wrap(W3[0], 29); lines(w3a, -8.85, 30.06, 8.15, 0.28, 0.44, OY); lines(wrap(W3[1], 29), -8.85, 30.06, 8.15 - w3a.length * 0.44 - 0.25, 0.28, 0.44, OY); }
       // Every view hangs the calendar at 0.6 scale from its top centre, so the team photo fits under it in V1.04, V1.05 and V1.07.
       (function (B0, S0, T0) { const cs = 0.6, cx = 7.0, cz = 9.4, X = function (x) { return cx + (x - cx) * cs; }, Z = function (z) { return cz + (z - cz) * cs; };
         const B = function (x, y, z, w, d, h, c, o) { return B0(X(x), y, Z(z), w * cs, d, h * cs, c, o); }, S = function (x, y, z, r, c, o) { return S0(X(x), y, Z(z), r * cs, c, o); }, T = function (x, y, z, s, t, o) { return T0(X(x), y, Z(z), s * cs, t, o); };
@@ -631,8 +631,8 @@ export class CanvasDiorama {
           add(T(-1.5, y + 0.02, 4.58, 0.15, 'What I taught myself', { al: 'l', wt: 800, c: INK, nc: INK }));
           [['Ps', 'Photoshop', 'images', '#2F5C99'], ['Cd', 'CorelDraw', 'vector', '#3D8A3A'], ['</>', 'HTML, CSS, JS', 'web', '#C9785E'], ['Fl', 'Flash', 'animation', '#B0413E']].forEach(function (r, i) {
             const z = 4.3 - i * 0.34;
-            add(B(-1.5, y + 0.005, z - 0.28, 0.36, 0.01, 0.28, r[3], E(r[3])), T(-1.32, y + 0.02, z - 0.06, 0.15, r[0], { wt: 800, c: '#F7F3EA', nc: '#F7F3EA' }));
-            add(T(-1.05, y + 0.02, z - 0.05, 0.14, r[1], { al: 'l', wt: 700, c: INK, nc: INK }), T(0.1, y + 0.02, z - 0.06, 0.1, r[2], { al: 'l', wt: 500, c: INK2, nc: INK2 }));
+            add(B(-1.5, y + 0.005, z - 0.28, 0.36, 0.01, 0.28, r[3], E(r[3])), T(-1.32, y + 0.02, z - 0.14, 0.14, r[0], { wt: 800, c: '#F7F3EA', nc: '#F7F3EA' })); // centred in its 0.36 x 0.28 tile
+            add(T(-1.05, y + 0.02, z - 0.14, 0.14, r[1], { al: 'l', wt: 700, c: INK, nc: INK }), T(0.1, y + 0.02, z - 0.14, 0.1, r[2], { al: 'l', wt: 500, c: INK2, nc: INK2 }));
           });
         }
       })();
