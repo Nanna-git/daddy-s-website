@@ -1,6 +1,6 @@
 import { TOPICS, STORIES, PHASES, MORE, TOC } from './data.js';
 import { renderDiorama } from './still.js';
-import { sceneHTML } from './board.js';
+import { sceneHTML, povOf, travel } from './board.js';
 
 // sections that have a page; every other link is '#'
 const PAGES = { university: 'university.html', telkomsel: 'telkomsel.html' };
@@ -15,6 +15,12 @@ const HOME_VIEWS = [
 ];
 // Scene view → article section (V02 and V03 share one article section).
 const ART_FOR_VIEW = ['a-home-1', 'a-home-2', 'a-home-2', 'a-home-3', 'a-home-4', 'a-home-5'];
+// How the camera gets from each view to the next one:
+//   'travel'        it really goes there; the old view's text stays where it is
+//   'travel-clear'  same, but the old view's text and papers fade out as it leaves (both views show the same spot)
+//   'cut'           cross-fade
+const HOME_MOVES = ['travel', 'travel', 'travel-clear', 'travel', 'travel']; // V01→V02, V02→V03, … V05→V06
+const CAMERA = 1500; // ms the camera takes
 
 const root = document.documentElement;
 const $ = (s, el = document) => el.querySelector(s);
@@ -23,6 +29,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
+  session(k, v) { try { return v ? sessionStorage.setItem(k, v) : sessionStorage.getItem(k); } catch { return null; } },
 };
 const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
 const darkQuery = matchMedia('(prefers-color-scheme: dark)');
@@ -39,11 +46,12 @@ let lockUntil = 0;
 
 /* ================================================================ drawing the views (as on the boards, 1440 × 900) */
 const drawn = new Map(); // view index → theme it was drawn in
+const viewProps = (i) => ({ scene: 'room', dark: isDark(), w: 1440, h: 900, ...HOME_VIEWS[i] });
 function draw(i) {
   if (i < 0 || i >= TOTAL) return;
   const mode = isDark() ? 'dark' : 'light';
   if (drawn.get(i) === mode) return;
-  $('.u-board', views[i]).innerHTML = sceneHTML({ scene: 'room', dark: isDark(), w: 1440, h: 900, ...HOME_VIEWS[i] });
+  $('.u-board', views[i]).innerHTML = sceneHTML(viewProps(i));
   drawn.set(i, mode);
 }
 // The scene covers its box; the overlay is fitted inside the viewport (same as the section pages).
@@ -106,7 +114,7 @@ function setActive(i, { focus = false } = {}) {
   if (i === active) return;
   const prev = active;
   active = i;
-  draw(i);
+  if (!root.classList.contains('is-moving')) draw(i);
   views.forEach((v, k) => {
     const on = k === i;
     v.classList.toggle('is-active', on);
@@ -127,7 +135,7 @@ function setActive(i, { focus = false } = {}) {
   if (location.hash !== hash) history.replaceState(null, '', hash);
 
   // draw the neighbours once this view is up, so the next move has no wait
-  setTimeout(() => { draw(i + 1); draw(i - 1); }, reduced() ? 0 : 700);
+  setTimeout(() => { if (!root.classList.contains('is-moving')) { draw(i + 1); draw(i - 1); } }, reduced() ? 0 : 700);
   if (phoneQuery.matches) viewsEl.scrollTop = 0;
   if (focus) {
     const target = $('h1, h2, h3, .u-copy', views[i]);
@@ -141,8 +149,32 @@ function step(dir, opts = {}) {
   if (now < lockUntil) return; // inputs during a move are ignored
   const next = active + dir;
   if (next < 0 || next >= TOTAL) return;
+  if (!reduced() && !choppy && HOME_MOVES[Math.min(active, next)] !== 'cut') { moveTo(next, opts); return; }
   lockUntil = now + (reduced() ? 250 : 900 + 150);
   setActive(next, opts);
+}
+
+// Camera move to a neighbouring view. The camera travels inside the old view (its text stays on the
+// walls), then the next view takes over at the same camera and its own papers and text come in.
+let choppy = false; // set when this device could not keep up; views cross-fade from then on
+function moveTo(next, opts) {
+  const prev = active, kind = HOME_MOVES[Math.min(prev, next)];
+  const a = viewProps(prev), b = viewProps(next), from = povOf(a), to = povOf(b);
+  lockUntil = performance.now() + CAMERA + 200;
+  root.classList.add('is-moving'); // the laid-over text and the Next link fade out
+  // the film set must be there while the camera turns to it or away from it
+  const during = { ...a, studio: a.studio || b.studio };
+  // the film crew and the tool corner are never built together: dissolve from one set to the other early in the move
+  const rebuilt = !!(a.tlesson || a.tpage) !== !!(b.tlesson || b.tpage);
+  travel($('.u-board', views[prev]), during, from, to, CAMERA, { clear: kind === 'travel-clear', then: rebuilt ? b : null }).then((smooth) => {
+    choppy = !smooth;
+    $('.u-board', views[next]).innerHTML = sceneHTML({ ...b, enter: true });
+    drawn.set(next, isDark() ? 'dark' : 'light');
+    drawn.delete(prev); // the old board is left at the new camera; it is redrawn as a neighbour
+    setActive(next, opts);
+    views[next].getBoundingClientRect(); // the views swap at once, then the laid-over text fades in
+    root.classList.remove('is-moving');
+  });
 }
 
 $$('[data-next]').forEach((b) => b.addEventListener('click', () => step(1, { focus: true })));
@@ -345,5 +377,17 @@ const start = m ? Math.min(TOTAL, Math.max(1, +m[1])) - 1 : 0;
 applyTheme(root.dataset.theme);
 applyReduce(root.classList.contains('reduce-motion'));
 setActive(start);
+// First visit to Home in this tab: the camera takes one slow step into the room, then the greeting appears.
+if (start === 0 && !reduced() && root.dataset.mode === 'scene' && !store.session('af-in')) {
+  store.session('af-in', '1');
+  const to = povOf(viewProps(0)), back = [0, 1, 2].map((k) => to.eye[k] - (to.at[k] - to.eye[k]) * 0.12);
+  root.classList.add('is-moving');
+  lockUntil = performance.now() + 1900;
+  drawn.delete(0);
+  travel($('.u-board', views[0]), viewProps(0), { ...to, eye: back }, to, 1600, { ease: (t) => 1 - Math.pow(1 - t, 3) }).then(() => {
+    draw(0);
+    root.classList.remove('is-moving');
+  });
+}
 applyMode(root.dataset.mode === 'article' ? 'article' : 'scene');
 requestAnimationFrame(() => root.classList.add('u-ready'));

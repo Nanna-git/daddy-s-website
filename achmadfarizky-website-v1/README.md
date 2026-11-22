@@ -19,7 +19,7 @@ Then open <http://localhost:8000/>. Views have their own links: `#/home/1` … `
 | `index.html` | Home V01–V06, HUD, Chapters sheet, Story library, Read as article |
 | `assets/css/site.css` | Design tokens (light/dark), layout for desktop, tablet and phone |
 | `assets/js/app.js` | Home's six views (scene props copied from boards H01–H05), input (wheel, keys, swipe), theme, reduced motion, menus, library, article mode |
-| `assets/js/board.js` | Turns a canvas scene into HTML; used by Home and the section pages |
+| `assets/js/board.js` | Turns a canvas scene into HTML and moves the camera between two views; used by Home and the section pages |
 | `assets/js/diorama.js` | Older port of the scene library, used only by `still.js` |
 | `assets/js/still.js` | SVG renderer for library thumbnails and the article illustration |
 | `assets/js/data.js` | Stories (33), topics (9), career phases and sections used by the menus |
@@ -27,6 +27,12 @@ Then open <http://localhost:8000/>. Views have their own links: `#/home/1` … `
 | `design/` | Design brief and view-by-view content map |
 
 All story and section links point to `#` for now.
+
+### Camera moves (Home)
+
+Going to the next or previous view, the camera travels from one view's position to the other in 1.5 s (`CAMERA` in `app.js`). The old view's text stays painted in the room while the camera leaves. When it arrives, the new view's own things come in: loose things, then papers put up one by one (slightly curled, smoothed down from the top), then labels, then the text line by line (`tag()` in `board.js`, `ev-*` rules in `university.css`).
+
+`HOME_MOVES` at the top of `app.js` has one entry per move: `'travel'`, `'travel-clear'` (the old text and papers fade out as the camera leaves, for two views of the same spot) or `'cut'` (a plain cross-fade). With reduced motion on, or on a device that cannot keep up, views cross-fade. On the first visit in a tab, Home opens with one slow step into the room.
 
 ## My story · University
 

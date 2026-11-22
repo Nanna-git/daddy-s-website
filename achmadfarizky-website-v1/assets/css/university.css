@@ -35,6 +35,28 @@ html:not(.u-ready) .u-view { transition: none; } /* the first view appears at on
 .hud-sub { position: absolute; left: 36px; top: 80px; white-space: nowrap; font: 800 28px/1.15 var(--font-head); letter-spacing: -0.01em; text-shadow: 0 0 14px var(--halo), 0 0 4px var(--halo); }
 .reduce-motion .dz-root, .reduce-motion .dz-root * { animation: none !important; } /* the Reduce motion switch, like the system setting */
 
+/* camera move: the text laid over the scene is out while the camera travels (text painted in the room stays) */
+.u-scrim, .u-scene .hud-fade { transition: opacity 250ms ease; }
+.is-moving .u-scrim, .is-moving .u-scene .hud-fade { opacity: 0; }
+.is-moving .u-view { transition: none; } /* the next view takes over at once: it starts at the same camera */
+@media (min-width: 820px) { .u-over { transition: opacity 250ms ease; } .is-moving .u-over { opacity: 0; } }
+
+/* a view's own things coming in after the camera arrives (classes and --d set by board.js) */
+.ev-t, .ev-o { animation: ev-fade 600ms ease var(--d, 0ms) both; }                    /* text line by line, small things */
+.ev-t.dz-float { animation: dz-float 5s ease-in-out infinite, ev-fade 600ms ease var(--d, 0ms) both; }
+@keyframes ev-fade { from { opacity: 0; } }
+/* a paper being put up: it comes to the board slightly curled, the top edge sticks, the rest is smoothed down */
+.ev-p { animation: ev-come 700ms cubic-bezier(.22, .8, .3, 1) var(--d, 0ms) both; }
+.ev-p.dz-bob { animation: ev-come 700ms cubic-bezier(.22, .8, .3, 1) var(--d, 0ms) both, dz-bob 3.4s ease-in-out calc(var(--d, 0ms) + 1300ms) infinite; }
+.ev-p:not(.ev-curl) { animation-name: ev-fade; } /* the paper's thin edges */
+.ev-curl, .ev-h, .ev-h0 { transform-style: preserve-3d; }
+.ev-h { animation: ev-flat 560ms cubic-bezier(.45, 0, .2, 1) calc(var(--d, 0ms) + 380ms + var(--k) * 60ms) both; }
+/* the whole sheet fades as one piece (fading the bands one by one shows their seams) */
+@keyframes ev-come { 0% { opacity: 0; transform: perspective(900px) translateY(-18px) scale(1.05); } 30% { opacity: 1; } 100% { transform: perspective(900px); } }
+@keyframes ev-flat { from { transform: rotateX(4.5deg); } to { transform: rotateX(0deg); } }
+/* the speech bubbles wait for their turn (the engine's own rule shows them all until their delay ends) */
+.dz-say2, .dz-say3, .dz-say4 { animation-fill-mode: backwards; }
+
 /* V1.09: related stories */
 .u-card { position: absolute; right: 56px; top: 108px; width: 340px; padding: 28px 28px 30px; border-radius: 28px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 24px 60px rgba(19, 32, 58, 0.16); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); display: flex; flex-direction: column; gap: 20px; }
 [data-theme="dark"] .u-card { background: rgba(14, 22, 40, 0.88); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4); }
