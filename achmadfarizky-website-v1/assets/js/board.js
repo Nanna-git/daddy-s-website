@@ -151,7 +151,7 @@ const over = (html, opacity) => `<div style="position:absolute;left:0;top:0;opac
 //        are built differently, like the film crew and the tool corner), so nothing pops in on arrival.
 export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, then = null } = {}) {
   return play(el, dur, (t) => {
-    const pov = povBetween(a, b, ease(t)), mix = then ? Math.min(1, t / 0.35) : 0;
+    const pov = povBetween(a, b, ease(t)), mix = then ? Math.min(1, t / 0.25) : 0; // two pictures are drawn while it dissolves: keep it short
     return (mix < 1 ? sceneHTML({ ...props, pov, ...(clear ? { evo: Math.max(0, 1 - t * 3) } : null) }) : '')
       + (then ? over(sceneHTML({ ...then, pov, evo: 0 }), mix) : '');
   });
@@ -167,5 +167,43 @@ export function cameraMove(el, a, b, kind, dur) {
   const during = { ...a, studio: a.studio || b.studio };
   return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b });
 }
+// Turn, walk, cut, walk: for a spot that is too far to walk to in one go. The camera turns towards
+// it (turn: 'left' or 'right' forces the hand, otherwise the short way), walks `walk` units, the
+// picture cuts, and the camera walks the last stretch to b. That stretch starts at `viaEye` (an eye
+// point) when given, otherwise `back` units before b. a's text stays in place until the cut.
+// dolly: the last stretch starts `back` units straight behind b's standing point and walks in on what b
+// looks at (the picture grows), instead of coming in along the line from a.
+export function viaMove(el, a, b, { turn, walk = 5, viaEye = null, back = 10, dolly = false }, dur) {
+  const from = povOf(a), to = povOf(b), g = gaze(from);
+  const way = [to.eye[0] - from.eye[0], to.eye[1] - from.eye[1]], len = Math.hypot(way[0], way[1]) || 1;
+  const head = Math.atan2(way[1], way[0]), full = Math.PI * 2;
+  // In this world a growing angle is a turn to the right (x runs to the right and y to the left on the set).
+  let swing = ((head - g.yaw) % full + full) % full;            // turning right, 0–360°
+  if (turn === 'left' || (!turn && swing > Math.PI)) swing -= full;
+  const look = (eye, yaw, pitch, like) => ({ eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: like.fov, off: like.off });
+  const gb = gaze(to);
+  const startB = viaEye || (dolly ? [to.eye[0] - Math.cos(gb.yaw) * back, to.eye[1] - Math.sin(gb.yaw) * back, to.eye[2]] : [to.eye[0] - way[0] / len * back, to.eye[1] - way[1] / len * back, to.eye[2]]);
+  const entry = dolly && !viaEye ? look(startB, gb.yaw, gb.pitch, to)
+    : look(startB, Math.atan2(to.eye[1] - startB[1], to.eye[0] - startB[0]), 0, to); // walking in, looking where it goes
+  return play(el, dur, (t) => {
+    const mix = Math.max(0, Math.min(1, (t - 0.46) / 0.1));
+    let html = '';
+    if (mix < 1) {
+      const u = Math.min(1, t / 0.52), turned = inOutSine(Math.min(1, u / 0.7)), step = u < 0.45 ? 0 : Math.pow((u - 0.45) / 0.55, 2) * walk;
+      const eye = [from.eye[0] + way[0] / len * step, from.eye[1] + way[1] / len * step, from.eye[2]];
+      html = sceneHTML({ ...a, pov: look(eye, g.yaw + swing * turned, lerp(g.pitch, 0, turned), from) });
+    }
+    if (mix > 0) { const v = Math.max(0, (t - 0.5) / 0.5); html += over(sceneHTML({ ...b, pov: povBetween(entry, to, 1 - (1 - v) * (1 - v)), evo: 0 }), mix); }
+    return html;
+  });
+}
+
 // What a view is made of apart from its words, its focus and the film set (compared between two views).
-function built(props) { const d = new Cam({ ...props, probe: true }); d.renderVals(); return d.sig; }
+function built(props) {
+  const memo = JSON.stringify({ ...props, dark: 0, pov: 0 });
+  if (!BUILT.has(memo)) { const d = new Cam({ ...props, probe: true }); d.renderVals(); BUILT.set(memo, d.sig); }
+  return BUILT.get(memo);
+}
+const BUILT = new Map();
+// Works out ahead of time what a move to view b will need (it is remembered), so its first frame is not late.
+export function warm(b) { built(b); sceneHTML({ ...b, evo: 0 }); sceneHTML({ ...b, enter: true }); }
