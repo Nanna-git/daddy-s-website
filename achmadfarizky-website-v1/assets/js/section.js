@@ -1,11 +1,18 @@
 // My story sections (2.1 University, 2.2 Telkomsel). Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
 // The page picks its section with <body data-section="…">.
-import { sceneHTML } from './board.js';
+import { sceneHTML, cameraMove } from './board.js';
 
 // cam / uv / ut are copied from the boards U01…U11 and TK01…TK10 (ut = the text painted into the scene).
+// moves: how the camera gets from each view to the next one:
+//   'travel'  it really goes there (1.5 s); the old view's text stays where it is
+//   'cut'     walk, cut, walk: for spots too far apart (1.8 s). The two pictures are moved, not redrawn:
+//             the old one steps forward and fades, the new one fades in and settles (university.css)
+//   'crane'   a slow rise to a view from above (2.4 s)
+//   'fade'    a plain cross-fade
+const DURATION = { travel: 1500, cut: 1800, crane: 2400 };
 const SECTIONS = {
-  university: { scene: 'uni', views: [
+  university: { scene: 'uni', moves: ['cut', 'cut', 'travel', 'travel', 'travel', 'travel', 'travel', 'crane'], views: [
   { cam: 'u1', uv: 1, ut: '1. University: an engineer|who loved design (2000–2005)||In 2000, I started studying Telecommunication Engineering at Telkom University in Bandung, Indonesia. (Back then, it was called Sekolah Tinggi Teknologi Telkom, or STT Telkom.)' },
   { cam: 'u2', uv: 2, ut: 'My classes were real engineering stuff: switching techniques, traffic engineering, transmission lines, antenna and propagation, digital signal processing, and optical and satellite communication systems.||There was a lot of calculus, physics and lab work, and I enjoyed it. Programming was only a small part: one introduction to computers and one programming lab.' },
   { cam: 'u3', uv: 3, ut: 'But outside the classroom, I spent a lot of my time on something else: design. I taught myself Adobe Photoshop and CorelDraw, then web design with HTML, CSS and JavaScript, and animation with Macromedia Flash.||Nobody asked me to. I just liked making things look good.' },
@@ -16,7 +23,7 @@ const SECTIONS = {
   { cam: 'u9', uv: 9, ut: "A moment I'm proud of||Getting paid, as a student, to design my own university's calendar and its academic book. Those were my first real design clients." },
   { cam: 'u11', uv: 11, ut: '' },
   ] },
-  telkomsel: { scene: 'tsel', views: [
+  telkomsel: { scene: 'tsel', moves: ['cut', 'cut', 'travel', 'travel', 'cut', 'cut', 'travel', 'travel', 'crane'], views: [
   { cam: 't1', uv: 1, ut: "2. Telkomsel: the desk guy|who discovered data (2005–2009)||After graduating in 2005, I joined Telkomsel, Indonesia's biggest mobile operator, as a radio network engineer in operations and network performance, first in Medan and later in Jakarta." },
   { cam: 't2', uv: 2, ut: 'Honestly, I was a bit jealous in my first years. My colleagues travelled for technical training and went to the field with drive test tools. I stayed at my desk with spreadsheets.||One night I begged to join them, and they sent me to a rural site at 2 AM just to make a test call. I was so happy, like a kid in an amusement park.' },
   { cam: 't3', uv: 3, ut: 'At my desk, I started doing more than delivering numbers. I learned UNIX scripting by myself and used it to build small automations for our daily work. I used my old web skills to build a web dashboard for network performance. Then I combined Google Earth with UNIX scripts to build a live GIS view of our 2G radio network, so management could see how the network was running from their own workstations.' },
@@ -30,7 +37,7 @@ const SECTIONS = {
   ] },
 };
 const SLUG = document.body.dataset.section;
-const { scene: SCENE, views: VIEWS } = SECTIONS[SLUG];
+const { scene: SCENE, views: VIEWS, moves: MOVES } = SECTIONS[SLUG];
 const TOTAL = VIEWS.length;
 
 const root = document.documentElement;
@@ -47,12 +54,12 @@ const reduced = () => root.classList.contains('reduce-motion');
 /* ================================================================ drawing the views */
 const views = $$('.u-view');
 const drawn = new Map(); // view index → theme it was drawn in
+const viewProps = (i) => { const v = VIEWS[i]; return { scene: SCENE, cam: v.cam, side: 'center', nofog: 'true', uv: v.uv, ut: v.ut, dark: isDark(), w: 1440, h: 900 }; };
 function draw(i) {
   if (i < 0 || i >= TOTAL) return;
   const mode = isDark() ? 'dark' : 'light';
   if (drawn.get(i) === mode) return;
-  const v = VIEWS[i];
-  $('.u-board', views[i]).innerHTML = sceneHTML({ scene: SCENE, cam: v.cam, side: 'center', nofog: 'true', uv: v.uv, ut: v.ut, dark: isDark(), w: 1440, h: 900 });
+  $('.u-board', views[i]).innerHTML = sceneHTML(viewProps(i));
   $$('.u-thumb', views[i]).forEach((el) => { el.innerHTML = sceneHTML({ scene: el.dataset.scene, cam: el.dataset.cam, dark: el.dataset.dark ? true : isDark(), w: +el.dataset.w || 284, h: +el.dataset.h || 124, inset: false }); });
   drawn.set(i, mode);
 }
@@ -110,7 +117,7 @@ function setActive(i, { focus = false } = {}) {
   if (location.hash !== hash) history.replaceState(null, '', hash);
   if (phoneQuery.matches) $('#views').scrollTop = 0;
   // draw the neighbours once this view is up, so the next move is instant
-  setTimeout(() => { draw(i + 1); draw(i - 1); }, reduced() ? 0 : 700);
+  setTimeout(() => { if (!root.classList.contains('is-moving')) { draw(i + 1); draw(i - 1); } }, reduced() ? 0 : 700);
   if (focus) {
     const t = $('h1, h2, h3, .u-copy', views[i]);
     if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '-1');
@@ -122,8 +129,39 @@ function step(dir, opts) {
   if (now < lockUntil) return;
   const next = active + dir;
   if (next < 0 || next >= TOTAL) return;
+  const pair = Math.min(active, next), kind = MOVES[pair];
+  if (!reduced() && !heavy.has(pair) && heavy.size < 2 && DURATION[kind]) { moveTo(next, opts, kind, pair); return; }
   lockUntil = now + (reduced() ? 250 : 1050);
   setActive(next, opts);
+}
+
+// Camera move to a neighbouring view. It plays inside the old view, then the next view takes over at
+// the same camera and its text comes in line by line.
+const heavy = new Set(); // moves this device could not keep up with: they cross-fade from then on (all of them after two)
+function moveTo(next, opts, kind, pair) {
+  const prev = active, dur = DURATION[kind];
+  lockUntil = performance.now() + dur + 200;
+  root.classList.add('is-moving'); // the laid-over text, cards and the Next link fade out
+  const arrive = () => {
+    drawn.delete(next);
+    draw(next); // also its story pictures
+    $('.u-board', views[next]).innerHTML = sceneHTML({ ...viewProps(next), enter: true });
+    setActive(next, opts);
+    views[next].getBoundingClientRect(); // the views swap at once, then the laid-over text fades in
+    root.classList.remove('is-moving');
+  };
+  if (kind === 'cut') {
+    // walk, cut, walk without redrawing: the old picture steps forward and fades, the new one fades in and settles
+    $('.u-board', views[next]).innerHTML = sceneHTML({ ...viewProps(next), evo: 0 }); // its words come in on arrival
+    views[prev].classList.add('cut-out'); views[next].classList.add('cut-in');
+    setTimeout(() => { arrive(); views[prev].classList.remove('cut-out'); views[next].classList.remove('cut-in'); }, dur);
+    return;
+  }
+  cameraMove($('.u-board', views[prev]), viewProps(prev), viewProps(next), 'travel', dur).then((smooth) => {
+    if (!smooth) heavy.add(pair);
+    drawn.delete(prev); // the old board is left at the new camera; it is redrawn as a neighbour
+    arrive();
+  });
 }
 $$('[data-next]').forEach((b) => b.addEventListener('click', () => step(1, { focus: true })));
 

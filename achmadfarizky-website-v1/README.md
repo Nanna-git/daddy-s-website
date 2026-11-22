@@ -28,11 +28,13 @@ Then open <http://localhost:8000/>. Views have their own links: `#/home/1` … `
 
 All story and section links point to `#` for now.
 
-### Camera moves (Home)
+### Camera moves
 
 Going to the next or previous view, the camera travels from one view's position to the other in 1.5 s (`CAMERA` in `app.js`). The old view's text stays painted in the room while the camera leaves. When it arrives, the new view's own things come in: loose things, then papers put up one by one (slightly curled, smoothed down from the top), then labels, then the text line by line (`tag()` in `board.js`, `ev-*` rules in `university.css`).
 
-`HOME_MOVES` at the top of `app.js` has one entry per move: `'travel'`, `'travel-clear'` (the old text and papers fade out as the camera leaves, for two views of the same spot) or `'cut'` (a plain cross-fade). With reduced motion on, or on a device that cannot keep up, views cross-fade. On the first visit in a tab, Home opens with one slow step into the room.
+`HOME_MOVES` at the top of `app.js` has one entry per move: `'travel'`, `'travel-clear'` (the old text and papers fade out as the camera leaves, for two views of the same spot) or `'fade'` (a plain cross-fade). With reduced motion on, or on a device that cannot keep up, views cross-fade. On the first visit in a tab, Home opens with one slow step into the room.
+
+University and Telkomsel move the same way. Each has a `moves` list in `section.js`: `'travel'` (1.5 s), `'cut'` for spots too far apart (walk, cut, walk in 1.8 s: the old picture steps forward and fades while the new one fades in and settles, without redrawing), `'crane'` for the slow rise to the last view (2.4 s) or `'fade'`. A move that a device cannot keep up with cross-fades from then on.
 
 ## My story · University
 

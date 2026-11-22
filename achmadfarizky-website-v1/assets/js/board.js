@@ -11,7 +11,15 @@ class Cam extends CanvasDiorama {
     if (P.pov && sc.cams) sc.cams[P.cam] = { pov: P.pov };
     this.pov = sc.cams?.[P.cam]?.pov || null;
     if (P.enter || P.evo != null) this.tag(id, opt, sc.items, P.enter);
+    if (P.probe) this.sig = JSON.stringify(super.scene(id, { ...Cam.bare(opt), focus: '', studio: true }).items);
     return sc;
+  }
+
+  // The scene's options with the view's words taken out. The tool corner (V06) is furniture: it stays.
+  static bare(opt) {
+    const bare = { ...opt, swb: { lesson: '', page: '' }, tools: opt.tools ? { lesson: '', page: '', title: '' } : null, ut: '' };
+    VIEW_TEXT.forEach((k) => { bare[k] = ''; });
+    return bare;
   }
 
   // Marks the items that belong to this view only (its text, papers, labels) with the class "ev",
@@ -27,9 +35,7 @@ class Cam extends CanvasDiorama {
 
   findOwn(id, opt, items, enter) {
     const key = (it) => JSON.stringify(it);
-    // the tool corner (V06) is furniture: it stays, only its words are taken out
-    const bare = { ...opt, swb: { lesson: '', page: '' }, tools: opt.tools ? { lesson: '', page: '', title: '' } : null, uv: 0, ut: '' };
-    VIEW_TEXT.forEach((k) => { bare[k] = ''; });
+    const bare = Cam.bare(opt);
     const kept = new Set(super.scene(id, bare).items.map(key));           // drawn with the view's focus, without its text
     const base = new Set(super.scene(id, { ...bare, focus: '' }).items.map(key));
     const mine = new Set(items.filter((it) => !base.has(key(it)) && !/dz-say/.test(it.a || ''))); // speech bubbles keep their own loop
@@ -119,24 +125,47 @@ export function povBetween(a, b, t) {
   const eye = [0, 1, 2].map((k) => lerp(a.eye[k], b.eye[k], t));
   return { eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: lerp(a.fov || 70, b.fov || 70, t), off: lerp(a.off || 0, b.off || 0, t) };
 }
-// Redraws `el` every frame while the camera goes from a to b. Resolves true when the move was smooth,
-// false when it was stopped early because the device could not keep up (the caller then stops using moves).
-// clear: the view's own text and papers fade out during the first part of the move.
-// then:  a second set of props that the picture dissolves into early in the move (when the two views
-//        are built differently, like the film crew and the tool corner), so nothing pops in on arrival.
-export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, then = null } = {}) {
+// Calls html(t) every frame for `dur` ms (t goes 0–1) and puts the result in `el`. Resolves true when
+// it ran smoothly, false when it was stopped early because the device could not keep up.
+function play(el, dur, html) {
   return new Promise((done) => {
     let t0 = 0, last = 0, n = 0, slow = 0;
     const frame = (now) => {
       if (!t0) t0 = last = now;
-      const t = Math.min(1, (now - t0) / dur), pov = povBetween(a, b, ease(t)), mix = then ? Math.min(1, t / 0.35) : 0;
-      let html = mix < 1 ? sceneHTML({ ...props, pov, ...(clear ? { evo: Math.max(0, 1 - t * 3) } : null) }) : '';
-      if (then) html += `<div style="position:absolute;left:0;top:0;opacity:${mix}">${sceneHTML({ ...then, pov, evo: 0 })}</div>`;
-      el.innerHTML = html;
-      n += 1; if (now - last > 70) slow += 1; // under about 14 frames a second last = now;
+      const t = Math.min(1, (now - t0) / dur);
+      el.innerHTML = html(t);
+      n += 1;
+      if (now - last > 70) slow += 1; // under about 14 frames a second
+      last = now;
       const choppy = n >= 8 && slow > n / 2;
       if (t < 1 && !choppy) requestAnimationFrame(frame); else done(!choppy);
     };
     requestAnimationFrame(frame);
   });
 }
+const over = (html, opacity) => `<div style="position:absolute;left:0;top:0;opacity:${opacity}">${html}</div>`;
+
+// The camera goes from a to b while `props` is drawn.
+// clear: the view's own text and papers fade out during the first part of the move.
+// then:  a second set of props that the picture dissolves into early in the move (when the two views
+//        are built differently, like the film crew and the tool corner), so nothing pops in on arrival.
+export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, then = null } = {}) {
+  return play(el, dur, (t) => {
+    const pov = povBetween(a, b, ease(t)), mix = then ? Math.min(1, t / 0.35) : 0;
+    return (mix < 1 ? sceneHTML({ ...props, pov, ...(clear ? { evo: Math.max(0, 1 - t * 3) } : null) }) : '')
+      + (then ? over(sceneHTML({ ...then, pov, evo: 0 }), mix) : '');
+  });
+}
+
+// One camera move from view a to view b (their scene props), drawn in `el`.
+//   'travel'        the camera really goes there; a's text stays where it is
+//   'travel-clear'  same, but a's text and papers fade out as it leaves (both views show the same spot)
+export function cameraMove(el, a, b, kind, dur) {
+  const from = povOf(a), to = povOf(b);
+  // the film set is there while the camera turns to it or away from it; anything else that is built
+  // differently in the two views dissolves from one to the other early in the move
+  const during = { ...a, studio: a.studio || b.studio };
+  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b });
+}
+// What a view is made of apart from its words, its focus and the film set (compared between two views).
+function built(props) { const d = new Cam({ ...props, probe: true }); d.renderVals(); return d.sig; }

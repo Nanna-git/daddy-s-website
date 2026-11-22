@@ -1,6 +1,6 @@
 import { TOPICS, STORIES, PHASES, MORE, TOC } from './data.js';
 import { renderDiorama } from './still.js';
-import { sceneHTML, povOf, travel } from './board.js';
+import { sceneHTML, povOf, travel, cameraMove } from './board.js';
 
 // sections that have a page; every other link is '#'
 const PAGES = { university: 'university.html', telkomsel: 'telkomsel.html' };
@@ -18,7 +18,7 @@ const ART_FOR_VIEW = ['a-home-1', 'a-home-2', 'a-home-2', 'a-home-3', 'a-home-4'
 // How the camera gets from each view to the next one:
 //   'travel'        it really goes there; the old view's text stays where it is
 //   'travel-clear'  same, but the old view's text and papers fade out as it leaves (both views show the same spot)
-//   'cut'           cross-fade
+//   'fade'          a plain cross-fade
 const HOME_MOVES = ['travel', 'travel', 'travel-clear', 'travel', 'travel']; // V01→V02, V02→V03, … V05→V06
 const CAMERA = 1500; // ms the camera takes
 
@@ -149,7 +149,7 @@ function step(dir, opts = {}) {
   if (now < lockUntil) return; // inputs during a move are ignored
   const next = active + dir;
   if (next < 0 || next >= TOTAL) return;
-  if (!reduced() && !choppy && HOME_MOVES[Math.min(active, next)] !== 'cut') { moveTo(next, opts); return; }
+  if (!reduced() && !choppy && HOME_MOVES[Math.min(active, next)] !== 'fade') { moveTo(next, opts); return; }
   lockUntil = now + (reduced() ? 250 : 900 + 150);
   setActive(next, opts);
 }
@@ -159,14 +159,10 @@ function step(dir, opts = {}) {
 let choppy = false; // set when this device could not keep up; views cross-fade from then on
 function moveTo(next, opts) {
   const prev = active, kind = HOME_MOVES[Math.min(prev, next)];
-  const a = viewProps(prev), b = viewProps(next), from = povOf(a), to = povOf(b);
+  const a = viewProps(prev), b = viewProps(next);
   lockUntil = performance.now() + CAMERA + 200;
   root.classList.add('is-moving'); // the laid-over text and the Next link fade out
-  // the film set must be there while the camera turns to it or away from it
-  const during = { ...a, studio: a.studio || b.studio };
-  // the film crew and the tool corner are never built together: dissolve from one set to the other early in the move
-  const rebuilt = !!(a.tlesson || a.tpage) !== !!(b.tlesson || b.tpage);
-  travel($('.u-board', views[prev]), during, from, to, CAMERA, { clear: kind === 'travel-clear', then: rebuilt ? b : null }).then((smooth) => {
+  cameraMove($('.u-board', views[prev]), a, b, kind, CAMERA).then((smooth) => {
     choppy = !smooth;
     $('.u-board', views[next]).innerHTML = sceneHTML({ ...b, enter: true });
     drawn.set(next, isDark() ? 'dark' : 'light');

@@ -57,6 +57,17 @@ html:not(.u-ready) .u-view { transition: none; } /* the first view appears at on
 /* the speech bubbles wait for their turn (the engine's own rule shows them all until their delay ends) */
 .dz-say2, .dz-say3, .dz-say4 { animation-fill-mode: backwards; }
 
+/* walk, cut, walk (section pages): the old picture steps forward and fades, the new one fades in and settles */
+.u-view.cut-out, .u-view.cut-in { visibility: visible; }
+.u-view.cut-out { animation: cut-out 1800ms linear both; }
+.u-view.cut-in { animation: cut-in 1800ms linear both; }
+.cut-out .u-board { animation: step-off 1800ms cubic-bezier(.5, 0, .9, .6) both; }
+.cut-in .u-board { animation: step-on 1800ms cubic-bezier(.1, .4, .5, 1) both; }
+@keyframes cut-out { 0%, 30% { opacity: 1; } 70%, 100% { opacity: 0; } }
+@keyframes cut-in { 0%, 30% { opacity: 0; } 70%, 100% { opacity: 1; } }
+@keyframes step-off { to { transform: translate(-50%, -50%) scale(calc(var(--cover, 1) * 1.14)); } }
+@keyframes step-on { from { transform: translate(-50%, -50%) scale(calc(var(--cover, 1) * 1.14)); } }
+
 /* V1.09: related stories */
 .u-card { position: absolute; right: 56px; top: 108px; width: 340px; padding: 28px 28px 30px; border-radius: 28px; background: rgba(255, 255, 255, 0.9); box-shadow: 0 24px 60px rgba(19, 32, 58, 0.16); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); display: flex; flex-direction: column; gap: 20px; }
 [data-theme="dark"] .u-card { background: rgba(14, 22, 40, 0.88); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4); }
