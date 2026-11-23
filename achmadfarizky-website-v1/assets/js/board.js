@@ -7,10 +7,10 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 // replaces the view's camera for one render; the generated engine file stays untouched.
 class Cam extends CanvasDiorama {
   scene(id, opt) {
-    const sc = super.scene(id, opt), P = this.props;
+    const sc = super.scene(id, opt), P = this.props, home = sc.cams?.[P.cam]?.pov; // home: where this view stands
     if (P.pov && sc.cams) sc.cams[P.cam] = { pov: P.pov };
     this.pov = sc.cams?.[P.cam]?.pov || null;
-    if (P.enter || P.evo != null) this.tag(id, opt, sc.items, P.enter);
+    if (P.enter || P.evo != null) this.tag(id, opt, sc.items, P.enter, home);
     if (P.probe) this.sig = JSON.stringify(super.scene(id, { ...Cam.bare(opt), focus: '', studio: true }).items);
     return sc;
   }
@@ -26,19 +26,22 @@ class Cam extends CanvasDiorama {
   // found by building the same scene without the view's text. With `enter`, each one also gets
   // its entrance, in this order: loose things, then papers put up one by one, then what sits on
   // the papers, then labels, then the text line by line. The delay rides in the class name (evd-<ms>).
-  tag(id, opt, items, enter) {
+  tag(id, opt, items, enter, home) {
     // the answer depends on the scene's options only, not on the camera: work it out once (a move asks every frame)
     const memo = id + (enter ? '+' : '-') + JSON.stringify(opt);
-    if (!TAGS.has(memo)) TAGS.set(memo, this.findOwn(id, opt, items, enter));
+    if (!TAGS.has(memo)) TAGS.set(memo, this.findOwn(id, opt, items, enter, home));
     TAGS.get(memo).forEach((cls, i) => { items[i].a = (items[i].a ? items[i].a + ' ' : '') + cls; });
   }
 
-  findOwn(id, opt, items, enter) {
+  findOwn(id, opt, items, enter, home) {
     const key = (it) => JSON.stringify(it);
+    // a wall and what hangs on it can be in the scene twice (engine: vx / vy), each copy drawn from one side only:
+    // the copy this view never shows is left out, or the view's words would be counted twice and come in late
+    const shown = (it) => !home || ['vx', 'vy'].every((k, n) => !it[k] || (home.eye[n] >= it[k][0] && home.eye[n] < it[k][1]));
     const bare = Cam.bare(opt);
     const kept = new Set(super.scene(id, bare).items.map(key));           // drawn with the view's focus, without its text
     const base = new Set(super.scene(id, { ...bare, focus: '' }).items.map(key));
-    const mine = new Set(items.filter((it) => !base.has(key(it)) && !/dz-say/.test(it.a || ''))); // speech bubbles keep their own loop
+    const mine = new Set(items.filter((it) => !base.has(key(it)) && !/dz-say/.test(it.a || '') && shown(it))); // speech bubbles keep their own loop
     const box = (it) => (it.t === 's' ? [[it.x - it.r, it.x + it.r], [it.y - it.r, it.y + it.r], [it.z - it.r, it.z + it.r]] : [[it.x, it.x + (+it.w || 0)], [it.y, it.y + (+it.d || 0)], [it.z, it.z + (+it.h || 0)]]);
     const on = (it, p) => { const a = box(it), b = box(p); return a.every((r, k) => r[0] <= b[k][1] + 0.08 && r[1] >= b[k][0] - 0.08); };
     const sheet = (it) => { const d = [it.w, it.d, it.h].map(Number).sort((x, y) => x - y); return it.t !== 't' && it.t !== 's' && d[0] <= 0.05 && d[1] >= 0.5 && d[2] <= 3; };
@@ -149,9 +152,10 @@ const over = (html, opacity) => `<div style="position:absolute;left:0;top:0;opac
 // clear: the view's own text and papers fade out during the first part of the move.
 // then:  a second set of props that the picture dissolves into early in the move (when the two views
 //        are built differently, like the film crew and the tool corner), so nothing pops in on arrival.
-export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, then = null } = {}) {
+// path:  a function of t that gives the camera, instead of the straight line from a to b.
+export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, then = null, path = null } = {}) {
   return play(el, dur, (t) => {
-    const pov = povBetween(a, b, ease(t)), mix = then ? Math.min(1, t / 0.25) : 0; // two pictures are drawn while it dissolves: keep it short
+    const pov = path ? path(t) : povBetween(a, b, ease(t)), mix = then ? Math.min(1, t / 0.25) : 0; // two pictures are drawn while it dissolves: keep it short
     return (mix < 1 ? sceneHTML({ ...props, pov, ...(clear ? { evo: Math.max(0, 1 - t * 3) } : null) }) : '')
       + (then ? over(sceneHTML({ ...then, pov, evo: 0 }), mix) : '');
   });
@@ -160,12 +164,29 @@ export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, 
 // One camera move from view a to view b (their scene props), drawn in `el`.
 //   'travel'        the camera really goes there; a's text stays where it is
 //   'travel-clear'  same, but a's text and papers fade out as it leaves (both views show the same spot)
-export function cameraMove(el, a, b, kind, dur) {
+//   'walk'          the long way on foot, in one take: see walkPath (back: how far behind b's standing point it turns to face b)
+export function cameraMove(el, a, b, kind, dur, { back = 10 } = {}) {
   const from = povOf(a), to = povOf(b);
   // the film set is there while the camera turns to it or away from it; anything else that is built
   // differently in the two views dissolves from one to the other early in the move
   const during = { ...a, studio: a.studio || b.studio };
-  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b });
+  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b, path: kind === 'walk' ? walkPath(from, to, back) : null });
+}
+// Turn, walk, turn, walk, with no cut: the camera turns to face where it is going, walks to a spot `back` units straight
+// behind b's standing point, turns to face what b looks at, and walks in. Each part starts and stops gently and overlaps
+// the next one, so the camera never stands dead still on the way. The second turn is long and starts halfway down the
+// walk: the place it is going to stays in the picture instead of sliding out of it while the camera looks straight ahead.
+export function walkPath(from, to, back) {
+  const g = gaze(from), gb = gaze(to), short = (d) => Math.atan2(Math.sin(d), Math.cos(d)); // the short way round
+  const mid = [to.eye[0] - Math.cos(gb.yaw) * back, to.eye[1] - Math.sin(gb.yaw) * back, to.eye[2]];
+  const d1 = short(Math.atan2(mid[1] - from.eye[1], mid[0] - from.eye[0]) - g.yaw), d2 = short(gb.yaw - g.yaw - d1);
+  const part = (t, t0, len) => inOutSine(Math.max(0, Math.min(1, (t - t0) / len)));
+  return (t) => {
+    const turn1 = part(t, 0, 0.26), walk1 = part(t, 0.12, 0.52), turn2 = part(t, 0.32, 0.48), walk2 = part(t, 0.74, 0.26), s = inOutSine(t);
+    const eye = [0, 1, 2].map((k) => from.eye[k] + (mid[k] - from.eye[k]) * walk1 + (to.eye[k] - mid[k]) * walk2);
+    const yaw = g.yaw + d1 * turn1 + d2 * turn2, pitch = g.pitch * (1 - turn1) + gb.pitch * turn2;
+    return { eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: lerp(from.fov || 70, to.fov || 70, s), off: lerp(from.off || 0, to.off || 0, s) };
+  };
 }
 // Turn, walk, cut, walk: for a spot that is too far to walk to in one go. The camera turns towards
 // it (turn: 'left' or 'right' forces the hand, otherwise the short way), walks `walk` units, the

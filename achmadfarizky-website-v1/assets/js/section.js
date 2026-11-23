@@ -1,19 +1,21 @@
-// My story sections (2.1 University, 2.2 Telkomsel). Each view is the canvas board: the scene
+// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying). Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
 // The page picks its section with <body data-section="…">.
 import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 
-// cam / uv / ut are copied from the boards U01…U11 and TK01…TK10 (ut = the text painted into the scene).
+// cam / uv / ut are copied from the boards U01…U11, TK01…TK10 and YT01…YT05 (ut = the text painted into the scene).
 // moves: how the camera gets from each view to the next one:
 //   'travel'  it really goes there (1.5 s); the old view's text stays where it is
 //   'cut'     walk, cut, walk: for spots too far apart (1.8 s). The two pictures are moved, not redrawn:
 //             the old one steps forward and fades, the new one fades in and settles (university.css)
 //   'crane'   a slow rise to a view from above (2.4 s)
+//   { kind: 'walk', back }  the long way on foot in one take, unhurried (7 s): turn to where it is going, walk to `back` units behind
+//             the view's standing point, turn to face the view, walk in. No cut; the same going back.
 //   'fade'    a plain cross-fade
 //   { kind: 'via', turn, walk, via, dur }  turn ('left' / 'right'), walk `walk` units, cut, then walk the last
 //             stretch to the view, starting where view number via + 1 stands (or a little before the view).
 //             Going back the other way it turns the short way and starts a little before the view.
-const DURATION = { travel: 1500, cut: 1800, crane: 2400 };
+const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000 };
 const SECTIONS = {
   // 2→3: turn left towards the studio, walk a little, cut to where view 6 stands, walk on to view 3
   university: { scene: 'uni', moves: ['travel', { kind: 'via', turn: 'left', walk: 6, via: 5, dur: 3000 }, 'travel', 'travel', 'travel', 'travel', 'travel', 'crane'], views: [
@@ -40,6 +42,15 @@ const SECTIONS = {
   { cam: 't8', uv: 8, ut: "A moment I'm proud of||In 2009, after the earthquake in West Sumatra, my GIS live monitoring tool was used during the network recovery. I received official appreciation from the company's directors and VPs. I was also named best employee of the service quality assurance team in 2007." },
   { cam: 't9', uv: 9, ut: '' },
   { cam: 't10', uv: 10, ut: '' },
+  ] },
+  // 1→2 and 3→4: the whole way on foot (down the road to the study; out of the study and down the road to the airport).
+  // 2→3: a side-step along the wall to the window.
+  trying: { scene: 'yt', moves: [{ kind: 'walk', back: 10 }, 'travel', { kind: 'walk', back: 10 }, 'crane'], views: [
+  { cam: 'y1', uv: 1, ut: '3. A year of trying|(2009–2010)||At the end of 2009, I left Telkomsel to build a career overseas. It took longer than I hoped. For most of 2010, I kept applying and waiting.' },
+  { cam: 'y2', uv: 2, ut: 'I used that time to fill a gap. After five years in data and reporting, I felt my telecom knowledge was not deep enough. So I studied 3G radio networks seriously. I wanted to understand how things really work on the business side of the network, not only the data and the reports about it.' },
+  { cam: 'y3', uv: 3, ut: 'Thread 2, in a different way.||To be useful to engineers, I had to understand their world, not just their numbers.' },
+  { cam: 'y4', uv: 4, ut: 'Patience. Some doors open late, but they do open. In October 2010, Ericsson brought me to Riyadh, Saudi Arabia.||When I arrived, my English speaking was close to zero. My Arabic helped me survive, and my English just "grew by nature" for many years. (It took me another 15 years to finally fix it properly. That\'s its own story.)' },
+  { cam: 'y5', uv: 5, ut: '' },
   ] },
 };
 const SLUG = document.body.dataset.section;
@@ -171,7 +182,7 @@ function moveTo(next, opts, move, pair) {
   const forward = next > prev; // the turn hand and the cut-in spot are written for going forward
   const playing = kind === 'via'
     ? viaMove(board, a, b, forward ? { ...move, viaEye: move.via == null ? null : povOf(viewProps(move.via)).eye } : { walk: move.walk }, dur)
-    : cameraMove(board, a, b, 'travel', dur);
+    : cameraMove(board, a, b, kind === 'walk' ? 'walk' : 'travel', dur, move);
   playing.then((smooth) => {
     if (!smooth) heavy.add(pair);
     drawn.delete(prev); // the old board is left at the new camera; it is redrawn as a neighbour
