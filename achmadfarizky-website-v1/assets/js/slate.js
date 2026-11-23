@@ -10,7 +10,8 @@
   var PAGES = {
     'index.html': { title: 'Home' },
     'university.html': { scene: '1', title: 'University', years: '2000–2005' },
-    'telkomsel.html': { scene: '2', title: 'Telkomsel', years: '2005–2009' }
+    'telkomsel.html': { scene: '2', title: 'Telkomsel', years: '2005–2009' },
+    'trying.html': { scene: '3', title: 'A year of trying', years: '2009–2010' }
   };
   var RISE = 620, CLAP = 220, DROP = 650, FADE = 260; // ms: board up and lights down, the clap, board away, plain fade
   var KEY = 'af-slate';
