@@ -1481,6 +1481,409 @@ export class CanvasDiorama {
       add(L.chair(10.4, 9.3, 0.2, '#5C6E91'), L.chair(12.0, 9.3, 0.2, '#6E9C8F'));
       add(L.car(2.2, 9.9, 0, '#E8E2D6'));
       def.cams = { room: { x: 11.8, y: 7.0, z: 2.0, zoom: 1.55 }, wall: { x: 11.9, y: 5.7, z: 2.0, zoom: 2.0 }, towers: { x: 11.0, y: 2.0, z: 4.5, zoom: 1.4 }, city: { x: 4.0, y: 1.2, z: 2.6, zoom: 1.5 }, tents: { x: 2.6, y: 8.2, z: 0.4, zoom: 1.9 }, leader: { x: 3.4, y: 5.1, z: 1.6, zoom: 2.0 }, console: { x: 11.4, y: 8.0, z: 1.7, zoom: 2.0 }, bags: { x: 1.3, y: 5.1, z: 0.5, zoom: 2.1 } };
+    } else if (id === 'er') {
+      // Ericsson at human scale (same scale as 'uni', 'tsel' and 'yt': desk 2.4 = 0.75 m, a man about 5.3 units), eye-level walk. A film lot on
+      // the studio floor under a hot, clear Riyadh sky. The places stand well apart, each on its own patch of ground, joined by one road that
+      // bends between them: the office front where he arrives (V4.01, front left), the STC office (V4.02-03, set back), the Hajj operations
+      // room (V4.05, V4.08, V4.11-12) with the desert behind it (the tent field, V4.04, and the team's tent, V4.06-07 and V4.13), and the
+      // room of his last years (V4.09-10, V4.14) on the right. V4.15 is the whole lot, seen low from the front right.
+      // Every eye-level camera looks toward -y, so each set is authored back (small y) to front. The overview looks from the front right, so the
+      // sets themselves go in from left to right. Each view passes uv (1-15) and its text in ut ("||").
+      def.label = 'Ericsson set: an office front in Riyadh with two telecom towers, the STC office, a Hajj operations room, a field of white tents and the team tent on the sand, and a room for his last projects, on a studio floor';
+      def.sky = ['#BFD8EE', '#F6EAD6']; def.nsky = ['#2A2550', '#D98B6A']; def.nmix = '#3A2E55'; def.orb = true; def.fog = 0;
+      const EV = Number(opt.uv || 0), ET = String(opt.ut || '').split('||');
+      if (EV === 15) def.tmin = 0.05; // the overview keeps the small painted texts instead of dropping them
+      const wrap = function (txt, ch) { const ws = String(txt || '').trim().split(/\s+/), o = []; let cur = ''; ws.forEach(function (w) { if (!w) return; if (cur && (cur + ' ' + w).length > ch) { o.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }); if (cur) o.push(cur); return o; };
+      const INK = '#13203A', INK2 = '#44506A', LITE = '#EEF2F8', WHITE = '#F7F3EA';
+      const say = function (txt, x, y, z, s, o) { add(T(x, y, z, s, txt, Object.assign({ al: 'l', wt: 500, ff: 'Inter, sans-serif', c: INK, nc: INK }, o || {}))); };
+      const para = function (txt, ch, x, y, z, s, step, o) { const ls = wrap(txt, ch); ls.forEach(function (ln, k) { say(ln, x, y, z - k * step, s, o); }); return ls.length * step; };
+      const head = function (txt, x, y, z, s, o) { say(txt, x, y, z, s, Object.assign({ wt: 800, ff: 'Manrope, sans-serif', c: INK2, nc: INK2 }, o || {})); };
+      const hand = function (txt, x, y, z, s, c, o) { say(txt, x, y, z, s, Object.assign({ wt: 700, ff: 'Kalam, cursive', c: c, nc: c }, o || {})); };
+      const mono = function (txt, x, y, z, s, c, o) { say(txt, x, y, z, s, Object.assign({ wt: 600, ff: 'IBM Plex Mono, monospace', c: c, nc: c }, o || {})); };
+      const label = function (txt, x, y, z, s, o) { add(T(x, y, z, s, txt, Object.assign({ wt: 700, ff: 'Manrope, sans-serif', c: WHITE, nc: WHITE }, o || {}))); };
+      // Each set shows its own view's text; seen from another view it shows the board copy, so the lot reads the same from every camera.
+      const SX = {"1":["4. Ericsson: 13 years with|Saudi telecom operators (2010–2023)","At Ericsson, I was a Data Solution Professional in managed services. I worked from Riyadh and Jeddah for telecom operators in Saudi Arabia, and later supported projects in the GCC and Africa. I was on the business side, close to the network operations teams, not in IT."],"2":["4a. STC: building on SAP BusinessObjects (2010–2012)","My first customer was STC. Here I went deep into SAP BusinessObjects, not just as a user. I built ways to share documents publicly, set up alerts for network anomalies, and put data on Google Earth and Google Maps for faster insights."],"3":["In 2011, I was named best employee of the STC network performance team. In 2012, Omar Elward taught me Excel macros and VBA, another tool I used for years."],"4":["4b. Mobily: nine years and the Hajj dream team (2013–2022)","Mobily was my longest customer. From 2014 to 2020, I was the data leader for Hajj affairs. During Hajj, the network carries millions of pilgrims in a few days, and the operations team needs to see what is happening live."],"5":["I integrated the data end to end, built dashboards and a mini-GIS application for live monitoring, made advanced reports, and automated many processes. This saved a lot of effort and improved accuracy. The tools were used for many years in a row."],"6":["That team was more than a team. It was a family: we supported each other, taught each other, and covered each other. Naif Al Malki, then a General Manager at Mobily and my data analytics mentor for many years, wrote this about my work:","\"Indeed, your fingerprint is still till today, you are one of the best talented telecom engineer in advanced data analysis field that I worked with him, wish you all the best.\"","Naif Al Malki, now GM of Service Management Center"],"7":["I also received official appreciation from the customer's top management for the work progress and deep analytics."],"8":["At Mobily, I also \"cheated\" once. Our BI tool made it hard to compare time periods, like today vs. yesterday, hour by hour. So I added \"time offset\" calculations directly into our main data model on the production server. I was afraid it looked like a quick fix. But it worked for years, and it's still in use. More than ten years later, I saw well-known BI experts teaching the same idea in Power BI, and calling it a superpower.","My \"cheat\" had been an expert trick all along. I just didn't know it.","Sometimes what looks like a \"cheat\" is actually a smart solution. That gave me the confidence to start sharing even my small ideas."],"9":["4c. Many customers, one way of working (2021–2023)","In my last years, I moved between projects: a 4G and 5G trial for Zain, remote support for MTN Benin in Africa, then back to STC, and finally Tawal. Because I had built my tools in a reusable way, I could copy them to new projects quickly. A project manager in Bahrain told me, \"Your reports are great!\" A customer director in Benin said, \"I like that dashboard!\""],"10":["During these years I also kept learning by myself: advanced Excel and Power Query, Python, and machine learning. A friend who was also my customer, Sultan Alsayed, showed me his work in Power BI, and that pushed me to want to be as good as him. My boss also encouraged me to go deeper into machine learning."],"11":["Thread 2 again.","Most of my best tools started from what my team leaders, managers and customers needed. The IT team was supportive too: \"Go ahead, do what the business needs.\""],"12":["Thread 3 again.","The vendor's built-in reports didn't always fit our needs, so I built custom ones with the tools we had. Custom was the solution, and many of those tools are still in daily use."],"13":["A moment I'm proud of","Being trusted as the data leader for Hajj for seven years in a row, and Naif's words above."]};
+      const SU = function (n) { return EV === n ? ET : (SX[n] || ['', '']); };
+      // "4a. STC: building on … (2010–2012)" → its number, title, subtitle and years.
+      const parts = function (h) { const m = String(h || '').replace('|', ' ').match(/^(\d+\w?)\.\s*(.*?)\s*\((.*)\)\s*$/); if (!m) return null; const k = m[2].indexOf(':'); return { n: m[1], yrs: m[3], title: k < 0 ? m[2] : m[2].slice(0, k).trim(), sub: k < 0 ? '' : m[2].slice(k + 1).trim() }; };
+      const RED = '#C0392B', TEAL = '#1D6A5A', BLUE = '#2F5C99', OCHRE = '#B7791F', GOLD = '#D9A441', GREEN = '#2E7D4F', GL = '#A9C6E8', LITW = '#FFD27A', PAPER = '#F7F3EA', NPAPER = '#C9CEDA', DK = '#3D4A63', SKIN = '#B07A55', SHIRT = '#5C7FA8', TROUS = '#3D4A63', WOOD = '#B98B5E', SAND = '#E6D6B8', NSAND = '#6A5E62', DIRT = '#CDB48C', NDIRT = '#4A4038';
+      // where the office front, the STC office, the Hajj operations room, the team tent and the last room stand on the lot
+      const OF = [-150, 14], ST = [-58, -32], HJ = [30, -8], TT = [36, -66], MC = [186, 0];
+      const at = function (o, f) { const i0 = I.length; f(); for (let i = i0; i < I.length; i++) { I[i].x += o[0]; I[i].y += o[1]; } }; // a set is authored around its own origin, then moved
+      // seen(k, lo, hi, f): what f adds is drawn only while the camera's x (k 'vx') or y (k 'vy') is in [lo, hi), in set coordinates.
+      // Nothing is depth-sorted, so anything that must cover its surroundings from both sides goes in twice, early and late.
+      const FAR = 1e9, seen = function (k, lo, hi, f) { const i0 = I.length; f(); for (let i = i0; i < I.length; i++) { const r = I[i][k]; I[i][k] = r ? [Math.max(r[0], lo), Math.min(r[1], hi)] : [lo, hi]; } };
+      // A standing man (o.back: seen from behind; o.hat: a hard hat instead of hair).
+      const man = function (px, py, z0, o) { o = o || {}; const sh = o.shirt || SHIRT;
+        add(B(px - 0.45, py - 0.25, z0, 0.38, 0.5, 2.5, TROUS), B(px + 0.07, py - 0.25, z0, 0.38, 0.5, 2.5, TROUS));
+        add(B(px + 0.65, py - 0.2, z0 + 2.7, 0.3, 0.4, 1.65, sh, { nc: '#3E5470' }), B(px - 0.62, py - 0.35, z0 + 2.45, 1.24, 0.7, 1.95, sh, { nc: '#3E5470' }), B(px - 0.95, py - 0.2, z0 + 2.7, 0.3, 0.4, 1.65, sh, { nc: '#3E5470' }));
+        if (o.back) add(S(px, py, z0 + 4.78, 0.4, SKIN, { nc: '#8A6248' }), S(px, py, z0 + 5.02, 0.47, '#20242E'));
+        else add(S(px, py - 0.12, z0 + 5.28, o.hat ? 0.47 : 0.4, o.hat || '#20242E'), S(px, py, z0 + 5.0, 0.45, SKIN, { nc: '#8A6248' })); };
+      const plant = function (x, y, z, s) { add(C(x, y, z, 0.95 * s, 1.5 * s, '#B5694A', { n: 10 }), C(x, y, z + 1.5 * s, 0.16 * s, 3.0 * s, '#8C6A4A', { n: 6 }), K(x, y, z + 4.2 * s, 1.7 * s, 0.9 * s, '#5E8A5A', { n: 6, rot: 0.3 }), K(x, y, z + 4.7 * s, 1.2 * s, 1.7 * s, '#6E9A66', { n: 6 })); };
+      const bush = function (x, y, z, r) { add(S(x, y, z + r * 0.7, r, '#8FA36B', { nc: '#34443A' }), S(x + r * 0.9, y + 0.3, z + r * 0.5, r * 0.7, '#9DB27A', { nc: '#3E5240' })); };
+      const clock = function (x, y, z, r) { add(L.D(x, y, z, r, DK), L.D(x, y + 0.02, z, r * 0.84, '#F7F3EA', { nc: '#D9DEE8' }), B(x - 0.05, y + 0.04, z, 0.1, 0.01, r * 0.5, INK), B(x, y + 0.04, z - 0.05, r * 0.66, 0.01, 0.1, INK), L.D(x, y + 0.05, z, r * 0.09, RED, { n: 8 })); };
+      const mug = function (x, y, z, c) { add(C(x, y, z, 0.3, 0.55, c || '#C9785E', { n: 10 }), B(x + 0.28, y - 0.05, z + 0.15, 0.13, 0.1, 0.28, c || '#C9785E')); };
+      const lamp = function (x, y, z) { add(C(x, y, z, 0.6, 0.14, DK, { n: 10 }), B(x - 0.1, y - 0.1, z + 0.14, 0.2, 0.2, 2.5, DK), K(x, y + 0.3, z + 2.4, 0.9, 0.95, DK, { n: 8 }), S(x, y + 0.3, z + 2.35, 0.26, '#FFE7A8', { e: 1, a: 'dz-pulse' }), G(x, y + 1.1, z + 1.4, 4.6, '#FFD27A')); };
+      // A medal on a certificate: two ribbon tails first, so they hang behind it, then a darker rim, the gold face and a star.
+      const medal = function (x, y, z, r) { add(B(x - r * 0.8, y, z - r * 2.1, r * 0.6, 0.005, r * 1.9, RED, { nc: RED }), B(x + r * 0.2, y, z - r * 2.1, r * 0.6, 0.005, r * 1.9, RED, { nc: RED }), L.D(x, y + 0.01, z, r * 1.1, '#B8862E', { n: 12, nc: '#B8862E' }), L.D(x, y + 0.02, z, r * 0.82, GOLD, { n: 16, nc: GOLD }), T(x, y + 0.03, z, r * 0.85, '★', { wt: 700, ff: 'Inter, sans-serif', c: '#FFF4D0', nc: '#FFF4D0' })); };
+      const paper = function (x, y, z, w, h, c, nc) { add(B(x, y, z, w, 0.03, h, c || PAPER, { nc: nc || NPAPER })); };
+      // A flat screen on its stand, facing +y (x, z: the bottom left corner of the picture). Returns the y to paint on.
+      const screen = function (x, y, z, w, h, bg, nbg) { add(B(x + w / 2 - 0.9, y - 0.35, z - 0.8, 1.8, 0.9, 0.08, DK), B(x + w / 2 - 0.25, y + 0.02, z - 0.75, 0.5, 0.16, 0.65, DK), B(x - 0.15, y, z - 0.15, w + 0.3, 0.2, h + 0.3, '#20242E', { nc: '#161B28' }), B(x, y + 0.2, z, w, 0.02, h, bg, { nc: nbg || bg, e: 1 })); return y + 0.225; };
+      const suitcase = function (x, y, z, tag) { add(B(x, y, z, 2.4, 0.9, 3.2, '#8C5A48', { nc: '#4E3A30' }), B(x, y + 0.9, z + 2.2, 2.4, 0.02, 0.25, '#6E4638'), B(x + 0.7, y + 0.35, z + 3.2, 1.0, 0.15, 0.45, DK), B(x + 0.45, y + 0.91, z + 1.2, 1.5, 0.02, 0.6, PAPER, { nc: NPAPER }));
+        add(T(x + 1.2, y + 0.94, z + 1.5, 0.26, tag, { wt: 600, ff: 'IBM Plex Mono, monospace', c: INK, nc: INK })); };
+      // A telecom tower: a lattice mast with platforms, three panel antennas and a beacon. arcs: signal waves going out from the antennas.
+      const tower = function (x, y, h, r, arcs) { add(K(x, y, 0, r, h, '#AEB5C1', { n: 4, rot: Q }));
+        [0.2, 0.4, 0.58, 0.74].forEach(function (f) { const hw = r * 0.72 * (1 - f) + 0.08; add(B(x - hw, y - hw, h * f, hw * 2, hw * 2, 0.16, '#7E8796', { nc: '#4A5262' })); });
+        add(B(x - 1.5, y + 0.4, h * 0.8, 0.55, 0.3, 3.0, '#E8E2D6'), B(x + 0.95, y + 0.4, h * 0.8, 0.55, 0.3, 3.0, '#E8E2D6'), B(x - 0.28, y + 0.6, h * 0.66, 0.55, 0.3, 2.6, '#E8E2D6'));
+        add(S(x, y, h + 0.3, 0.5, '#D9573F', { e: 1, nc: '#FF6B5A', a: 'dz-blink' }), G(x, y, h + 0.3, 3.4, '#FF6B5A', { a: 'dz-blink' }));
+        if (arcs) [3, 5, 7].forEach(function (rr, k) { [[x + 1.6, -0.75, 0.75], [x - 1.6, Math.PI - 0.75, Math.PI + 0.75]].forEach(function (s) { const n = Math.ceil(rr * 1.5 / 0.5); for (let j = 0; j <= n; j++) { const a = s[1] + (s[2] - s[1]) * j / n; add(B(s[0] + rr * Math.cos(a) - 0.25, y + 0.8, h * 0.84 + rr * Math.sin(a) - 0.25, 0.5, 0.03, 0.5, '#2FA89A', { e: 1, nc: '#7FD8CB', a: 'dz-sig' + (k + 1) })); } }); }); };
+      // Flat ground: a patch (its top at z 0) or a thin layer lying on one; a strip of that layer between two points; a road along a line of points.
+      const patch = function (c, nc, pts, lay) { add(C(0, 0, lay ? 0 : -0.6, 0, lay ? lay : 0.6, c, { nc: nc, pts: pts })); };
+      const strip = function (a, b, w, c, nc, lay) { const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l * w / 2, ny = dx / l * w / 2; patch(c, nc, [[a[0] + nx, a[1] + ny], [b[0] + nx, b[1] + ny], [b[0] - nx, b[1] - ny], [a[0] - nx, a[1] - ny]], lay || 0.04); };
+      const road = function (P, w, c, nc) {
+        for (let i = 0; i < P.length - 1; i++) strip(P[i], P[i + 1], w, c, nc);
+        P.slice(1, -1).forEach(function (p) { add(C(p[0], p[1], 0, w / 2, 0.04, c, { nc: nc, n: 14 })); });
+        for (let i = 0; i < P.length - 1; i++) { const a = P[i], b = P[i + 1], l = Math.hypot(b[0] - a[0], b[1] - a[1]), pt = function (t) { return [a[0] + (b[0] - a[0]) * t / l, a[1] + (b[1] - a[1]) * t / l]; };
+          for (let t = 2; t + 2.6 < l; t += 6) strip(pt(t), pt(t + 2.6), 0.3, '#EDE7D8', '#EDE7D8', 0.05); } };
+      // A cutaway room (back wall y 0, open to the front): floor, back wall, and the two side walls, which are behind the room's things while
+      // the camera is between them and in front of them (painted last) once it is outside. inside() adds the room's things.
+      const room = function (o, w, d, h, fl, wall, inside) { at(o, function () {
+        const lwall = function () { add(B(-0.4, 0, 0.25, 0.4, d, h, wall[2], { nc: wall[3] })); }, rwall = function () { add(B(w, 0, 0.25, 0.4, d, h, wall[2], { nc: wall[3] })); };
+        add(B(0, 0, 0, w, d, 0.25, fl[0], { nc: fl[1] }), B(-0.4, -0.4, 0.25, w + 0.8, 0.4, h, wall[0], { nc: wall[1] }));
+        seen('vx', o[0], FAR, lwall); seen('vx', -FAR, o[0] + w + 0.4, rwall);
+        add(B(0, 0, 0.25, w, 0.03, 0.6, '#C9C2B4', { nc: '#55504A' })); // skirting board
+        inside();
+        seen('vx', -FAR, o[0], lwall); seen('vx', o[0] + w + 0.4, FAR, rwall); }); };
+
+      // ---- The ground. The studio floor; on it a paved city block for the office front (with a lay-by across the road), a block for the STC
+      // office, the apron of the operations room, a wide patch of desert sand behind it for the tents (a dune runs off to the right, a sand
+      // track comes down to the road, a footpath joins the operations room and the team tent) and a block for the last room. One road joins
+      // them: it bends back to the STC office and forward again.
+      add(B(-640, -520, -0.66, 1300, 880, 0.06, '#5B606B', { nc: '#2A2F3D' }));
+      patch('#D8CFBC', '#3A3D48', [[-196, 34], [-206, 14], [-190, -18], [-160, -32], [-116, -26], [-100, -2], [-103, 34]]);
+      patch('#CFC8B8', '#34384A', [[-76, -46], [-36, -56], [0, -48], [10, -20], [3, 3], [-66, 3], [-82, -16]]);
+      patch('#E4D2AC', '#4E4650', [[18, -36], [70, -28], [150, -24], [204, -40], [232, -84], [214, -136], [150, -158], [70, -150], [22, -118], [6, -72]]);
+      patch('#E4D2AC', '#4E4650', [[212, -48], [246, -34], [258, -58], [232, -80]]);
+      patch('#D6D0C4', '#34384A', [[20, -14], [144, -14], [154, 0], [150, 25], [28, 25], [16, 12]]);
+      patch('#C9C2B0', '#3A3D48', [[176, -8], [238, -10], [248, 10], [236, 25], [180, 25], [170, 12]]);
+      patch('#C9C2B0', '#3A3D48', [[-178, 44], [-126, 44], [-118, 54], [-132, 62], [-172, 62], [-184, 54]], 0.03);
+      strip([166, 25], [158, -25], 5, DIRT, NDIRT, 0.03); strip([72, -14], [62, -50], 3, DIRT, NDIRT, 0.03);
+      road([[-240, 39], [-106, 39], [-74, 8], [2, 8], [24, 30], [262, 30]], 10, '#8E949E', '#2E323A');
+      for (let i = 0; i < 7; i++) add(B(OF[0] - 4.6 + i * 1.6, 34.6, 0.05, 0.9, 8.8, 0.005, '#EDE7D8')); // a crossing in front of the office door
+
+      // ---- Far away, in the heat haze: the flat roofs of the city (not in the overview, where they would stand on the studio floor).
+      if (EV !== 15) { [[-270, 30, 22], [-232, 18, 34], [-206, 26, 16], [-172, 14, 46], [-150, 30, 20], [-112, 20, 30], [-84, 24, 18], [-52, 16, 52], [-28, 28, 24], [10, 22, 36], [40, 30, 18], [80, 16, 60], [102, 26, 26], [140, 22, 38], [170, 30, 20], [210, 18, 44], [236, 28, 24], [268, 20, 32]].forEach(function (b) { add(B(b[0], -262, 0, b[1], 18, b[2], '#DCCFB6', { nc: '#4A3E5E' })); });
+        add(B(-520, -236, 0, 1040, 0.05, 90, '#F1E4CC', { nc: '#6A4E6A', op: 0.45 })); }
+      // Low dunes at the back of the sand.
+      [[52, -128, 24, 6], [150, -146, 34, 8], [216, -104, 20, 5]].forEach(function (d) { add(K(d[0], d[1], 0, d[2], d[3], '#DCC79C', { n: 7, rot: 0.4, nc: '#4A4250' })); });
+
+      // ---- The tent field (V4.04): rows of white tents on the sand, two towers behind them sending out signal. The tents stand for the
+      // pilgrims: no figures, no crowds, no holy sites. At the edge of the field a sign board carries the heading and the paragraph; a mobile
+      // site on a trailer is parked beside it. No figure stands here.
+      tower(112, -140, 46, 3.2, true); tower(190, -132, 40, 2.8, true);
+      // Each tent is taller than a man (walls 3 units, roof 4.4 more) and has a door flap, so the field reads at human scale.
+      for (let r = 0; r < 6; r++) for (let q = 0; q < 8; q++) { const x = 100 + q * 13 + (r % 2) * 6, y = -122 + r * 12;
+        // rows further back are a shade darker, and each roof sits on a darker eave, so the tents read one behind the other
+        const wc = ['#DDD7C8', '#E1DBCD', '#E5E0D2', '#E9E4D7', '#ECE8DC', '#EFEBE0'][r], rc = ['#E6E0D2', '#EAE5D8', '#EEE9DD', '#F1EDE2', '#F4F0E6', '#F7F3EA'][r];
+        add(B(x - 3.9, y - 3.9, 0, 7.8, 7.8, 3.0, wc, { nc: '#B9A98C' }), B(x - 0.7, y + 3.9, 0, 1.4, 0.02, 2.4, '#BFB7A2', { nc: '#8E8270' }), B(x - 4.2, y - 4.2, 3.0, 8.4, 8.4, 0.2, '#CFC7B3', { nc: '#A89878' }), K(x, y, 3.2, 5.95, 4.3, rc, { n: 4, rot: Q, nc: '#FFE2A0', e: 1 })); }
+      add(L.palm(130, -55, 0, 4.2), L.palm(174, -55, 0, 3.8), L.lampPost(178, -60, 0, 11));
+      { const U = SU(4), h = parts(U[0]), X = 138.2, Y = -51.72;
+        add(B(X - 0.4, -52.3, 0, 0.5, 0.5, 10.2, '#6B5A48'), B(X + 11.1, -52.3, 0, 0.5, 0.5, 10.2, '#6B5A48'), B(X - 0.4, -52, 1.9, 12.0, 0.25, 8.0, '#C4A27A', { nc: '#5E5040' }), B(X, -51.75, 2.2, 11.2, 0.03, 7.4, PAPER, { nc: NPAPER }));
+        if (h) { add(T(X + 0.6, Y, 9.15, 0.36, h.n + '  ·  ' + h.yrs, { al: 'l', wt: 700, ff: 'Manrope, sans-serif', c: RED, nc: RED })); head(h.title, X + 0.6, Y, 8.25, 1.05, { c: INK, nc: INK }); head(h.sub, X + 0.6, Y, 7.25, 0.46); }
+        else head(U[0], X + 0.6, Y, 8.6, 0.5);
+        para(U[1], 46, X + 0.6, Y, 6.35, 0.42, 0.7); }
+      at([5.5, -4], function () {
+      add(B(157, -47.3, 0, 1.1, 0.3, 1.1, '#20242E'), B(161.4, -47.3, 0, 1.1, 0.3, 1.1, '#20242E'), B(156, -50, 0.8, 7, 3, 3.2, '#EDEFF2', { nc: '#8C93A3' }), B(156, -47, 3.5, 7, 0.02, 0.3, TEAL, { nc: TEAL }));
+      add(T(159.5, -46.97, 2.5, 0.5, 'mobile site', { wt: 700, ff: 'Manrope, sans-serif', c: INK, nc: INK }), B(156.5, -46.98, 1.3, 0.7, 0.02, 0.14, '#7FD8A0', { e: 1, a: 'dz-blink' }));
+      add(C(161.6, -48.5, 4.0, 0.2, 13, '#9AA3B2', { n: 6 }), B(160.9, -48.3, 15, 0.5, 0.3, 2.2, '#E8E2D6'), B(162.0, -48.3, 15, 0.5, 0.3, 2.2, '#E8E2D6'), S(161.6, -48.5, 17.3, 0.35, '#D9573F', { e: 1, nc: '#FF6B5A', a: 'dz-blink' }), G(161.6, -48.5, 17.3, 2.6, '#FF6B5A', { a: 'dz-blink' }));
+      });
+
+      // ---- The team tent (V4.06 the family and Naif's words, V4.07 the letter, V4.13 seven years): a majlis on the sand. A cloth
+      // back wall (y 0) with a woven band, cushions along it, a pot of coffee, lanterns. Open to the front.
+      at(TT, function () { const CLOTH = '#F1E9D6', NCLOTH = '#6A6058', MAROON = '#8E2E2A';
+        add(L.palm(-6, -5, 0, 4.4), L.palm(58, -7, 0, 4.0));
+        const lwall = function () { add(B(-0.3, 0, 0.12, 0.3, 14, 10.3, '#E8DEC8', { nc: '#5E564E' })); }, rwall = function () { add(B(52, 0, 0.12, 0.3, 14, 10.3, '#E8DEC8', { nc: '#5E564E' })); };
+        add(B(0, 0, 0, 52, 14, 0.12, '#A6524A', { nc: '#4A2E30' }), B(1, 1, 0.12, 50, 0.6, 0.01, '#E8D9B8', { nc: '#6A5E58' }), B(1, 12.4, 0.12, 50, 0.6, 0.01, '#E8D9B8', { nc: '#6A5E58' }));
+        add(B(-0.3, -0.3, 0.12, 52.6, 0.3, 10.3, CLOTH, { nc: NCLOTH }));
+        // The cloth roof from below: it goes in first, behind everything in the tent, with a maroon stripe at each pole.
+        add(B(-1, -1, 10.42, 54, 16.5, 0.02, '#EDE4CF', { nc: '#665E56', ub: 1, ubf: 0.95 }));
+        [0.2, 17.4, 34.8, 51.8].forEach(function (x) { add(B(x - 0.3, -1, 10.38, 0.6, 16.5, 0.04, MAROON, { nc: '#6E2A2A', ub: 1, ubf: 0.92 })); });
+        seen('vx', TT[0], FAR, lwall); seen('vx', -FAR, TT[0] + 52.3, rwall);
+        add(B(0, 0, 2.7, 52, 0.02, 0.7, MAROON, { nc: '#6E2A2A' }), B(0, 0.02, 2.92, 52, 0.01, 0.08, '#20242E'), B(0, 0.02, 3.12, 52, 0.01, 0.08, CLOTH, { nc: '#B9AE9C' }));
+        for (let i = 0; i < 40; i++) add(B(i * 1.3, 0.02, 9.72, 1.3, 0.02, 0.7, i % 2 ? MAROON : '#FFFDF7', { nc: i % 2 ? '#6E2A2A' : '#8E857A' })); // a scalloped band along the top
+        // V4.06: the paragraph on the cloth and, right beside it, the words it leads up to: Naif's, framed, with his initials under them.
+        { const U = SU(6); para(U[0], 44, 1.5, 0.03, 8.55, 0.36, 0.6, { nc: LITE });
+          add(B(11.0, 0.03, 3.7, 11.4, 0.15, 5.5, '#8C6A4A', { nc: '#4E4034' })); paper(11.35, 0.18, 4.0, 10.7, 4.9, '#FFFDF7', '#D9DEE8');
+          wrap(U[1], 40).forEach(function (ln, k) { say(ln, 11.9, 0.22, 8.25 - k * 0.74, 0.46, { wt: 700, ff: 'Manrope, sans-serif' }); });
+          add(L.D(12.3, 0.22, 4.55, 0.4, '#E6EAF0', { n: 14, nc: '#B4BFD2' }), T(12.3, 0.24, 4.55, 0.25, 'NA', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK })); say('— ' + (U[2] || ''), 12.95, 0.22, 4.55, 0.27, { c: INK2, nc: INK2 }); }
+        // V4.13: the proud moment, and under it a badge for each Hajj season he led the data.
+        { const U = SU(13); hand(U[0], 24.0, 0.03, 9.0, 0.56, OCHRE, { nc: '#E0B060' }); para(U[1], 48, 24.0, 0.03, 8.05, 0.44, 0.76, { nc: LITE }); }
+        hand('Hajj seasons', 24.0, 0.03, 6.3, 0.34, MAROON, { nc: '#E8A49B' });
+        add(B(23.8, 0.03, 5.75, 9.4, 0.05, 0.05, DK));
+        ['2014', '2015', '2016', '2017', '2018', '2019', '2020'].forEach(function (yr, i) { const x = 24.0 + i * 1.3, z = 4.1;
+          add(B(x + 0.55, 0.04, z + 1.5, 0.06, 0.02, 0.15, DK), B(x, 0.04, z, 1.15, 0.03, 1.5, '#FFFFFF', { nc: '#E8ECF2' }), B(x, 0.075, z + 1.15, 1.15, 0.005, 0.35, TEAL, { nc: TEAL }));
+          add(T(x + 0.575, 0.08, z + 0.55, 0.3, yr, { wt: 600, ff: 'IBM Plex Mono, monospace', c: INK, nc: INK })); });
+        // The letter of appreciation, framed, and its sentence beside it.
+        add(B(37, 0.03, 3.7, 6.4, 0.15, 5.5, GOLD, { nc: '#8A6A30' })); paper(37.3, 0.18, 4.0, 5.8, 4.9, '#FFFDF7', '#D9DEE8');
+        mono('APPRECIATION', 40.2, 0.22, 8.4, 0.26, INK2, { al: 'c' });
+        [0, 1, 2, 3].forEach(function (i) { add(B(37.8, 0.22, 7.6 - i * 0.42, 4.8 - (i === 3 ? 1.8 : 0), 0.005, 0.12, '#B4BFD2')); });
+        hand('thank you', 37.8, 0.22, 5.5, 0.4, BLUE); say("customer's top management", 37.8, 0.22, 4.55, 0.2, { c: INK2, nc: INK2 });
+        medal(42.0, 0.2, 5.3, 0.5);
+        para(SU(7)[0], 24, 44.4, 0.03, 8.4, 0.44, 0.76, { nc: LITE });
+        // Lanterns on the back wall, cushions along it, coffee for the team.
+        [22.8, 35.6].forEach(function (x) { add(B(x + 0.37, 0.4, 7.9, 0.06, 0.06, 1.4, DK), B(x, 0.1, 6.8, 0.8, 0.7, 1.1, '#FFE7A8', { e: 1, nc: '#FFE7A8', a: 'dz-pulse' }), B(x - 0.1, 0, 7.9, 1.0, 0.9, 0.12, DK), G(x + 0.4, 1.2, 7.3, 4.2, '#FFD27A')); });
+        // The seating: for each place a back cushion with a woven band, a seat with a dark base and gold piping, and a throw pillow; between
+        // two places a cream bolster as an armrest. Nothing is depth-sorted, and a seat's side must cover what is behind it whichever side the
+        // camera stands on: so the row goes in twice. First, left to right, every piece the camera is to the right of; then, right to left,
+        // every piece it is to the left of. Only one copy of each piece is ever drawn.
+        { const X = function (i) { return 0.6 + i * 4.28; };
+          const seat = function (i) { const x = X(i), c = i % 2 ? '#A84A3E' : MAROON, px = x + (i % 2 ? 2.3 : 0.5), pc = i % 2 ? TEAL : '#F1E9D6';
+            add(B(x, 0.15, 1.02, 4.0, 0.7, 1.4, c, { nc: '#5A2A2E' }), B(x, 0.3, 0.12, 4.0, 2.3, 0.9, c, { nc: '#5A2A2E' }));
+            add(B(x, 0.86, 1.92, 4.0, 0.01, 0.32, '#F1E9D6', { nc: '#8E857A' }), B(x, 0.87, 2.05, 4.0, 0.005, 0.06, '#20242E'));
+            for (let k = 0; k < 5; k++) add(B(x + 0.25 + k * 0.8, 0.87, 1.96, 0.3, 0.005, 0.07, MAROON, { nc: '#6E2A2A' }), B(x + 0.25 + k * 0.8, 0.87, 2.13, 0.3, 0.005, 0.07, MAROON, { nc: '#6E2A2A' }));
+            add(B(x, 2.6, 0.12, 4.0, 0.02, 0.2, '#4A2A28', { nc: '#2E1E20' }), B(x, 2.6, 0.9, 4.0, 0.03, 0.12, '#C9A24A', { nc: '#8A6A30' }));
+            add(B(px, 0.9, 1.02, 1.2, 0.4, 1.1, pc, { nc: i % 2 ? '#1D4A44' : '#8E857A' }), B(px + 0.35, 1.3, 1.37, 0.5, 0.01, 0.4, i % 2 ? '#D9A441' : MAROON, { nc: i % 2 ? '#8A6A30' : '#6E2A2A' })); };
+          const arm = function (i) { const x = X(i); add(B(x + 4.0, 0.25, 0.12, 0.28, 2.37, 1.45, '#E8DEC8', { nc: '#6A6058' }), B(x + 4.0, 2.62, 1.2, 0.28, 0.01, 0.12, MAROON, { nc: '#6E2A2A' })); };
+          // arm(i) stands right of seat i; arm(-1) and arm(11) close the row against the tent's two side walls
+          for (let i = -1; i < 12; i++) { if (i >= 0) seen('vx', TT[0] + X(i) + 2, FAR, function () { seat(i); }); seen('vx', TT[0] + X(i) + 4.14, FAR, function () { arm(i); }); }
+          for (let i = 11; i >= -1; i--) { seen('vx', -FAR, TT[0] + X(i) + 4.14, function () { arm(i); }); if (i >= 0) seen('vx', -FAR, TT[0] + X(i) + 2, function () { seat(i); }); } }
+        at([5.8, 0], function () {
+        add(C(9.4, 4.0, 0.12, 1.5, 1.3, '#8C6A4A', { n: 12 }), C(9.4, 4.0, 1.42, 1.7, 0.1, GOLD, { n: 14, nc: '#8A6A30' }));
+        add(C(8.9, 3.8, 1.52, 0.42, 0.75, GOLD, { n: 8, nc: '#C9A24A' }), K(8.9, 3.8, 2.27, 0.42, 0.6, GOLD, { n: 8, nc: '#C9A24A' }), B(9.25, 3.75, 1.95, 0.55, 0.1, 0.12, GOLD), S(8.9, 3.8, 2.9, 0.09, GOLD));
+        [[9.9, 3.4], [10.3, 4.1], [9.9, 4.7], [9.2, 4.9], [8.5, 4.6]].forEach(function (p) { add(C(p[0], p[1], 1.52, 0.15, 0.22, '#FFFFFF', { n: 8 })); });
+        });
+        seen('vx', -FAR, TT[0], lwall); seen('vx', TT[0] + 52.3, FAR, rwall);
+        [0.2, 17.4, 34.8, 51.8].forEach(function (x) { add(C(x, 13.6, 0, 0.22, 10.4, '#8C6A4A', { n: 8 })); });
+        add(B(-1, -1, 10.44, 54, 16.5, 0.3, '#E8DEC8', { nc: '#5A5248' })); // the roof from above goes in last: it covers the inside
+        for (let i = 0; i < 40; i++) add(B(i * 1.3, 15.5, 9.82, 1.3, 0.08, 0.6, i % 2 ? MAROON : CLOTH, { nc: i % 2 ? '#6E2A2A' : NCLOTH }));
+      });
+
+      // The four built sets go in from left to right: the overview looks from the front right, where the office front is the farthest
+      // and the last room the nearest.
+
+      // ---- Set 1 (V4.01): arriving in Riyadh. The office front, sand-coloured with a Najdi parapet, two towers standing behind it. The
+      // heading is painted on the facade, "Context" is the notice on the wall right of the door. Left of the door a directory board puts him
+      // on the business side, next to network operations (IT is in another building); a signpost points to Riyadh and to Jeddah. He has
+      // just walked up with the suitcase from the airport.
+      at(OF, function () {
+        tower(-27, -30, 42, 3.0); tower(25, -34, 40, 2.8);
+        add(L.palm(-24.5, -3, 0, 4.4), L.palm(23.5, -5, 0, 4.0));
+        add(B(-19, -20, 0, 38, 20, 19, SAND, { nc: NSAND }));
+        // The Najdi parapet: a low wall flush with the facade. Its triangles are flat, in the plane of the facade: each is a diamond whose
+        // lower half the parapet covers. The flat roof inside it and the parapet's other three sides are out of sight from the street (drawn
+        // there they would show through the facade), so only the overview gets them.
+        if (EV === 15) add(B(-18.4, -19.4, 19, 36.8, 18.8, 0.3, '#CDB892', { nc: '#5A4E52' }), B(-19, -20, 19, 38, 0.6, 1.0, SAND, { nc: NSAND }), B(-19, -19.4, 19, 0.6, 18.8, 1.0, SAND, { nc: NSAND }), B(18.4, -19.4, 19, 0.6, 18.8, 1.0, SAND, { nc: NSAND }));
+        for (let i = 0; i < 13; i++) add(L.D(-17.4 + i * 2.9, -0.02, 20.0, 1.1, SAND, { n: 4, nc: NSAND }));
+        add(B(-19, -0.6, 19, 38, 0.6, 1.0, SAND, { nc: NSAND }), B(-19, 0, 18.85, 38, 0.05, 0.16, '#CDB892', { nc: '#5A4E52' }));
+        add(B(-19, 0, 13.0, 38, 0.06, 0.4, BLUE, { nc: BLUE }));
+        [1.8, 7.2].forEach(function (z, f) { [-17.2, -12.9, -8.6].forEach(function (x, i) { const lit = (i + f) % 3 !== 1; add(B(x - 0.15, 0, z - 0.15, 2.9, 0.05, 3.5, '#B8BEC8'), B(x, 0.05, z, 2.6, 0.04, 3.2, GL, { nc: lit ? LITW : '#2A3858', e: lit ? 1 : 0 })); }); });
+        add(B(-3, 0, 0, 6, 0.06, 7.2, DK), B(-2.7, 0.06, 0.2, 2.6, 0.03, 6.6, GL, { nc: LITW, e: 1 }), B(0.1, 0.06, 0.2, 2.6, 0.03, 6.6, GL, { nc: LITW, e: 1 }));
+        { const U1 = SU(1), hm = parts(U1[0]);
+          if (hm) add(T(0, 0.1, 17.9, 0.66, hm.n + '  ·  ' + hm.yrs, { wt: 700, ff: 'Manrope, sans-serif', c: RED, nc: '#E8A49B' }), T(0, 0.1, 16.4, 1.7, hm.title, { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: LITE }), T(0, 0.1, 14.4, 0.8, hm.sub, { wt: 600, ff: 'Manrope, sans-serif', c: INK2, nc: '#D6DCE8' }));
+          else String(U1[0] || '').split('|').forEach(function (ln, k) { add(T(0, 0.1, 17.0 - k * 1.4, 1.0, ln.trim(), { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: LITE })); });
+          // The notice on the wall right of the door: "Context" and its paragraph.
+          add(B(5.2, 0, 2.3, 13.4, 0.2, 10.0, '#C4A27A', { nc: '#5E5040' }), B(5.5, 0.2, 2.6, 12.8, 0.03, 9.4, PAPER, { nc: NPAPER }));
+          head('Context', 6.1, 0.26, 11.2, 0.56); para(U1[1], 42, 6.1, 0.26, 10.2, 0.56, 0.95); }
+        add(B(-4.5, 0, 7.4, 9, 3.0, 0.6, BLUE, { nc: BLUE }), B(-4.2, 2.7, 0.08, 0.25, 0.25, 7.32, '#9AA3B2'), B(3.95, 2.7, 0.08, 0.25, 0.25, 7.32, '#9AA3B2')); label('Managed Services', 0, 3.02, 7.7, 0.46);
+        // The directory board: which side of the house he is on.
+        add(B(-18.6, 4.1, 0, 0.3, 0.3, 6.8, '#6B5A48'), B(-11.6, 4.1, 0, 0.3, 0.3, 6.8, '#6B5A48'), B(-18.6, 4.2, 2.2, 7.3, 0.2, 4.7, DK, { nc: '#232B3E' }));
+        mono('BUSINESS SIDE', -18.2, 4.42, 6.42, 0.32, '#F2C14E');
+        label('Network operations', -18.2, 4.42, 5.62, 0.48, { al: 'l' }); hand('← my desk is right here', -18.2, 4.42, 4.78, 0.44, '#F2C14E');
+        add(B(-18.2, 4.41, 4.15, 6.5, 0.01, 0.04, '#5C6475')); label('IT', -18.2, 4.42, 3.3, 0.48, { al: 'l', c: '#B4BFD2', nc: '#B4BFD2' }); say('another building →', -17.1, 4.42, 3.3, 0.4, { c: '#B4BFD2', nc: '#B4BFD2' });
+        // The signpost: Riyadh this way, Jeddah that way.
+        add(C(-8.4, 6.4, 0, 0.18, 10.4, '#9AA3B2', { n: 8 }), B(-14.6, 6.5, 9.1, 6.2, 0.14, 1.15, TEAL, { nc: TEAL }), B(-8.4, 6.5, 7.7, 5.6, 0.14, 1.15, BLUE, { nc: BLUE }));
+        label('← Riyadh · الرياض', -14.4, 6.67, 9.68, 0.46, { al: 'l' }); label('Jeddah · جدة →', -8.2, 6.67, 8.28, 0.46, { al: 'l' });
+        plant(-5.6, 3.4, 0, 0.62); bush(-21.6, 3.4, 0, 1.5); bush(20.4, 2.6, 0, 1.3);
+        // Achmad, just arrived, and his suitcase.
+        suitcase(0.6, 6.6, 0.08, 'CGK → RUH'); man(-1.6, 7.4, 0.08, { back: true });
+        add(B(-26, 16.4, 0, 52, 3.3, 0.1, '#E3DBCB', { nc: '#3A3D48' }), B(-26, 19.7, 0, 52, 0.3, 0.16, '#B9B2A4', { nc: '#2E313A' }));
+        for (let i = 0; i < 6; i++) add(C(-21.5 + i * 8.8, 15.4, 0, 0.28, 1.3, '#9AA3B2', { n: 8 })); // bollards along the forecourt's edge
+        add(L.lampPost(-24.5, 17.6, 0, 11), L.lampPost(24.5, 17.6, 0, 11));
+      });
+
+      // ---- The STC office (V4.02 on SAP BusinessObjects, V4.03 the award and the Excel lessons).
+      room(ST, 46, 16, 10.5, ['#B9B4A6', '#44423E'], ['#E9E1D0', '#5F5B58', '#EFE8DA', '#6F6A63'], function () {
+        // V4.02: the heading and the paragraph on the wall; a sketch of universe design under them; and the three things he built on top:
+        // KPIs on the map, a public folder of documents, an alert for network anomalies.
+        { const U = SU(2), h = parts(U[0]);
+          if (h) { add(T(1.5, 0.03, 10.0, 0.34, h.n + '  ·  ' + h.yrs, { al: 'l', wt: 700, ff: 'Manrope, sans-serif', c: RED, nc: '#E8A49B' })); head(h.title, 1.5, 0.03, 9.1, 0.95, { c: INK, nc: LITE }); head(h.sub, 1.5, 0.03, 8.15, 0.42, { nc: '#B4BFD2' }); }
+          else head(U[0], 1.5, 0.03, 9.4, 0.44, { nc: '#B4BFD2' });
+          para(U[1], 50, 1.5, 0.03, 7.35, 0.31, 0.5, { nc: LITE }); }
+        paper(1.5, 0.03, 1.9, 8.6, 2.9, '#FAFAF7');
+        hand('universe design', 1.8, 0.08, 4.42, 0.3, BLUE); hand('not just a user', 6.3, 0.08, 4.42, 0.26, INK2);
+        [[2.0, 'cells', BLUE], [4.9, 'KPIs', TEAL], [7.6, 'time', OCHRE]].forEach(function (b, i) { const z = 2.3 + (i % 2) * 0.5; add(B(b[0], 0.07, z, 2.0, 0.01, 0.9, b[2], { nc: b[2] })); label(b[1], b[0] + 1.0, 0.09, z + 0.45, 0.28); });
+        add(B(4.0, 0.07, 2.95, 0.9, 0.01, 0.06, DK), B(6.9, 0.07, 3.0, 0.7, 0.01, 0.06, DK));
+        add(B(11.4, 0.03, 5.8, 11.7, 0.08, 4.5, DK), B(11.6, 0.11, 6.0, 11.3, 0.02, 4.1, '#CDDCC0', { nc: '#3E5A50', e: 1 }), B(19.6, 0.13, 6.0, 3.3, 0.005, 2.0, '#A9C6E8', { nc: '#2F5C99' }));
+        add(B(11.6, 0.13, 7.7, 8.0, 0.005, 0.1, '#F4F1EA', { nc: '#8FA89A' }), B(15.2, 0.13, 6.0, 0.1, 0.005, 3.5, '#F4F1EA', { nc: '#8FA89A' }), B(11.6, 0.13, 9.5, 11.3, 0.005, 0.6, '#20242E', { nc: '#161B28' }));
+        mono('Google Earth · network sites', 11.8, 0.15, 9.8, 0.24, '#F7F3EA');
+        [[13.2, 8.4], [14.5, 6.5], [16.6, 8.6], [18.2, 6.9], [20.9, 8.5]].forEach(function (p, i) { add(B(p[0] - 0.03, 0.14, p[1], 0.06, 0.005, 0.45, DK), L.D(p[0], 0.15, p[1] + 0.6, 0.24, RED, { n: 10, nc: '#FF6B5A', a: i === 3 ? 'dz-blink' : '' })); });
+        hand('KPIs on the map', 11.9, 0.15, 6.35, 0.3, INK);
+        add(B(11.5, 0.03, 1.7, 5.4, 0.05, 3.3, '#D8CBB0', { nc: '#5A5246' })); mono('PUBLIC FOLDER', 11.75, 0.1, 4.68, 0.22, INK);
+        [BLUE, TEAL, OCHRE].forEach(function (c, i) { const x = 11.8 + i * 1.7, y = 0.09 + i * 0.01; paper(x, y, 2.3, 1.45, 1.95, '#FFFFFF', '#E8ECF2'); add(B(x, y + 0.035, 3.95, 1.45, 0.005, 0.3, c, { nc: c })); for (let r = 0; r < 3; r++) add(B(x + 0.15, y + 0.035, 2.6 + r * 0.38, 1.15 - r * 0.2, 0.005, 0.12, '#B4BFD2')); });
+        hand('shared with everyone', 11.75, 0.1, 1.98, 0.26, INK);
+        add(B(17.6, 0.03, 1.7, 5.4, 0.08, 3.3, '#20242E', { nc: '#161B28' })); mono('ALERT · network anomaly', 17.85, 0.13, 4.62, 0.2, '#FF8A70', { a: 'dz-blink' });
+        [0.5, 0.6, 0.45, 0.55, 1.9, 0.6, 0.5, 0.65, 0.5].forEach(function (h, i) { const hot = i === 4; add(B(18.0 + i * 0.52, 0.12, 2.1, 0.36, 0.01, h, hot ? '#E0563F' : '#7FD8A0', { e: 1, nc: hot ? '#FF6B5A' : '#7FD8A0', a: hot ? 'dz-blink' : '' })); });
+        add(B(20.0, 0.1, 5.0, 0.6, 0.6, 0.12, DK), S(20.3, 0.4, 5.38, 0.3, '#D9573F', { e: 1, nc: '#FF6B5A', a: 'dz-blink' }), G(20.3, 0.6, 5.38, 2.2, '#FF6B5A', { a: 'dz-blink' }));
+        // V4.03: the paragraph on the wall; the framed award; a note of thanks to Omar.
+        para(SU(3)[0], 50, 25.5, 0.03, 9.75, 0.33, 0.54, { nc: LITE });
+        add(B(37.6, 0.03, 5.3, 6.4, 0.12, 4.9, GOLD, { nc: '#8A6A30' })); paper(37.9, 0.15, 5.6, 5.8, 4.3, '#FFFDF7', '#D9DEE8');
+        mono('BEST EMPLOYEE', 40.8, 0.19, 9.4, 0.26, INK2, { al: 'c' }); add(T(40.8, 0.19, 8.5, 0.95, '2011', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK })); say('STC network performance team', 40.8, 0.19, 7.6, 0.22, { al: 'c', c: INK2, nc: INK2 });
+        medal(40.8, 0.17, 6.8, 0.5);
+        add(B(34.9, 0.03, 6.1, 2.3, 0.02, 1.4, '#F6E27A', { nc: '#F6E27A' })); hand('thanks,', 35.1, 0.06, 7.05, 0.3, INK); hand('Omar!', 35.1, 0.06, 6.5, 0.3, INK);
+        // The floor. V4.02: a cabinet under the exhibits. V4.03: the desk where Omar taught him: a spreadsheet with its macro, two chairs,
+        // the book; beside it a low cabinet with the trophy.
+        // The cabinet is kept low: the paper tray on it then stands clear below the boards on the wall, not tucked up against them.
+        add(B(12, 0.3, 0.25, 11, 1.7, 0.9, '#A77E57', { nc: '#453A30' })); [14.7, 17.5, 20.3].forEach(function (x) { add(B(x, 2.0, 0.38, 0.06, 0.02, 0.64, '#6E5238')); });
+        add(B(13, 0.7, 1.15, 2.2, 1.2, 0.3, '#8E949E'), B(13.1, 0.8, 1.45, 2.0, 1.0, 0.06, PAPER, { nc: NPAPER })); mug(21.6, 1.1, 1.15);
+        plant(0.3, 1.4, 0.25, 0.6);
+        // A low filing cabinet, flat against the wall under the award and clear of the desk, with the trophy standing on it. It stands further back than the desk's front, so it goes in first.
+        add(B(40.9, 0.03, 0.25, 2.4, 2.0, 3.0, '#8E949E', { nc: '#4A5262' }), B(40.9, 2.03, 1.72, 2.4, 0.02, 0.06, DK), B(41.8, 2.04, 1.0, 0.6, 0.03, 0.1, DK), B(41.8, 2.04, 2.45, 0.6, 0.03, 0.1, DK));
+        add(C(42.1, 1.0, 3.25, 0.5, 0.18, DK, { n: 10 }), C(42.1, 1.0, 3.43, 0.12, 0.6, GOLD, { n: 6 }), S(42.1, 1.0, 4.46, 0.48, GOLD, { nc: GOLD }));
+        add(L.desk(26.5, 0.8, 0.25, 12.1, 4.4, 2.4, WOOD));
+        { const sy = screen(28.6, 2.0, 3.45, 5.6, 3.2, '#FFFFFF', '#E8ECF2'); add(B(28.6, sy, 6.3, 5.6, 0.004, 0.35, GREEN, { nc: GREEN })); say('report.xlsm', 28.8, sy + 0.01, 6.47, 0.18, { wt: 700, c: '#F7F3EA', nc: '#F7F3EA' });
+          for (let r = 0; r < 6; r++) for (let q = 0; q < 3; q++) add(B(28.7 + q * 0.92, sy, 3.6 + r * 0.43, 0.84, 0.004, 0.35, r === 3 ? '#CFE8D6' : '#EEF1F5', { nc: r === 3 ? '#9FD8B0' : '#D9DEE8' }));
+          add(B(31.5, sy, 3.55, 2.6, 0.004, 2.65, '#20242E', { nc: '#20242E' })); ['Sub Report()', ' For Each c', '  c.Copy', ' Next c', 'End Sub'].forEach(function (ln, i) { mono(ln, 31.65, sy + 0.01, 5.9 - i * 0.44, 0.2, i % 4 === 0 ? '#F2C14E' : '#9FD4FF'); }); }
+        add(B(29.8, 3.6, 2.65, 3.2, 1.0, 0.1, '#D9D4C7'), B(33.5, 3.7, 2.65, 0.5, 0.8, 0.14, '#D9D4C7')); lamp(27.6, 1.7, 2.65); mug(34.8, 2.6, 2.65);
+        add(B(35.6, 2.6, 2.65, 2.7, 1.9, 0.5, GREEN, { nc: GREEN })); label('Excel VBA', 36.95, 4.53, 2.9, 0.3);
+        add(L.chair(28.8, 6.4, 0.25, '#5C6E91'), L.chair(31.4, 6.7, 0.25, '#8C5A48'));
+      });
+
+      // ---- The Hajj operations room (V4.05 the video wall, V4.12 the console, V4.11 the requests board, V4.08 the production server and
+      // the time offset; the conference screen and the small ideas at the far end). Everything on the back wall goes in first, then what
+      // stands on the floor, so the furniture of one corner is never painted under the wall of the next.
+      room(HJ, 110, 18, 11.5, ['#8E99A8', '#34405A'], ['#DDE2E8', '#565E78', '#E6EAEF', '#646C86'], function () {
+        // V4.05: the paragraph, and under it the video wall: dashboards, the mini-GIS, automated reports.
+        para(SU(5)[0], 60, 3.0, 0.03, 10.75, 0.31, 0.5, { nc: LITE });
+        clock(15.6, 0.03, 9.9, 0.8);
+        add(B(18.8, 0.03, 9.2, 4.6, 0.12, 1.3, '#20242E', { nc: '#161B28' }), S(19.6, 0.2, 9.85, 0.22, '#E0563F', { e: 1, nc: '#FF6B5A', a: 'dz-blink' })); mono('LIVE', 20.2, 0.17, 9.85, 0.5, '#FF8A70');
+        add(B(2.8, 0.03, 2.8, 20.9, 0.2, 5.4, '#20242E', { nc: '#161B28' }));
+        { const Y = 0.26, pan = function (x, bg, nbg, title) { add(B(x, 0.23, 3.1, 6.6, 0.02, 4.8, bg, { nc: nbg, e: 1 }), B(x, Y, 7.4, 6.6, 0.004, 0.5, '#13203A', { nc: '#13203A' })); say(title, x + 0.2, Y + 0.01, 7.65, 0.24, { wt: 700, c: '#F7F3EA', nc: '#F7F3EA' }); };
+          pan(3.1, '#F4F6FA', '#D9E2F0', 'Hajj traffic · live'); pan(10.05, '#27474F', '#27474F', 'mini-GIS · sites'); pan(17.0, '#FFFFFF', '#E8ECF2', 'daily report · automated');
+          [1.2, 1.9, 2.6, 3.3, 2.9, 3.6, 2.4, 1.6].forEach(function (h, i) { add(B(3.45 + i * 0.76, Y, 3.4, 0.52, 0.004, h, i % 2 ? '#7A93B8' : BLUE, { nc: i % 2 ? '#7A93B8' : BLUE, a: i === 5 ? 'dz-pulse' : '' })); });
+          add(B(10.05, Y, 5.2, 6.6, 0.004, 0.1, '#5E8A8A', { nc: '#5E8A8A' }), B(10.05, Y, 6.4, 6.6, 0.004, 0.08, '#5E8A8A', { nc: '#5E8A8A' }), B(12.4, Y, 3.1, 0.1, 0.004, 4.3, '#5E8A8A', { nc: '#5E8A8A' }), B(14.9, Y, 3.1, 0.1, 0.004, 4.3, '#5E8A8A', { nc: '#5E8A8A' }));
+          [[10.8, 4.2, 0], [11.7, 5.8, 0], [13.3, 4.5, 1], [13.9, 6.8, 0], [14.5, 3.7, 2], [15.7, 5.7, 0], [16.0, 4.2, 0], [11.2, 6.8, 1], [13.0, 5.9, 0]].forEach(function (p) { const c = ['#7FD8A0', '#F2C14E', '#FF6B5A'][p[2]]; add(S(p[0], Y + 0.02, p[1], 0.15, c, { e: 1, nc: c, a: p[2] ? 'dz-blink' : '' })); });
+          for (let r = 0; r < 5; r++) { add(B(17.25, Y, 3.45 + r * 0.62, 6.1, 0.004, 0.46, r % 2 ? '#EEF1F5' : '#E3E8EF', { nc: r % 2 ? '#D9DEE8' : '#C9CFDA' })); for (let q = 0; q < 3; q++) add(B(17.45 + q * 2.0, Y + 0.004, 3.6 + r * 0.62, 1.4 - q * 0.3, 0.004, 0.16, '#8C93A3')); }
+          add(B(20.15, Y, 6.7, 3.2, 0.004, 0.5, GREEN, { nc: GREEN })); say('✓ sent 06:00', 20.35, Y + 0.01, 6.95, 0.22, { wt: 700, c: '#F7F3EA', nc: '#F7F3EA' }); }
+        // V4.12: Thread 3 on the wall above the console, and a calendar of the days the tools were used.
+        { const U = SU(12); hand(U[0], 27.5, 0.03, 10.5, 0.56, BLUE, { nc: '#9FC0F0' }); para(U[1], 40, 27.5, 0.03, 9.55, 0.4, 0.68, { nc: LITE }); }
+        paper(36.1, 0.03, 6.9, 7.2, 3.9, '#FFFFFF', '#E8ECF2'); add(B(36.1, 0.065, 10.2, 7.2, 0.005, 0.6, RED, { nc: RED })); label('in daily use', 39.7, 0.08, 10.5, 0.3);
+        for (let r = 0; r < 4; r++) for (let q = 0; q < 7; q++) { const x = 36.3 + q * 0.98, z = 7.05 + r * 0.78; add(B(x, 0.065, z, 0.86, 0.005, 0.66, '#EEF1F5', { nc: '#D9DEE8' }), T(x + 0.43, 0.08, z + 0.33, 0.4, '✓', { wt: 700, ff: 'Inter, sans-serif', c: GREEN, nc: GREEN })); }
+        // V4.11: "What I learned" and Thread 2; IT's note under it; the whiteboard where requests became tools.
+        { const U = SU(11); head('What I learned', 47.5, 0.03, 10.75, 0.4, { nc: '#B4BFD2' }); hand(U[0], 47.5, 0.03, 9.95, 0.56, OCHRE, { nc: '#E0B060' }); para(U[1], 40, 47.5, 0.03, 9.0, 0.4, 0.68, { nc: LITE }); }
+        paper(47.5, 0.03, 2.9, 7.8, 2.5); add(L.D(48.3, 0.07, 4.85, 0.3, GREEN, { n: 10, nc: GREEN })); mono('FROM: IT', 48.9, 0.07, 4.85, 0.24, INK2); hand('"Go ahead, do what', 47.8, 0.07, 4.1, 0.36, GREEN); hand('the business needs."', 47.8, 0.07, 3.45, 0.36, GREEN);
+        add(B(56.4, 0.03, 3.3, 9.2, 0.06, 7.3, '#FAFAF7', { nc: '#C9CEDA' }), B(56.3, 0.03, 3.15, 9.4, 0.25, 0.15, '#9AA3B2'));
+        hand('requests', 56.8, 0.11, 10.1, 0.38, INK2); hand('my tools', 61.9, 0.11, 10.1, 0.38, TEAL);
+        [['TEAM LEADER', 'see it live?', '#F6E27A', 'dashboard'], ['MANAGER', 'one page, daily', '#F2B8A8', 'report'], ['CUSTOMER', 'where, on a map?', '#A9D6E8', 'mini-GIS']].forEach(function (r, i) { const z = 7.9 - i * 2.05;
+          add(B(56.8, 0.1, z, 3.6, 0.02, 1.6, r[2], { nc: r[2] })); mono(r[0], 57.0, 0.13, z + 1.3, 0.2, INK2); hand(r[1], 57.0, 0.13, z + 0.6, 0.3, INK);
+          hand('→', 60.7, 0.11, z + 0.8, 0.6, INK2); add(B(61.9, 0.1, z + 0.3, 3.3, 0.02, 1.0, TEAL, { nc: TEAL })); label(r[3], 63.55, 0.13, z + 0.8, 0.3); });
+        // V4.08: the long paragraph; beside it the chart he could not get before: today against yesterday, hour by hour; under the
+        // chart, large, the line the paragraph leads to, and under that what he learned from it.
+        { const U = SU(8); para(U[0], 54, 67.5, 0.03, 10.75, 0.31, 0.5, { nc: LITE });
+          wrap(U[1], 30).forEach(function (ln, k) { head(ln, 77.6, 0.03, 6.05 - k * 0.86, 0.56, { c: INK, nc: LITE }); });
+          para(U[2], 38, 77.6, 0.03, 3.4, 0.4, 0.66, { nc: LITE }); }
+        paper(77.4, 0.03, 6.9, 10.2, 4.0, '#FFFFFF', '#E8ECF2'); head('today vs. yesterday, hour by hour', 77.8, 0.07, 10.45, 0.3, { c: INK, nc: INK });
+        [[0.5, 0.46], [0.42, 0.4], [0.36, 0.34], [0.5, 0.44], [0.9, 0.8], [1.5, 1.3], [2.2, 1.9], [2.9, 2.4], [3.3, 2.8], [3.1, 2.9], [2.6, 2.5], [2.0, 1.9]].forEach(function (h, i) { const x = 77.9 + i * 0.78; add(B(x, 0.065, 7.85, 0.3, 0.005, h[1] * 0.58, '#B4BFD2', { nc: '#8C93A3' }), B(x + 0.34, 0.065, 7.85, 0.3, 0.005, h[0] * 0.58, BLUE, { nc: BLUE })); });
+        add(B(77.8, 0.065, 7.77, 9.5, 0.005, 0.06, DK), B(78.0, 0.065, 7.12, 0.4, 0.005, 0.3, BLUE, { nc: BLUE }), B(80.3, 0.065, 7.12, 0.4, 0.005, 0.3, '#B4BFD2', { nc: '#8C93A3' }));
+        say('today', 78.55, 0.08, 7.27, 0.26); say('yesterday', 80.85, 0.08, 7.27, 0.26); hand('= today − 1 day', 83.2, 0.08, 7.27, 0.32, '#C8641E');
+        hand('time offset', 78.2, 0.08, 9.8, 0.4, '#C8641E');
+        // The far end of the room, in no view of its own: a board of small ideas, and the conference screen where, ten years on, the
+        // same trick was taught as a superpower.
+        add(B(92.8, 0.03, 3.0, 6.8, 0.06, 3.2, '#C9A77A', { nc: '#5E5040' }));
+        [['idea', '#F6E27A'], ['tip', '#F2B8A8'], ['trick', '#A9D6E8'], ['fix', '#BFE0B0']].forEach(function (n, i) { const x = 93.1 + i * 1.6, z = 4.4 + (i % 2) * 0.35; add(B(x, 0.1, z, 1.35, 0.02, 1.3, n[1], { nc: n[1] })); hand(n[0], x + 0.67, 0.13, z + 0.65, 0.34, INK, { al: 'c' }); });
+        hand('small ideas, shared', 93.1, 0.1, 3.6, 0.36, INK);
+        add(B(100.6, 0.03, 4.0, 8.8, 0.1, 6.3, '#20242E', { nc: '#161B28' }), B(100.8, 0.13, 4.2, 8.4, 0.02, 5.9, '#FFFFFF', { nc: '#F4F1E6', e: 1 }));
+        mono('BI conference · ten years later', 101.1, 0.16, 9.65, 0.2, INK2); head('Time intelligence', 101.1, 0.16, 8.9, 0.56, { c: INK, nc: INK });
+        [[0.5, 0.4], [0.8, 0.6], [1.3, 1.0], [1.7, 1.4], [1.5, 1.6], [1.1, 1.2]].forEach(function (h, i) { const x = 101.2 + i * 0.66; add(B(x, 0.155, 4.6, 0.26, 0.005, h[1], '#B4BFD2', { nc: '#8C93A3' }), B(x + 0.28, 0.155, 4.6, 0.26, 0.005, h[0], BLUE, { nc: BLUE })); });
+        hand('"a superpower"', 105.3, 0.16, 6.9, 0.52, '#C8841E'); add(L.D(107.3, 0.16, 5.3, 0.6, GOLD, { n: 5, nc: GOLD }), G(107.3, 0.6, 5.3, 2.6, '#FFD27A', { day: 1, a: 'dz-pulse' }));
+
+        // The floor. V4.05: where the data comes from: three small boxes against the wall under the video wall, cabled into one store.
+        // They stand clear of each other and of the page's own things along the bottom (timeline, Next link, view counter).
+        add(B(11.4, 0.9, 0.25, 11.0, 0.2, 0.1, DK));
+        [['OSS', '#7A93B8'], ['counters', '#6E9C8F'], ['traffic', '#B97A62']].forEach(function (b, i) { const x = 15.4 + i * 2.7;
+          add(B(x, 0.3, 0.25, 1.8, 1.3, 1.3, b[1]), B(x + 0.15, 1.61, 1.28, 0.3, 0.02, 0.1, '#7FD8A0', { e: 1, a: i === 1 ? 'dz-blink' : '' })); label(b[0], x + 0.9, 1.63, 0.85, 0.28); });
+        add(C(10.4, 1.5, 0.25, 1.15, 2.2, '#5C6E91', { n: 12, nc: '#3E4A6A' }), C(10.4, 1.5, 0.95, 1.2, 0.12, '#B4BFD2', { n: 12 }), C(10.4, 1.5, 1.7, 1.2, 0.12, '#B4BFD2', { n: 12 })); label('all the data', 10.4, 2.72, 1.35, 0.28, { c: INK, nc: LITE });
+        // V4.12: the console: the vendor's built-in report on the left screen, his own on the right; two chairs.
+        plant(45.15, 0.9, 0.25, 0.6); // by the wall, right of the desk: clear of the desk's corner and of the page's view counter
+        add(L.desk(27.5, 1.0, 0.25, 14.8, 4.2, 2.4, '#B8BEC8'));
+        { const sy = screen(27.9, 2.2, 3.45, 6.4, 2.5, '#FFFFFF', '#E8ECF2'); add(B(27.9, sy, 5.55, 6.4, 0.004, 0.4, '#8E949E', { nc: '#8E949E' })); say('Vendor report · built-in', 28.1, sy + 0.01, 5.75, 0.2, { wt: 700, c: '#F7F3EA', nc: '#F7F3EA' });
+          for (let r = 0; r < 4; r++) for (let q = 0; q < 4; q++) add(B(28.1 + q * 1.55, sy, 3.6 + r * 0.47, 1.4, 0.004, 0.32, '#D9DEE8', { nc: '#B4BFD2' })); }
+        { const sy = screen(35.3, 2.2, 3.45, 6.4, 2.5, '#F4F6FA', '#D9E2F0'); add(B(35.3, sy, 5.55, 6.4, 0.004, 0.4, BLUE, { nc: BLUE })); say('Custom report · mine', 35.5, sy + 0.01, 5.75, 0.2, { wt: 700, c: '#F7F3EA', nc: '#F7F3EA' });
+          [0.6, 0.95, 0.8, 1.35, 1.7, 1.2].forEach(function (h, i) { add(B(35.6 + i * 0.6, sy, 3.6, 0.42, 0.004, h, i === 4 ? OCHRE : '#7A93B8', { nc: i === 4 ? '#E0B060' : '#7A93B8' })); });
+          add(B(39.5, sy, 4.65, 1.9, 0.004, 0.7, TEAL, { nc: TEAL }), B(39.5, sy, 3.6, 1.9, 0.004, 0.9, '#CFE8D6', { nc: '#7FD8A0' })); }
+        add(B(29.5, 3.9, 2.65, 3.2, 1.0, 0.1, '#D9D4C7'), B(36.9, 3.9, 2.65, 3.2, 1.0, 0.1, '#D9D4C7')); mug(34.8, 3.6, 2.65, '#5C7FA8');
+        add(L.chair(30.3, 6.6, 0.25, '#5C6E91'), L.chair(37.8, 6.8, 0.25, '#6E9C8F'));
+        // V4.11: a cabinet with the coffee machine and the team's mugs.
+        add(B(57, 0.3, 0.25, 8, 1.7, 2.0, '#A77E57', { nc: '#453A30' }), B(57.2, 2.0, 0.45, 3.7, 0.02, 1.6, WOOD, { nc: '#55473A' }), B(61.1, 2.0, 0.45, 3.7, 0.02, 1.6, WOOD, { nc: '#55473A' }));
+        add(B(57.6, 0.6, 2.25, 1.6, 1.2, 1.5, '#20242E'), B(57.8, 1.8, 2.9, 0.4, 0.02, 0.2, '#7FD8A0', { e: 1 })); mug(60.4, 1.2, 2.25); mug(61.4, 1.3, 2.25, '#5C7FA8'); mug(62.4, 1.1, 2.25, '#6E9C8F');
+        // V4.08: his desk with the data model on screen (the yellow box is the time offset), and the production server it went into.
+        add(L.desk(67.5, 0.8, 0.25, 9.2, 4.2, 2.4, '#B8BEC8'));
+        { const sy = screen(69.2, 2.0, 3.45, 5.8, 2.5, '#F4F6FA', '#D9E2F0'); add(B(69.2, sy, 5.6, 5.8, 0.004, 0.35, '#13203A', { nc: '#13203A' })); say('data model · production', 69.4, sy + 0.01, 5.78, 0.18, { wt: 700, c: '#F7F3EA', nc: '#F7F3EA' });
+          add(B(69.5, sy, 3.75, 1.5, 0.004, 1.4, '#7A93B8', { nc: '#7A93B8' }), B(71.4, sy, 3.75, 1.5, 0.004, 1.4, '#7A93B8', { nc: '#7A93B8' }), B(71.0, sy, 4.4, 0.4, 0.004, 0.06, DK), B(72.9, sy, 4.4, 0.4, 0.004, 0.06, DK));
+          add(B(73.3, sy, 3.75, 1.5, 0.004, 1.4, '#F2C14E', { e: 1, nc: '#F2C14E', a: 'dz-pulse' })); mono('+ time', 73.4, sy + 0.01, 4.7, 0.17, INK); mono('offset', 73.4, sy + 0.01, 4.3, 0.17, INK); }
+        add(B(70.4, 3.7, 2.65, 3.2, 1.0, 0.1, '#D9D4C7')); mug(68.4, 3.2, 2.65);
+        add(L.chair(73.4, 6.4, 0.25, '#5C6E91'));
+        add(B(88.5, 0.5, 0.25, 2.9, 2.2, 8.3, '#3D4A63', { nc: '#232B3E' }));
+        for (let j = 0; j < 5; j++) for (let k = 0; k < 3; k++) add(B(88.9 + k * 0.85, 2.7, 1.2 + j * 1.0, 0.36, 0.02, 0.14, k % 2 ? '#7FD8A0' : '#9FD4FF', { e: 1, a: (j + k) % 3 === 0 ? 'dz-blink' : '' }));
+        mono('PRODUCTION', 88.7, 2.72, 8.05, 0.26, '#F7F3EA'); paper(88.7, 2.71, 6.15, 2.5, 1.25, '#F6E27A', '#F6E27A'); hand('my quick fix', 88.8, 2.75, 7.05, 0.26, INK); hand('still running', 88.8, 2.75, 6.5, 0.26, GREEN);
+        // The far end: the audience's chairs in front of the screen.
+        add(L.chair(101.6, 7.0, 0.25, '#5C6E91'), L.chair(104.2, 7.3, 0.25, '#8C5A48'), L.chair(106.8, 7.0, 0.25, '#5C6E91'));
+      });
+
+      // ---- The last room (V4.09 many customers, V4.10 self-study, V4.14 tools).
+      room(MC, 46, 16, 10.5, ['#C9B08E', '#4A4236'], ['#E9E1D0', '#5F5B58', '#EFE8DA', '#6F6A63'], function () {
+        // V4.09: the heading and the paragraph on the wall; a rail of project tags; two things customers said; his tools, built once and copied.
+        { const U = SU(9), h = parts(U[0]);
+          if (h) { add(T(1.5, 0.03, 10.0, 0.34, h.n + '  ·  ' + h.yrs, { al: 'l', wt: 700, ff: 'Manrope, sans-serif', c: RED, nc: '#E8A49B' })); head(h.title + (h.sub ? ': ' + h.sub : ''), 1.5, 0.03, 9.2, 0.46, { c: INK, nc: LITE }); }
+          else head(U[0], 1.5, 0.03, 9.4, 0.44, { nc: '#B4BFD2' });
+          para(U[1], 54, 1.5, 0.03, 8.35, 0.31, 0.5, { nc: LITE }); }
+        hand('built once', 1.9, 0.03, 4.5, 0.32, TEAL, { nc: '#7FD8CB' }); hand('→', 4.0, 0.03, 4.5, 0.6, INK2, { nc: '#B4BFD2' }); hand('copied to each project', 5.4, 0.03, 4.5, 0.32, INK2, { nc: '#B4BFD2' }); // the arrow sits in this line, above the boxes: lower down they would hide it
+        add(B(11.6, 0.03, 9.75, 11.6, 0.25, 0.14, DK));
+        [['Zain', '4G · 5G trial', '#7A5C99'], ['MTN Benin', 'remote support', GOLD], ['STC', 'back again', TEAL], ['Tawal', 'finally', BLUE]].forEach(function (g, i) { const x = 11.9 + i * 2.9;
+          add(B(x + 1.22, 0.05, 9.2, 0.06, 0.02, 0.6, DK), B(x, 0.05, 6.35, 2.5, 0.03, 2.85, PAPER, { nc: NPAPER }), B(x, 0.085, 8.5, 2.5, 0.005, 0.7, g[2], { nc: g[2] }), L.D(x + 1.25, 0.09, 8.85, 0.14, PAPER, { n: 8 }));
+          add(T(x + 1.25, 0.09, 7.75, 0.34, g[0], { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK })); hand(g[1], x + 1.25, 0.09, 7.0, 0.25, INK2, { al: 'c' }); });
+        [['"Your reports are great!"', '— a project manager, Bahrain', 11.7, BLUE], ['"I like that dashboard!"', '— a customer director, Benin', 17.6, TEAL]].forEach(function (q) { paper(q[2], 0.03, 3.55, 5.6, 2.4, '#FFFFFF', '#E8ECF2'); hand(q[0], q[2] + 0.3, 0.07, 5.2, 0.36, q[3]); say(q[1], q[2] + 0.3, 0.07, 4.2, 0.24, { c: INK2, nc: INK2 }); });
+        // V4.10: a pinboard above the desk with the paragraph and a print of Sultan's Power BI page. V4.14: the same board lists the tools.
+        paper(25.0, 0.03, 5.6, 20.0, 4.8, '#F4EEDF', '#C9CEDA');
+        if (EV === 14) { head('Tools I picked up', 25.6, 0.1, 9.9, 0.42, { c: INK, nc: INK });
+          [['SAP BusinessObjects (universe design, Web Intelligence)', 'BO', '#2E4E7A'], ['Pentaho Data Integration (Kettle)', 'Pk', '#B0662E'], ['SQL', 'SQ', '#4F6BA8'], ['Excel VBA', 'Xl', '#5E8A5A'], ['Power Query', 'PQ', '#A8892E'], ['Python', 'Py', '#3D6A8C'], ['Google Earth/Maps', 'GE', '#2E7A5A'], ['ReactJS (side experiment)', 'Re', '#5C6E91']].forEach(function (r, i) {
+            const cx = 25.6 + (i % 2) * 9.9, z = 8.9 - Math.floor(i / 2) * 0.86;
+            add(B(cx, 0.08, z - 0.32, 0.7, 0.01, 0.62, r[2], { nc: r[2] }), T(cx + 0.35, 0.1, z - 0.01, 0.26, r[1], { wt: 800, c: '#F7F3EA', nc: '#F7F3EA' })); say(r[0], cx + 0.9, 0.1, z, 0.25, { wt: 600 }); });
+        } else { para(SU(10)[0], 54, 25.6, 0.1, 9.9, 0.31, 0.5);
+          add(B(35.6, 0.08, 6.5, 8.8, 0.02, 3.6, '#20242E', { nc: '#161B28' }), B(35.6, 0.105, 9.6, 8.8, 0.005, 0.5, '#F2C811', { nc: '#F2C811' }));
+          mono('Power BI', 35.8, 0.12, 9.85, 0.22, INK);
+          [['#F2C811', 35.9], ['#7FD8CB', 37.9], ['#9FC0F0', 39.9]].forEach(function (t) { add(B(t[1], 0.105, 8.5, 1.8, 0.005, 0.9, t[0], { nc: t[0], e: 1 })); });
+          [0.6, 1.0, 0.8, 1.4, 1.1, 1.6, 1.3].forEach(function (h, i) { add(B(35.9 + i * 0.82, 0.105, 6.7, 0.6, 0.005, h, i % 2 ? '#F2C811' : '#9FC0F0', { nc: i % 2 ? '#F2C811' : '#9FC0F0', e: 1 })); });
+          add(L.D(43.1, 0.105, 7.6, 0.85, '#7FD8CB', { n: 16, nc: '#7FD8CB' }), L.D(43.1, 0.115, 7.6, 0.45, '#20242E', { n: 14, nc: '#161B28' }), B(42.2, 0.105, 8.6, 1.9, 0.005, 0.8, '#3D4A63'));
+          hand("Sultan's Power BI: I want to be this good", 35.6, 0.1, 6.05, 0.3, OCHRE); }
+        add(B(40.4, 0.03, 3.6, 4.0, 0.02, 1.6, '#F6E27A', { nc: '#F6E27A' })); mono('BOSS', 40.6, 0.06, 4.9, 0.2, INK2); hand('"go deeper into', 40.6, 0.06, 4.4, 0.3, INK); hand('machine learning"', 40.6, 0.06, 3.95, 0.3, INK);
+        // The floor. V4.09: a sideboard with his tool case and its copies, a suitcase and a laptop bag for the road.
+        add(B(1.5, 0.3, 0.25, 8.8, 1.8, 2.2, '#A77E57', { nc: '#453A30' }), B(1.7, 2.1, 0.5, 4.1, 0.02, 1.7, WOOD, { nc: '#55473A' }), B(6.0, 2.1, 0.5, 4.1, 0.02, 1.7, WOOD, { nc: '#55473A' }), S(5.6, 2.16, 1.4, 0.1, GOLD), S(6.2, 2.16, 1.4, 0.1, GOLD));
+        add(B(1.9, 0.6, 2.45, 2.9, 1.3, 1.4, TEAL, { nc: TEAL }), B(2.85, 1.1, 3.85, 1.0, 0.25, 0.3, DK)); label('my tools', 3.35, 1.93, 3.15, 0.36);
+        [0, 1, 2].forEach(function (i) { const x = 5.9 + i * 1.5; add(B(x, 0.7 + i * 0.1, 2.45, 1.25, 1.0, 1.0, '#4E9A88', { nc: '#2E6A5E' })); label('copy', x + 0.62, 1.73 + i * 0.1, 2.95, 0.24); });
+        suitcase(15.4, 4.4, 0.25, 'RUH ⇄ JED'); add(B(19.1, 4.6, 0.25, 2.8, 0.8, 1.9, DK), B(20.0, 4.9, 2.15, 1.0, 0.15, 0.4, '#20242E'), B(19.1, 5.4, 1.5, 2.8, 0.02, 0.12, '#8E949E'));
+        // V4.10: the desk in the evening: the books he studied from, the laptop, a lamp, a notebook.
+        add(L.desk(26, 0.8, 0.25, 18.5, 4.4, 2.4, WOOD));
+        [['Machine learning', '#7A5C99'], ['Python', BLUE], ['Power Query', GREEN], ['Advanced Excel', TEAL]].forEach(function (b, i) { const x = 27.0 + (i % 2) * 0.25, z = 2.65 + i * 0.56;
+          add(B(x, 1.9, z, 3.6, 2.2, 0.56, b[1], { nc: b[1] })); label(b[0], x + 0.25, 4.13, z + 0.28, 0.3, { al: 'l', wt: 800 }); });
+        add(B(32, 2.2, 2.65, 4.4, 2.8, 0.15, '#C9CED8'), B(32, 2.0, 2.8, 4.4, 0.15, 2.9, '#596379'), B(32.2, 2.16, 2.95, 4.0, 0.02, 2.6, '#14201A', { nc: '#14201A', e: 1 }));
+        ['import pandas as pd', 'df = pd.read_excel(f)', 'model.fit(X, y)'].forEach(function (ln, i) { mono(ln, 32.4, 2.19, 5.2 - i * 0.4, 0.19, '#7FD3A8'); });
+        [0.4, 0.7, 0.55, 0.9, 1.1].forEach(function (h, i) { add(B(32.5 + i * 0.5, 2.19, 3.1, 0.34, 0.005, h * 0.8, '#7FD8CB', { e: 1, nc: '#7FD8CB' })); });
+        mug(37.6, 2.8, 2.65); add(B(38.8, 3.0, 2.65, 2.6, 1.9, 0.12, PAPER, { nc: NPAPER }), B(39.0, 4.1, 2.77, 1.6, 0.12, 0.1, '#F2C14E'));
+        lamp(43.2, 1.8, 2.65);
+        add(L.chair(36.6, 6.4, 0.25, '#5C6E91'));
+        plant(23.6, 1.4, 0.25, 0.62);
+      });
+
+      { const E = function (o, x, d, az, fov, ez) { return { pov: { eye: [o[0] + x, o[1] + d, ez || 5.2], at: [o[0] + x, o[1], az], fov: fov || 64, off: 0 } }; };
+        def.cams = {
+          e1: { pov: { eye: [OF[0] + 0.5, OF[1] + 33, 5.0], at: [OF[0] + 0.5, OF[1] + 2, 8.5], fov: 72, off: 0 } },
+          e2: E(ST, 12, 19, 6.0), e3: E(ST, 34.5, 19, 6.0),
+          e4: { pov: { eye: [152, -30, 5.0], at: [152, -62, 7.4], fov: 72, off: 0 } },
+          e5: E(HJ, 13.5, 19, 6.4), e6: E(TT, 12, 18.5, 5.7), e7: E(TT, 43.6, 18.5, 5.7),
+          e8: E(HJ, 77.5, 19, 6.4), e9: E(MC, 12, 19, 6.0), e10: E(MC, 34.5, 19, 6.0),
+          e11: E(HJ, 56.5, 19, 6.4), e12: E(HJ, 36.5, 19, 6.4), e13: E(TT, 23, 20, 5.7), e14: E(MC, 34.5, 19, 6.0),
+          e15: { pov: { eye: [330, 170, 34], at: [70, -55, 21], fov: 47, off: 0 } } // low, from the front right: not the high front-left view that ends Telkomsel and A year of trying
+        }; }
     } else if (id === 'kanzway') {
       def.label = 'Kanzway warehouse: catalog shelves of industrial tools, an ERD board, a pallet and a small team at three desks';
       def.sky = ['#D5DAE0', '#EDEDEB']; def.nsky = ['#141B2E', '#2A3450']; def.fog = 0.15; def.haze = '#E3E6EA';
@@ -1662,7 +2065,7 @@ export class CanvasDiorama {
         addF(it, [[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]], 0.74, [1, 0, 0]);
         addF(it, [[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], 1.07, [0, 0, 1]);
         if (pov) { addF(it, [[x, y, z], [x + w, y, z], [x + w, y, z + h], [x, y, z + h]], 0.86, [0, -1, 0]); addF(it, [[x, y, z], [x, y + d, z], [x, y + d, z + h], [x, y, z + h]], 0.7, [-1, 0, 0]); }
-        if (pov && it.ub) addF(it, [[x, y, z], [x + w, y, z], [x + w, y + d, z], [x, y + d, z]], 0.66, [0, 0, -1]); // ub: a box seen from below (a plane overhead) also shows its underside
+        if (pov && it.ub) addF(it, [[x, y, z], [x + w, y, z], [x + w, y + d, z], [x, y + d, z]], it.ubf || 0.66, [0, 0, -1]); // ub: a box seen from below (a plane overhead) also shows its underside; ubf: how light it is drawn (default 0.66)
       } else if (it.t === 'c' || it.t === 'k') {
         const r = it.r, rot = it.rot || 0, cx = it.x, cy = it.y, z = it.z, h = it.h, v = [];
         if (it.pts) it.pts.forEach(function (p) { v.push([cx + p[0], cy + p[1]]); }); // custom footprint (ground patches): points relative to x, y

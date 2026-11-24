@@ -100,6 +100,9 @@ html:not(.u-ready) .u-view { transition: none; } /* the first view appears at on
 .u-spine [aria-current] { color: var(--ink); }
 .u-spine [aria-current] i::before { width: 16px; height: 16px; background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(255, 106, 77, 0.28); }
 
+/* a view's link to its story, placed on the scene (board coordinates in its style) */
+.u-read { position: absolute; border: 2px solid var(--ink); font-weight: 800; }
+
 /* desktop: the written copy is for screen readers only (the scene shows it) */
 .u-copy { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: normal; }
 .u-copy strong { font-weight: 800; }
@@ -117,6 +120,8 @@ html:not(.u-ready) .u-view { transition: none; } /* the first view appears at on
   .u-col { position: static; width: auto; height: auto; gap: 14px; }
   .u-copy h2 { font: 800 24px/1.2 var(--font-head); }
   .u-copy ul { margin: 0; padding-left: 22px; }
+  .u-copy blockquote { margin: 0; padding-left: 14px; border-left: 3px solid var(--accent); }
+  .u-read { position: static; margin-top: 16px; }
   .u-card-wide .u-stories { grid-template-columns: 1fr; }
   .u-col h1 { font-size: 34px; line-height: 1.1; }
   .hud-sub { display: none; }

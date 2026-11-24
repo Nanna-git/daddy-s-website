@@ -1,9 +1,9 @@
-// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying). Each view is the canvas board: the scene
+// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson). Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
 // The page picks its section with <body data-section="…">.
 import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 
-// cam / uv / ut are copied from the boards U01…U11, TK01…TK10 and YT01…YT05 (ut = the text painted into the scene).
+// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05 and ER01…ER15 (ut = the text painted into the scene).
 // moves: how the camera gets from each view to the next one:
 //   'travel'  it really goes there (1.5 s); the old view's text stays where it is
 //   'cut'     walk, cut, walk: for spots too far apart (1.8 s). The two pictures are moved, not redrawn:
@@ -51,6 +51,24 @@ const SECTIONS = {
   { cam: 'y3', uv: 3, ut: 'Thread 2, in a different way.||To be useful to engineers, I had to understand their world, not just their numbers.' },
   { cam: 'y4', uv: 4, ut: 'Patience. Some doors open late, but they do open. In October 2010, Ericsson brought me to Riyadh, Saudi Arabia.||When I arrived, my English speaking was close to zero. My Arabic helped me survive, and my English just "grew by nature" for many years. (It took me another 15 years to finally fix it properly. That\'s its own story.)' },
   { cam: 'y5', uv: 5, ut: '' },
+  ] },
+  // Camera moves are decided last: until then every view simply appears (a plain cross-fade).
+  ericsson: { scene: 'er', moves: Array(14).fill('fade'), views: [
+  { cam: 'e1', uv: 1, ut: '4. Ericsson: 13 years with|Saudi telecom operators (2010–2023)||At Ericsson, I was a Data Solution Professional in managed services. I worked from Riyadh and Jeddah for telecom operators in Saudi Arabia, and later supported projects in the GCC and Africa. I was on the business side, close to the network operations teams, not in IT.' },
+  { cam: 'e2', uv: 2, ut: '4a. STC: building on SAP BusinessObjects (2010–2012)||My first customer was STC. Here I went deep into SAP BusinessObjects, not just as a user. I built ways to share documents publicly, set up alerts for network anomalies, and put data on Google Earth and Google Maps for faster insights.' },
+  { cam: 'e3', uv: 3, ut: 'In 2011, I was named best employee of the STC network performance team. In 2012, Omar Elward taught me Excel macros and VBA, another tool I used for years.' },
+  { cam: 'e4', uv: 4, ut: '4b. Mobily: nine years and the Hajj dream team (2013–2022)||Mobily was my longest customer. From 2014 to 2020, I was the data leader for Hajj affairs. During Hajj, the network carries millions of pilgrims in a few days, and the operations team needs to see what is happening live.' },
+  { cam: 'e5', uv: 5, ut: 'I integrated the data end to end, built dashboards and a mini-GIS application for live monitoring, made advanced reports, and automated many processes. This saved a lot of effort and improved accuracy. The tools were used for many years in a row.' },
+  { cam: 'e6', uv: 6, ut: 'That team was more than a team. It was a family: we supported each other, taught each other, and covered each other. Naif Al Malki, then a General Manager at Mobily and my data analytics mentor for many years, wrote this about my work:||"Indeed, your fingerprint is still till today, you are one of the best talented telecom engineer in advanced data analysis field that I worked with him, wish you all the best."||Naif Al Malki, now GM of Service Management Center' },
+  { cam: 'e7', uv: 7, ut: "I also received official appreciation from the customer's top management for the work progress and deep analytics." },
+  { cam: 'e8', uv: 8, ut: 'At Mobily, I also "cheated" once. Our BI tool made it hard to compare time periods, like today vs. yesterday, hour by hour. So I added "time offset" calculations directly into our main data model on the production server. I was afraid it looked like a quick fix. But it worked for years, and it\'s still in use. More than ten years later, I saw well-known BI experts teaching the same idea in Power BI, and calling it a superpower.||My "cheat" had been an expert trick all along. I just didn\'t know it.||Sometimes what looks like a "cheat" is actually a smart solution. That gave me the confidence to start sharing even my small ideas.' },
+  { cam: 'e9', uv: 9, ut: '4c. Many customers, one way of working (2021–2023)||In my last years, I moved between projects: a 4G and 5G trial for Zain, remote support for MTN Benin in Africa, then back to STC, and finally Tawal. Because I had built my tools in a reusable way, I could copy them to new projects quickly. A project manager in Bahrain told me, "Your reports are great!" A customer director in Benin said, "I like that dashboard!"' },
+  { cam: 'e10', uv: 10, ut: 'During these years I also kept learning by myself: advanced Excel and Power Query, Python, and machine learning. A friend who was also my customer, Sultan Alsayed, showed me his work in Power BI, and that pushed me to want to be as good as him. My boss also encouraged me to go deeper into machine learning.' },
+  { cam: 'e11', uv: 11, ut: 'Thread 2 again.||Most of my best tools started from what my team leaders, managers and customers needed. The IT team was supportive too: "Go ahead, do what the business needs."' },
+  { cam: 'e12', uv: 12, ut: "Thread 3 again.||The vendor's built-in reports didn't always fit our needs, so I built custom ones with the tools we had. Custom was the solution, and many of those tools are still in daily use." },
+  { cam: 'e13', uv: 13, ut: "A moment I'm proud of||Being trusted as the data leader for Hajj for seven years in a row, and Naif's words above." },
+  { cam: 'e14', uv: 14, ut: '' },
+  { cam: 'e15', uv: 15, ut: '' },
   ] },
 };
 const SLUG = document.body.dataset.section;
