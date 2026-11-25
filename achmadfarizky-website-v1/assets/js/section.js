@@ -13,9 +13,12 @@ import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 //             the view's standing point, turn to face the view, walk in. No cut; the same going back.
 //   'fade'    a plain cross-fade
 //   { kind: 'via', turn, walk, via, dur }  turn ('left' / 'right'), walk `walk` units, cut, then walk the last
-//             stretch to the view, starting where view number via + 1 stands (or a little before the view).
-//             Going back the other way it turns the short way and starts a little before the view.
-const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000 };
+//             stretch to the view, starting where view number via + 1 stands (or at the point viaEye, or a little
+//             before the view). out: it first backs that far out of the room. Going back the other way it turns the
+//             short way and starts a little before the view.
+//   { kind: 'fly', up, out, in, glide, reverse }  one take through the air: up, along a curve, and a glide down (flyPath
+//             in board.js; reverse: flying backwards). Going back it flies the same curve the other way.
+const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000, fly: 3600 };
 const SECTIONS = {
   // 2→3: turn left towards the studio, walk a little, cut to where view 6 stands, walk on to view 3
   university: { scene: 'uni', moves: ['travel', { kind: 'via', turn: 'left', walk: 6, via: 5, dur: 3000 }, 'travel', 'travel', 'travel', 'travel', 'travel', 'crane'], views: [
@@ -52,8 +55,14 @@ const SECTIONS = {
   { cam: 'y4', uv: 4, ut: 'Patience. Some doors open late, but they do open. In October 2010, Ericsson brought me to Riyadh, Saudi Arabia.||When I arrived, my English speaking was close to zero. My Arabic helped me survive, and my English just "grew by nature" for many years. (It took me another 15 years to finally fix it properly. That\'s its own story.)' },
   { cam: 'y5', uv: 5, ut: '' },
   ] },
-  // Camera moves are decided last: until then every view simply appears (a plain cross-fade).
-  ericsson: { scene: 'er', moves: Array(14).fill('fade'), views: [
+  // 2→3, 6→7, 9→10, 11→12: a side-step along the wall. 3→4 and 5→6: a crane: up, forward, a glide down
+  // (3→4 turns right as it rises and flies along the back of the operations room; 5→6 goes straight over the back wall).
+  // 4→5: a drone: up and backwards in an arc, turning right, along the back of the operations room, then backwards over
+  // its back wall and down, facing it. 7→8: pulling back and to the right out of the tent, low over the sand and the back wall.
+  // 8→9: back out of the room, turn right, walk, cut to the road, then turn in to the last room. 12→13: fast, straight through.
+  ericsson: { scene: 'er', moves: ['fade', 'travel', { kind: 'fly', dur: 4400, out: 4, in: 40, climb: 40 }, { kind: 'fly', reverse: true, dur: 4600, up: 16, out: 18, in: 40, climb: 30, glide: 0.25 },
+    { kind: 'fly', dur: 3200, climb: 16 }, 'travel', { kind: 'fly', reverse: true, dur: 3000, up: 9, out: 8, in: 8, glide: 0.35 }, { kind: 'via', turn: 'right', out: 12, walk: 10, viaEye: [172, 31, 5.2], dur: 4600 },
+    'travel', 'fade', 'travel', { kind: 'travel', dur: 1000 }, 'fade', 'crane'], views: [
   { cam: 'e1', uv: 1, ut: '4. Ericsson: 13 years with|Saudi telecom operators (2010–2023)||At Ericsson, I was a Data Solution Professional in managed services. I worked from Riyadh and Jeddah for telecom operators in Saudi Arabia, and later supported projects in the GCC and Africa. I was on the business side, close to the network operations teams, not in IT.' },
   { cam: 'e2', uv: 2, ut: '4a. STC: building on SAP BusinessObjects (2010–2012)||My first customer was STC. Here I went deep into SAP BusinessObjects, not just as a user. I built ways to share documents publicly, set up alerts for network anomalies, and put data on Google Earth and Google Maps for faster insights.' },
   { cam: 'e3', uv: 3, ut: 'In 2011, I was named best employee of the STC network performance team. In 2012, Omar Elward taught me Excel macros and VBA, another tool I used for years.' },
@@ -199,8 +208,8 @@ function moveTo(next, opts, move, pair) {
   const board = $('.u-board', views[prev]), a = viewProps(prev), b = viewProps(next);
   const forward = next > prev; // the turn hand and the cut-in spot are written for going forward
   const playing = kind === 'via'
-    ? viaMove(board, a, b, forward ? { ...move, viaEye: move.via == null ? null : povOf(viewProps(move.via)).eye } : { walk: move.walk }, dur)
-    : cameraMove(board, a, b, kind === 'walk' ? 'walk' : 'travel', dur, move);
+    ? viaMove(board, a, b, forward ? { ...move, viaEye: move.viaEye || (move.via == null ? null : povOf(viewProps(move.via)).eye) } : { walk: move.walk, out: move.out }, dur)
+    : cameraMove(board, a, b, kind === 'walk' || kind === 'fly' ? kind : 'travel', dur, { ...move, flip: !forward });
   playing.then((smooth) => {
     if (!smooth) heavy.add(pair);
     drawn.delete(prev); // the old board is left at the new camera; it is redrawn as a neighbour

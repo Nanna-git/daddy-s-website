@@ -165,12 +165,13 @@ export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, 
 //   'travel'        the camera really goes there; a's text stays where it is
 //   'travel-clear'  same, but a's text and papers fade out as it leaves (both views show the same spot)
 //   'walk'          the long way on foot, in one take: see walkPath (back: how far behind b's standing point it turns to face b)
-export function cameraMove(el, a, b, kind, dur, { back = 10 } = {}) {
+//   'fly'           up, along a curve and down, in one take: see flyPath (flip: the move is being played backwards)
+export function cameraMove(el, a, b, kind, dur, { back = 10, flip = false, ...opt } = {}) {
   const from = povOf(a), to = povOf(b);
   // the film set is there while the camera turns to it or away from it; anything else that is built
   // differently in the two views dissolves from one to the other early in the move
   const during = { ...a, studio: a.studio || b.studio };
-  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b, path: kind === 'walk' ? walkPath(from, to, back) : null });
+  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b, path: kind === 'walk' ? walkPath(from, to, back) : kind === 'fly' ? flight(from, to, opt, flip) : null });
 }
 // Turn, walk, turn, walk, with no cut: the camera turns to face where it is going, walks to a spot `back` units straight
 // behind b's standing point, turns to face what b looks at, and walks in. Each part starts and stops gently and overlaps
@@ -188,15 +189,42 @@ export function walkPath(from, to, back) {
     return { eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: lerp(from.fov || 70, to.fov || 70, s), off: lerp(from.off || 0, to.off || 0, s) };
   };
 }
+// A flight in one take: the camera climbs, flies along a curve and glides down. It leaves along its own line of sight and
+// arrives along b's, so it never swings round on the spot. u is how far along the curve it is (0–1).
+//   up       how high above the straight line it flies
+//   climb    the stretch of ground (units) over which it gets up there; glide: the last part of the way (0–1), spent coming down
+//   out, in  how far it keeps going straight after leaving and before arriving (units): they shape the curve
+//   reverse  it flies backwards the whole way, looking at where it came from (a drone pulling out)
+//   tilt     how far it looks down while it is up (radians)
+export function flyPath(from, to, { up = 14, climb = 12, glide = 0.45, out = 20, in: inn = 20, reverse = false, tilt = 0.22 } = {}) {
+  const A = gaze(from), B = gaze(to), s = reverse ? -1 : 1;
+  const P = [from.eye, [from.eye[0] + s * out * Math.cos(A.yaw), from.eye[1] + s * out * Math.sin(A.yaw)], [to.eye[0] - s * inn * Math.cos(B.yaw), to.eye[1] - s * inn * Math.sin(B.yaw)], to.eye];
+  const curve = (u, k) => (1 - u) ** 3 * P[0][k] + 3 * (1 - u) ** 2 * u * P[1][k] + 3 * (1 - u) * u * u * P[2][k] + u ** 3 * P[3][k];
+  const along = (u, k) => (1 - u) ** 2 * (P[1][k] - P[0][k]) + 2 * (1 - u) * u * (P[2][k] - P[1][k]) + u * u * (P[3][k] - P[2][k]); // which way the curve runs
+  const len = Math.hypot(to.eye[0] - from.eye[0], to.eye[1] - from.eye[1]) || 1, part = (x) => inOutSine(Math.max(0, Math.min(1, x)));
+  return (u) => {
+    const high = part(u * len / climb) * (1 - part((u - 1 + glide) / glide));
+    const eye = [curve(u, 0), curve(u, 1), lerp(from.eye[2], to.eye[2], u) + up * high];
+    const yaw = Math.atan2(s * along(u, 1), s * along(u, 0)), pitch = lerp(A.pitch, B.pitch, u) - tilt * high;
+    return { eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: lerp(from.fov || 70, to.fov || 70, u), off: lerp(from.off || 0, to.off || 0, u) };
+  };
+}
+// flyPath against time (0–1): a gentle start and a long slow-down. Going back (flip), the same curve is flown the other way.
+export function flight(from, to, opt, flip) {
+  const path = flip ? flyPath(to, from, opt) : flyPath(from, to, opt), pace = (t) => inOutSine(1 - Math.pow(1 - t, 1.5));
+  return (t) => path(flip ? 1 - pace(t) : pace(t));
+}
 // Turn, walk, cut, walk: for a spot that is too far to walk to in one go. The camera turns towards
 // it (turn: 'left' or 'right' forces the hand, otherwise the short way), walks `walk` units, the
 // picture cuts, and the camera walks the last stretch to b. That stretch starts at `viaEye` (an eye
 // point) when given, otherwise `back` units before b. a's text stays in place until the cut.
 // dolly: the last stretch starts `back` units straight behind b's standing point and walks in on what b
 // looks at (the picture grows), instead of coming in along the line from a.
-export function viaMove(el, a, b, { turn, walk = 5, viaEye = null, back = 10, dolly = false }, dur) {
+// out: before it turns, the camera first backs `out` units straight out of the room it is in.
+export function viaMove(el, a, b, { turn, walk = 5, viaEye = null, back = 10, dolly = false, out = 0 }, dur) {
   const from = povOf(a), to = povOf(b), g = gaze(from);
-  const way = [to.eye[0] - from.eye[0], to.eye[1] - from.eye[1]], len = Math.hypot(way[0], way[1]) || 1;
+  const door = [from.eye[0] - Math.cos(g.yaw) * out, from.eye[1] - Math.sin(g.yaw) * out]; // where it stands once it has backed out
+  const way = [to.eye[0] - door[0], to.eye[1] - door[1]], len = Math.hypot(way[0], way[1]) || 1, lead = out ? 0.24 : 0;
   const head = Math.atan2(way[1], way[0]), full = Math.PI * 2;
   // In this world a growing angle is a turn to the right (x runs to the right and y to the left on the set).
   let swing = ((head - g.yaw) % full + full) % full;            // turning right, 0–360°
@@ -206,12 +234,13 @@ export function viaMove(el, a, b, { turn, walk = 5, viaEye = null, back = 10, do
   const startB = viaEye || (dolly ? [to.eye[0] - Math.cos(gb.yaw) * back, to.eye[1] - Math.sin(gb.yaw) * back, to.eye[2]] : [to.eye[0] - way[0] / len * back, to.eye[1] - way[1] / len * back, to.eye[2]]);
   const entry = dolly && !viaEye ? look(startB, gb.yaw, gb.pitch, to)
     : look(startB, Math.atan2(to.eye[1] - startB[1], to.eye[0] - startB[0]), 0, to); // walking in, looking where it goes
-  return play(el, dur, (t) => {
+  return play(el, dur, (time) => {
+    const t = Math.max(0, (time - lead) / (1 - lead)), gone = out ? inOutSine(Math.min(1, time / (lead + 0.08))) : 0; // backing out runs a little into the turn
     const mix = Math.max(0, Math.min(1, (t - 0.46) / 0.1));
     let html = '';
     if (mix < 1) {
       const u = Math.min(1, t / 0.52), turned = inOutSine(Math.min(1, u / 0.7)), step = u < 0.45 ? 0 : Math.pow((u - 0.45) / 0.55, 2) * walk;
-      const eye = [from.eye[0] + way[0] / len * step, from.eye[1] + way[1] / len * step, from.eye[2]];
+      const eye = [lerp(from.eye[0], door[0], gone) + way[0] / len * step, lerp(from.eye[1], door[1], gone) + way[1] / len * step, from.eye[2]];
       html = sceneHTML({ ...a, pov: look(eye, g.yaw + swing * turned, lerp(g.pitch, 0, turned), from) });
     }
     if (mix > 0) { const v = Math.max(0, (t - 0.5) / 0.5); html += over(sceneHTML({ ...b, pov: povBetween(entry, to, 1 - (1 - v) * (1 - v)), evo: 0 }), mix); }

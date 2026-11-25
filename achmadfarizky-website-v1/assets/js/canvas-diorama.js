@@ -1549,11 +1549,12 @@ export class CanvasDiorama {
       // the camera is between them and in front of them (painted last) once it is outside. inside() adds the room's things.
       const room = function (o, w, d, h, fl, wall, inside) { at(o, function () {
         const lwall = function () { add(B(-0.4, 0, 0.25, 0.4, d, h, wall[2], { nc: wall[3] })); }, rwall = function () { add(B(w, 0, 0.25, 0.4, d, h, wall[2], { nc: wall[3] })); };
-        add(B(0, 0, 0, w, d, 0.25, fl[0], { nc: fl[1] }), B(-0.4, -0.4, 0.25, w + 0.8, 0.4, h, wall[0], { nc: wall[1] }));
+        const bwall = function () { add(B(-0.4, -0.4, 0.25, w + 0.8, 0.4, h, wall[0], { nc: wall[1] })); }; // from behind (a camera move) it goes in last, over what is in the room
+        add(B(0, 0, 0, w, d, 0.25, fl[0], { nc: fl[1] })); seen('vy', o[1], FAR, bwall);
         seen('vx', o[0], FAR, lwall); seen('vx', -FAR, o[0] + w + 0.4, rwall);
         add(B(0, 0, 0.25, w, 0.03, 0.6, '#C9C2B4', { nc: '#55504A' })); // skirting board
         inside();
-        seen('vx', -FAR, o[0], lwall); seen('vx', o[0] + w + 0.4, FAR, rwall); }); };
+        seen('vx', -FAR, o[0], lwall); seen('vx', o[0] + w + 0.4, FAR, rwall); seen('vy', -FAR, o[1], bwall); }); };
 
       // ---- The ground. The studio floor; on it a paved city block for the office front (with a lay-by across the road), a block for the STC
       // office, the apron of the operations room, a wide patch of desert sand behind it for the tents (a dune runs off to the right, a sand
@@ -1573,7 +1574,9 @@ export class CanvasDiorama {
 
       // ---- Far away, in the heat haze: the flat roofs of the city (not in the overview, where they would stand on the studio floor).
       if (EV !== 15) { [[-270, 30, 22], [-232, 18, 34], [-206, 26, 16], [-172, 14, 46], [-150, 30, 20], [-112, 20, 30], [-84, 24, 18], [-52, 16, 52], [-28, 28, 24], [10, 22, 36], [40, 30, 18], [80, 16, 60], [102, 26, 26], [140, 22, 38], [170, 30, 20], [210, 18, 44], [236, 28, 24], [268, 20, 32]].forEach(function (b) { add(B(b[0], -262, 0, b[1], 18, b[2], '#DCCFB6', { nc: '#4A3E5E' })); });
-        add(B(-520, -236, 0, 1040, 0.05, 90, '#F1E4CC', { nc: '#6A4E6A', op: 0.45 })); }
+        // the haze is one flat sheet: seen from the air (a camera move on the site) its edges would show, so it thins out as the camera rises
+        const up = this.props && this.props.pov ? this.props.pov.eye[2] : 0;
+        add(B(-1400, -236, 0, 2800, 0.05, 90, '#F1E4CC', { nc: '#6A4E6A', op: 0.45 * Math.max(0, Math.min(1, (11 - up) / 5)) })); }
       // Low dunes at the back of the sand.
       [[52, -128, 24, 6], [150, -146, 34, 8], [216, -104, 20, 5]].forEach(function (d) { add(K(d[0], d[1], 0, d[2], d[3], '#DCC79C', { n: 7, rot: 0.4, nc: '#4A4250' })); });
 
