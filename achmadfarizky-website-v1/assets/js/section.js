@@ -1,9 +1,9 @@
-// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson). Each view is the canvas board: the scene
+// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway). Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
 // The page picks its section with <body data-section="…">.
 import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 
-// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05 and ER01…ER15 (ut = the text painted into the scene).
+// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15 and KZ01…KZ07 (ut = the text painted into the scene).
 // moves: how the camera gets from each view to the next one:
 //   'travel'  it really goes there (1.5 s); the old view's text stays where it is
 //   'cut'     walk, cut, walk: for spots too far apart (1.8 s). The two pictures are moved, not redrawn:
@@ -18,7 +18,9 @@ import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 //             short way and starts a little before the view.
 //   { kind: 'fly', up, out, in, glide, reverse }  one take through the air: up, along a curve, and a glide down (flyPath
 //             in board.js; reverse: flying backwards). Going back it flies the same curve the other way.
-const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000, fly: 3600 };
+//   { kind: 'slide' }  sideways along the front of the sets and in or out of one of them, facing the walls all the way, in one take
+//             (slidePath in board.js): for two views that face the same way, one of them standing further in.
+const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000, fly: 3600, slide: 3200 };
 const SECTIONS = {
   // 2→3: turn left towards the studio, walk a little, cut to where view 6 stands, walk on to view 3
   university: { scene: 'uni', moves: ['travel', { kind: 'via', turn: 'left', walk: 6, via: 5, dur: 3000 }, 'travel', 'travel', 'travel', 'travel', 'travel', 'crane'], views: [
@@ -78,6 +80,18 @@ const SECTIONS = {
   { cam: 'e13', uv: 13, ut: "A moment I'm proud of||Being trusted as the data leader for Hajj for seven years in a row, and Naif's words above." },
   { cam: 'e14', uv: 14, ut: '' },
   { cam: 'e15', uv: 15, ut: '' },
+  ] },
+  // The three sets stand side by side around one yard, so the camera slides from one to the next, always facing the walls.
+  // 1→2: along the road, then in on the data office. 2→3, 3→4: along the office wall. 4→5: back out of the office, then along the
+  // road to the dock. 5→6: a step to the right and closer. 6→7: back and up over the road, to the whole yard.
+  kanzway: { scene: 'kz', moves: [{ kind: 'slide' }, 'travel', 'travel', { kind: 'slide', dur: 3400 }, 'travel', { kind: 'travel', dur: 2600 }], views: [
+  { cam: 'k1', uv: 1, ut: '5. Kanzway: my first manager role (2023–2025)||In September 2023, I joined Kanzway in Jeddah in a senior data management role, to manage the company\'s digital product catalog. Later my role changed: I became Business and Data Management Manager, leading a small data team. It was a new world for me, far from telecom: industrial tool brands, product catalogs and business requirements.' },
+  { cam: 'k2', uv: 2, ut: 'I wrote business requirements documents (BRDs) to define project scope, and designed entity relationship diagrams (ERDs) for the product catalog. I built a process with Python and SQL to collect complex catalog data from our partners\' websites (brands like Dormer, Völkel, ESAB, Knipex, Koken and Röhm) and load it into our database with full accuracy. I also built Power BI dashboards for management.' },
+  { cam: 'k3', uv: 3, ut: 'I also worked closely with software developers for the first time. My friends Yussin Hidayat and Aslah Fuadin taught me Git on a real project, and I learned to manage work with Trello.||In 2025 the company ended its operations. I stayed until the last months to help.' },
+  { cam: 'k4', uv: 4, ut: 'Leading a team for the first time taught me that my job was no longer only to build things, but to help other people build them well.||Writing BRDs taught me to speak the business language first, before touching any data.||Working with developers taught me version control and teamwork habits that I had never needed as a "solo data warrior."' },
+  { cam: 'k5', uv: 5, ut: 'When things end, you still have everything you learned.' },
+  { cam: 'k6', uv: 6, ut: '' },
+  { cam: 'k7', uv: 7, ut: '' },
   ] },
 };
 const SLUG = document.body.dataset.section;
@@ -209,7 +223,7 @@ function moveTo(next, opts, move, pair) {
   const forward = next > prev; // the turn hand and the cut-in spot are written for going forward
   const playing = kind === 'via'
     ? viaMove(board, a, b, forward ? { ...move, viaEye: move.viaEye || (move.via == null ? null : povOf(viewProps(move.via)).eye) } : { walk: move.walk, out: move.out }, dur)
-    : cameraMove(board, a, b, kind === 'walk' || kind === 'fly' ? kind : 'travel', dur, { ...move, flip: !forward });
+    : cameraMove(board, a, b, kind === 'walk' || kind === 'fly' || kind === 'slide' ? kind : 'travel', dur, { ...move, flip: !forward });
   playing.then((smooth) => {
     if (!smooth) heavy.add(pair);
     drawn.delete(prev); // the old board is left at the new camera; it is redrawn as a neighbour

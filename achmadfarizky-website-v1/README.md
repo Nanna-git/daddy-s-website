@@ -1,6 +1,6 @@
 # achmadfarizky.com
 
-Achmad Farizky's story-telling website. It has **Home** (V01–V06), **University** and **Telkomsel**, built from the design canvas (Claude Design) in `design/` and its view map.
+Achmad Farizky's story-telling website. It has **Home** (V01–V06), **University**, **Telkomsel**, **A year of trying**, **Ericsson** and **Kanzway**, built from the design canvas (Claude Design) in `design/` and its view map.
 
 ## Run it
 
@@ -65,3 +65,21 @@ After changing the campus or the Telkomsel set on the canvas, download `project/
 ```bash
 node tools/sync-diorama.mjs path/to/Diorama.dc.html
 ```
+
+## My story · Kanzway
+
+`kanzway.html` is section 2.5 (V5.01–V5.07, links `#/kanzway/1` … `#/kanzway/7`), built the same way from boards KZ01–KZ07 and the `kz` scene: one paved yard with the warehouse front on the left, the data office across the back and the goods-out dock on the right. Ericsson's last view, the timeline on every section page and Home's Chapters sheet link to it. Everything after Kanzway points to `#`.
+
+Its camera moves are in the `kanzway` entry of `SECTIONS` in `section.js`. The three sets stand side by side, so the camera slides from one to the next and always faces the walls:
+
+| Move | What the camera does |
+|---|---|
+| 1 → 2 | `slide`: along the road, past the corner of the warehouse, then in on the data office (3.2 s) |
+| 2 → 3, 3 → 4 | `travel`: along the office wall (1.5 s) |
+| 4 → 5 | `slide`: back out of the office, then along the road to the dock (3.4 s) |
+| 5 → 6 | `travel`: a step to the right and closer to the pallet (1.5 s) |
+| 6 → 7 | `travel`: back and up over the road, to the whole yard (2.6 s) |
+
+`slide` is a move kind added for this page (`slidePath` in `board.js`): for two views that face the same way, one of them standing further in. The camera goes sideways along the line of the view that stands further back, and in or out of the other one, with the corner rounded so it is one take.
+
+In the `kz` scene a few things depend on where the camera stands (the two halves of the warehouse roof, and the order the office furniture is drawn in), because the engine does not sort by depth. The scene reads the camera from its own camera list, or from `pov` during a move.

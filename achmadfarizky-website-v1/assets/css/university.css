@@ -89,6 +89,9 @@ html:not(.u-ready) .u-view { transition: none; } /* the first view appears at on
 .u-card-wide .u-story-body { padding: 12px 14px 14px; gap: 5px; }
 .u-card-wide .u-story-body span { font-size: 11px; }
 .u-card-wide .u-story-body strong { font-size: 15px; }
+/* a wide card with a single story (Kanzway): narrower, one column; on a phone it follows the phone rules below */
+.u-card-one { width: 460px; }
+.u-card-one .u-stories { grid-template-columns: minmax(0, 1fr); }
 
 /* timeline of the seven chapters, bottom left (HUD) */
 .u-spine { position: fixed; z-index: 20; left: 36px; bottom: 34px; width: 384px; text-shadow: 0 0 10px var(--halo), 0 0 3px var(--halo); }

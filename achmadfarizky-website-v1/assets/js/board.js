@@ -166,12 +166,29 @@ export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, 
 //   'travel-clear'  same, but a's text and papers fade out as it leaves (both views show the same spot)
 //   'walk'          the long way on foot, in one take: see walkPath (back: how far behind b's standing point it turns to face b)
 //   'fly'           up, along a curve and down, in one take: see flyPath (flip: the move is being played backwards)
+//   'slide'         sideways along the front of the sets and in or out of one, in one take: see slidePath
 export function cameraMove(el, a, b, kind, dur, { back = 10, flip = false, ...opt } = {}) {
   const from = povOf(a), to = povOf(b);
   // the film set is there while the camera turns to it or away from it; anything else that is built
   // differently in the two views dissolves from one to the other early in the move
   const during = { ...a, studio: a.studio || b.studio };
-  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b, path: kind === 'walk' ? walkPath(from, to, back) : kind === 'fly' ? flight(from, to, opt, flip) : null });
+  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b, path: kind === 'walk' ? walkPath(from, to, back) : kind === 'fly' ? flight(from, to, opt, flip) : kind === 'slide' ? slidePath(from, to) : null });
+}
+// A slide between two views that face the same way but stand at different depths (one of them inside a set): the camera
+// keeps facing the walls the whole way. It goes sideways along the line of the view that stands further back, and in or
+// out of the other one: back out first when it starts inside, in last when it ends inside. The corner between the two
+// legs is rounded (a curve with both handles on the corner), so it is one move, not two. Played backwards it is the same path.
+export function slidePath(from, to) {
+  const A = gaze(from), B = gaze(to), fx = Math.cos(A.yaw), fy = Math.sin(A.yaw);
+  const depth = (p) => p.eye[0] * fx + p.eye[1] * fy, side = (p) => -p.eye[0] * fy + p.eye[1] * fx; // along the line of sight, and across it
+  const inward = depth(to) > depth(from), d = inward ? depth(from) : depth(to), w = inward ? side(to) : side(from);
+  const corner = [d * fx - w * fy, d * fy + w * fx];
+  return (t) => {
+    const s = inOutSine(t), u = 1 - s, yaw = A.yaw + (((B.yaw - A.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI) * s, pitch = lerp(A.pitch, B.pitch, s);
+    const at = (k) => u ** 3 * from.eye[k] + (1 - u ** 3 - s ** 3) * corner[k] + s ** 3 * to.eye[k];
+    const eye = [at(0), at(1), lerp(from.eye[2], to.eye[2], s)];
+    return { eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: lerp(from.fov || 70, to.fov || 70, s), off: lerp(from.off || 0, to.off || 0, s) };
+  };
 }
 // Turn, walk, turn, walk, with no cut: the camera turns to face where it is going, walks to a spot `back` units straight
 // behind b's standing point, turns to face what b looks at, and walks in. Each part starts and stops gently and overlaps
