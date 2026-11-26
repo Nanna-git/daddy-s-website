@@ -1,6 +1,6 @@
 # achmadfarizky.com
 
-Achmad Farizky's story-telling website. It has **Home** (V01–V06), **University**, **Telkomsel**, **A year of trying**, **Ericsson**, **Kanzway** and **Learning through community**, built from the design canvas (Claude Design) in `design/` and its view map.
+Achmad Farizky's story-telling website. It has **Home** (V01–V06), **University**, **Telkomsel**, **A year of trying**, **Ericsson**, **Kanzway**, **Learning through community** and **Johns Hopkins Aramco Healthcare**, built from the design canvas (Claude Design) in `design/` and its view map.
 
 ## Run it
 
@@ -88,7 +88,7 @@ In the `kz` scene a few things depend on where the camera stands (the two halves
 
 ## My story · Learning through community
 
-`community.html` is section 2.6 (V6.01–V6.09, links `#/community/1` … `#/community/9`), built the same way from boards LC01–LC09 and the `lc` scene: a park lot with four places standing apart, each on its own patch of ground: the park gate, the painted park wall on its lawn, the hall (dojo, forge, locker room) and the street front. Kanzway's last view, the timeline on every section page, the slate and Home's Chapters sheet link to it. Everything after it points to `#`.
+`community.html` is section 2.6 (V6.01–V6.09, links `#/community/1` … `#/community/9`), built the same way from boards LC01–LC09 and the `lc` scene: a park lot with four places standing apart, each on its own patch of ground: the park gate, the painted park wall on its lawn, the hall (dojo, forge, locker room) and the street front. Kanzway's last view, the timeline on every section page, the slate and Home's Chapters sheet link to it.
 
 Its camera moves are in the `community` entry of `SECTIONS` in `section.js`:
 
@@ -104,3 +104,23 @@ Its camera moves are in the `community` entry of `SECTIONS` in `section.js`:
 | 8 → 9 | `travel`: back and up over the street building, to the whole lot (3 s) |
 
 `route` is a move kind added for this page (`routePath` in `board.js`): a walk in one take through given points on the ground (`via`, here the gate opening and a bend of the path), so the camera can go through an opening instead of through a wall. Going back, the same path is walked backwards. It is also used on University and Telkomsel (see above).
+
+## My story · Johns Hopkins Aramco Healthcare
+
+`jhah.html` is section 2.7, the last of My story (V7.01–V7.10, links `#/jhah/1` … `#/jhah/10`), built the same way from boards JH01–JH10 and the `jh` scene: a hospital lot with four places standing apart, each on its own patch of ground: the hospital front and the wing (clinic corridor, meeting room) at the front, the library and the long data office behind them. Community's last view, the timeline on every section page, the slate and Home's Chapters sheet link to it. Everything after it (Portfolio) points to `#`.
+
+Its camera moves are in the `jhah` entry of `SECTIONS` in `section.js`:
+
+| Move | What the camera does |
+|---|---|
+| 1 → 2 | `fly`: up the hospital front, over its roof and down to the library behind it (5 s) |
+| 2 → 3 | `walk`: turn right, along the front of the back row, turn in to the data office (6 s) |
+| 3 → 4 | `travel`: along the office wall (1.5 s) |
+| 4 → 5 | `slide`: sideways along the back row, facing the walls, then in on the other half of the library (4.2 s) |
+| 5 → 6 | `fly`, backwards: up out of the library, across the lot, over the wing and down in front of the clinic corridor (4.6 s) |
+| 6 → 7 | `travel`: along the corridor wall (1.5 s) |
+| 7 → 8 | `travel`: past the sill into the meeting room (1.8 s) |
+| 8 → 9 | `fly`: over the wing, down in front of the right end of the data office (4 s) |
+| 9 → 10 | `crane`: back and up over the wing, to the whole lot (3.4 s) |
+
+The hospital's ground floor has back and side walls that are drawn twice (`seen` in the scene), so the lobby cannot be seen through them when a move passes beside or behind the building.

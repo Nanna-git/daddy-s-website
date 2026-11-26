@@ -2787,6 +2787,11 @@ export class CanvasDiorama {
       at(HP, function () {
         const WALL = '#F2F1EC', NWALL = '#454C64', palms = function () { palm(-36, -6, 5.6); palm(31, -11, 6.2); };
         seen('vy', HP[1], FAR, palms);
+        // The ground floor's shell: its back and side walls. They go in here, behind the lobby, for a camera in front; a camera behind or
+        // beside the building (a camera move) gets them again further down, over the lobby, so it cannot be seen through them.
+        const backW = function () { add(B(-22.5, -10, 0, 45, 0.4, 11.6, WALL, { nc: NWALL })); }, sideL = function () { add(B(-22.5, -9.6, 0, 0.4, 8.4, 11.6, WALL, { nc: NWALL })); }, sideR = function () { add(B(22.1, -9.6, 0, 0.4, 8.4, 11.6, WALL, { nc: NWALL })); };
+        const sides = function () { seen('vx', HP[0] + 22.5, FAR, sideR); seen('vx', -FAR, HP[0] - 22.5, sideL); };
+        backW(); sideL(); sideR();
         // the lobby behind the doors, lit at night
         add(B(-9, -9, 0, 18, 9, 0.12, '#DDE5E4', { nc: '#6A6450' }), B(-9, -9.4, 0, 18, 0.4, 11.6, '#E4EEEE', { nc: '#F2E2B8' }), L.cross(0, -8.98, 7.0, 1.7, MINT));
         add(B(-22.5, -10, 11.6, 45, 8.8, 12.4, WALL, { nc: NWALL })); // the storey above
@@ -2819,8 +2824,10 @@ export class CanvasDiorama {
           // Achmad at the open doors, his bag on his back; a pale walk leads in.
           add(B(-2.2, 0, 0, 4.4, 15, 0.04, '#DCE5E4', { nc: '#4A5262' }));
           man(0.4, 4.6, 0.05, { back: true }); add(B(-0.15, 4.95, 2.75, 1.1, 0.5, 1.5, '#B8472E', { nc: '#6A3028' }));
+          sides();
           lamp(-26.5, 6, 11); lamp(26.5, 6, 11);
         });
+        seen('vy', -FAR, HP[1], function () { backW(); sides(); });
         seen('vy', -FAR, HP[1], palms);
       });
 

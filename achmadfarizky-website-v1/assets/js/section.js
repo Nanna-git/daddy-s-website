@@ -1,9 +1,9 @@
-// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway, 2.6 Learning through community). Each view is the canvas board: the scene
+// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway, 2.6 Learning through community, 2.7 Johns Hopkins Aramco Healthcare). Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
 // The page picks its section with <body data-section="…">.
 import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 
-// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15, KZ01…KZ07 and LC01…LC09 (ut = the text painted into the scene).
+// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15, KZ01…KZ07, LC01…LC09 and JH01…JH10 (ut = the text painted into the scene).
 // moves: how the camera gets from each view to the next one:
 //   'travel'  it really goes there (1.5 s); the old view's text stays where it is
 //   'cut'     walk, cut, walk: for spots too far apart (1.8 s). The two pictures are moved, not redrawn:
@@ -115,6 +115,24 @@ const SECTIONS = {
   { cam: 'c7', uv: 7, ut: 'A moment I\'m proud of||Two job offers on the same day, after only eight months of learning in public.' },
   { cam: 'c8', uv: 8, ut: '' },
   { cam: 'c9', uv: 9, ut: '' },
+  ] },
+  // Four places stand apart on one hospital lot: the hospital front and the wing at the front, the library and the data office behind them.
+  // 1→2: a flight up the hospital front, over its roof and down to the library behind it. 2→3: on foot in one take: turn right, along the
+  // back row to the data office, turn in. 3→4: along the office wall. 4→5: sideways along the front of the back row, facing the walls all
+  // the way, then in on the other half of the library. 5→6: a flight backwards, up out of the library, across the lot and over
+  // the wing, down in front of the clinic corridor. 6→7, 7→8: along the wing. 8→9: a flight over the wing, down in front of the office.
+  // 9→10: back and up over the wing, to the whole lot.
+  jhah: { scene: 'jh', moves: [{ kind: 'fly', up: 26, climb: 26, dur: 5000 }, { kind: 'walk', back: 10, dur: 6000 }, 'travel', { kind: 'slide', dur: 4200 }, { kind: 'fly', reverse: true, up: 18, glide: 0.4, dur: 4600 }, 'travel', { kind: 'travel', dur: 1800 }, { kind: 'fly', up: 16, dur: 4000 }, { kind: 'crane', dur: 3400 }], views: [
+  { cam: 'j1', uv: 1, ut: '7. Johns Hopkins Aramco Healthcare: learning a new language (2025–now)||In October 2025, I joined Johns Hopkins Aramco Healthcare (JHAH) in Dhahran as a Quality & Data Analyst, working as a data specialist in healthcare. It was my third industry, and the first one where I didn\'t know the business at all.' },
+  { cam: 'j2', uv: 2, ut: 'Before day one, I studied healthcare analytics and passed the CHDA exam (AHIMA), which shocked me with how deep the healthcare questions were. Then Elijah Joshua Pryor, through his posts, introduced me to DAMA and the DMBOK2. After that, I started studying data management seriously, because it brings all my years of experience together into one framework.' },
+  { cam: 'j3', uv: 3, ut: 'In my first year:||I found that about 60% of my job is talking to people, not working with data.||My first task was one page of a Power BI dashboard. A few weeks later, I was unexpectedly asked to open it in a meeting with shareholders and answer their questions. They liked it.||My director gave me the chance to lead a new data project, where I practiced data modeling for real.||I took Epic training (Cogito, Clarity, Caboodle and Access data models) to understand our healthcare data and work better with the IT reporting teams.||I helped with the data side of JHAH\'s ICHOM accreditation for two services, one of them a first in Saudi Arabia.||I passed all my CDMP exams and became a CDMP Master in August 2026.' },
+  { cam: 'j4', uv: 4, ut: 'My work moved from front-end dashboards to the back end: data modeling, data quality and metadata. I miss building Power BI experiments sometimes, but a strong back end makes the front end much easier.' },
+  { cam: 'j5', uv: 5, ut: 'Now I\'m studying again: a Master of Applied Science in Patient Safety & Healthcare Quality at the Johns Hopkins Bloomberg School of Public Health, and two AI and Agentic AI in Healthcare programs at the Johns Hopkins Whiting School of Engineering.' },
+  { cam: 'j6', uv: 6, ut: 'Thread 2, in its newest form: learn their language.||To build something useful for doctors, nurses and pharmacists, I first need to understand how they work. So I\'m learning healthcare from the inside.' },
+  { cam: 'j7', uv: 7, ut: 'Find mentors early.||My colleagues are senior people with clinical backgrounds, and my manager is strong in data management. I\'m surrounded by great teachers.||Analytics shows you the answer. Data management tells you whether you can trust it.' },
+  { cam: 'j8', uv: 8, ut: 'A moment I\'m proud of||That shareholder meeting, when the dashboard answered their questions better than I could.' },
+  { cam: 'j9', uv: 9, ut: 'Tools I picked up' },
+  { cam: 'j10', uv: 10, ut: '' },
   ] },
 };
 const SLUG = document.body.dataset.section;
