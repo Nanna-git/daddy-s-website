@@ -168,33 +168,58 @@ export function travel(el, props, a, b, dur, { ease = inOutSine, clear = false, 
 //   'fly'           up, along a curve and down, in one take: see flyPath (flip: the move is being played backwards)
 //   'slide'         sideways along the front of the sets and in or out of one, in one take: see slidePath
 //   'route'         on foot through given points (a gate, a door), in one take: see routePath (via: the points)
+//   'drone'         turn on the spot, fly a curve, spin round onto b, in one take: see dronePath
 export function cameraMove(el, a, b, kind, dur, { back = 10, flip = false, ...opt } = {}) {
   const from = povOf(a), to = povOf(b);
   // the film set is there while the camera turns to it or away from it; anything else that is built
   // differently in the two views dissolves from one to the other early in the move
   const during = { ...a, studio: a.studio || b.studio };
-  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b, path: kind === 'walk' ? walkPath(from, to, back) : kind === 'fly' ? flight(from, to, opt, flip) : kind === 'slide' ? slidePath(from, to) : kind === 'route' ? route(from, to, opt.via || [], flip) : null });
+  return travel(el, during, from, to, dur, { clear: kind === 'travel-clear', then: built(a) === built(b) ? null : b, path: kind === 'walk' ? walkPath(from, to, back) : kind === 'fly' ? flight(from, to, opt, flip) : kind === 'slide' ? slidePath(from, to) : kind === 'route' ? route(from, to, opt, flip) : kind === 'drone' ? drone(from, to, opt, flip) : null });
 }
 // A walk in one take through given points on the ground (via: [[x, y], …], for a gate or a door): the camera follows a smooth
 // curve from a through the points to b. It turns to where it is going as it sets off, and to what b looks at over the last
 // part of the way. Played backwards (flip) it is the same path, walked backwards.
-export function routePath(from, to, via) {
+// fixed: the camera keeps facing the way both views face (it backs out, steps sideways and goes in) instead of turning to the path.
+// watch: it looks at what b looks at the whole way, instead of where it is going (an arc round the place it walks to).
+export function routePath(from, to, via, { fixed = false, watch = false } = {}) {
   const P = [from.eye, ...via.map((p) => [p[0], p[1], p[2] ?? from.eye[2]]), to.eye], n = P.length - 1, A = gaze(from), B = gaze(to);
   const short = (d) => Math.atan2(Math.sin(d), Math.cos(d)); // the short way round
   const on = (u, k) => { // a curve through every point (Catmull-Rom)
     const i = Math.min(n - 1, Math.floor(u * n)), f = u * n - i, p0 = P[Math.max(0, i - 1)][k], p1 = P[i][k], p2 = P[i + 1][k], p3 = P[Math.min(n, i + 2)][k];
     return 0.5 * (2 * p1 + (p2 - p0) * f + (2 * p0 - 5 * p1 + 4 * p2 - p3) * f * f + (3 * p1 - p0 - 3 * p2 + p3) * f ** 3);
   };
+  const at = byLength((u) => [0, 1, 2].map((k) => on(u, k))); // steady pace, however far apart the points are
   return (t) => {
-    const u = inOutSine(t), eye = [0, 1, 2].map((k) => on(u, k)), u0 = Math.max(0, Math.min(0.96, u - 0.02)), u1 = u0 + 0.04; // a short stretch of the path around here, kept inside it
-    const ahead = Math.atan2(on(u1, 1) - on(u0, 1), on(u1, 0) - on(u0, 0)); // which way the path runs here
-    const lead = inOutSine(Math.min(1, u / 0.2)), land = inOutSine(Math.max(0, (u - 0.6) / 0.4));
+    const s = inOutSine(t), eye = [0, 1, 2].map((k) => on(at(s), k)), s0 = Math.max(0, Math.min(0.96, s - 0.02)), u0 = at(s0), u1 = at(s0 + 0.04); // a short stretch of the path around here, kept inside it
+    const ahead = watch ? Math.atan2(to.at[1] - eye[1], to.at[0] - eye[0]) : Math.atan2(on(u1, 1) - on(u0, 1), on(u1, 0) - on(u0, 0)); // which way the path runs here
+    const lead = fixed ? 0 : inOutSine(Math.min(1, s / 0.2)), land = fixed ? s : inOutSine(Math.max(0, (s - 0.6) / 0.4));
     let yaw = A.yaw + short(ahead - A.yaw) * lead; yaw += short(B.yaw - yaw) * land;
     const pitch = lerp(A.pitch * (1 - lead), B.pitch, land);
-    return { eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: lerp(from.fov || 70, to.fov || 70, u), off: lerp(from.off || 0, to.off || 0, u) };
+    return { eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: lerp(from.fov || 70, to.fov || 70, s), off: lerp(from.off || 0, to.off || 0, s) };
   };
 }
-const route = (from, to, via, flip) => { const path = flip ? routePath(to, from, via) : routePath(from, to, via); return (t) => path(flip ? 1 - t : t); }; // via is written for going forward
+// For a curve p(u) (u 0–1): the u that is a given share (0–1) of the way along it, so the camera moves at an even speed.
+function byLength(p, N = 240) {
+  const acc = [0]; let q = p(0);
+  for (let i = 1; i <= N; i++) { const r = p(i / N); acc.push(acc[i - 1] + Math.hypot(r[0] - q[0], r[1] - q[1], r[2] - q[2])); q = r; }
+  return (s) => { const L = Math.max(0, Math.min(1, s)) * acc[N]; let i = 1; while (i < N && acc[i] < L) i++; return (i - 1 + (L - acc[i - 1]) / ((acc[i] - acc[i - 1]) || 1)) / N; };
+}
+const route = (from, to, opt, flip) => { const path = flip ? routePath(to, from, opt.via || [], opt) : routePath(from, to, opt.via || [], opt); return (t) => path(flip ? 1 - t : t); }; // via is written for going forward
+// A drone shot in one take: it turns on the spot as it lifts off (first, radians, < 0 a turn to the left), flies a curve through the
+// ground points c1 and c2 high over the sets, and spins on round as it glides down onto b (spin: about how far, < 0 to the left; it is
+// trued so the camera ends looking where b looks). Each part eases in and out and overlaps the next, so it never stops on the way.
+export function dronePath(from, to, { c1, c2, up = 18, first = -Math.PI / 2, spin = -1.5 * Math.PI, tilt = 0.3 } = {}) {
+  const A = gaze(from), B = gaze(to), r = B.yaw - A.yaw - first - spin, turn = spin + Math.atan2(Math.sin(r), Math.cos(r));
+  const P = [from.eye, c1, c2, to.eye], bez = (u, k) => (1 - u) ** 3 * P[0][k] + 3 * (1 - u) ** 2 * u * P[1][k] + 3 * (1 - u) * u * u * P[2][k] + u ** 3 * P[3][k];
+  const at = byLength((u) => [bez(u, 0), bez(u, 1), 0]), part = (t, t0, len) => inOutSine(Math.max(0, Math.min(1, (t - t0) / len)));
+  return (t) => {
+    const turn1 = part(t, 0, 0.3), go = part(t, 0.12, 0.78), turn2 = part(t, 0.48, 0.52), high = part(t, 0.04, 0.36) * (1 - part(t, 0.6, 0.4)), u = at(go);
+    const eye = [bez(u, 0), bez(u, 1), lerp(from.eye[2], to.eye[2], go) + up * high];
+    const yaw = A.yaw + first * turn1 + turn * turn2, pitch = lerp(A.pitch, B.pitch, go) - tilt * high;
+    return { eye, at: [eye[0] + 10 * Math.cos(pitch) * Math.cos(yaw), eye[1] + 10 * Math.cos(pitch) * Math.sin(yaw), eye[2] + 10 * Math.sin(pitch)], fov: lerp(from.fov || 70, to.fov || 70, go), off: lerp(from.off || 0, to.off || 0, go) };
+  };
+}
+const drone = (from, to, opt, flip) => { const path = flip ? dronePath(to, from, opt) : dronePath(from, to, opt); return (t) => path(flip ? 1 - t : t); }; // written for going forward
 // A slide between two views that face the same way but stand at different depths (one of them inside a set): the camera
 // keeps facing the walls the whole way. It goes sideways along the line of the view that stands further back, and in or
 // out of the other one: back out first when it starts inside, in last when it ends inside. The corner between the two

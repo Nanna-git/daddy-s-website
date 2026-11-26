@@ -36,6 +36,8 @@ Going to the next or previous view, the camera travels from one view's position 
 
 University and Telkomsel move the same way. Each has a `moves` list in `section.js`: `'travel'` (1.5 s), `'cut'` for spots too far apart (walk, cut, walk in 1.8 s: the old picture steps forward and fades while the new one fades in and settles, without redrawing), `'crane'` for the slow rise to the last view (2.4 s) or `'fade'`. A move that a device cannot keep up with cross-fades from then on.
 
+Since 2026-11-26 University 1 → 2 and 2 → 3 and every Telkomsel move are one take, with no cut: `route` walks (through the gate and up to the lab; across the lawn into the studio; on Telkomsel an arc to the rural site with `watch: true`, which keeps the camera looking at where it is going, and a backing-out slide from the meeting room to the office with `fixed: true`, which keeps it facing the walls), a `fly` from the rural site into the office, and longer `travel`s inside the office. A `route` keeps an even pace along its whole path, however far apart its points are. Ericsson 4 → 5 is a `drone` (`dronePath` in `board.js`): it turns left on the spot as it lifts off, flies an arc over the operations room through the ground points `c1`, `c2`, and spins on round to the left (about 270°) as it glides down onto view 5.
+
 ### The slate (between pages)
 
 Going from one page to another plays a film slate instead of a plain page load: a clapperboard is lifted into the frame, the lights go down, the sticks clap, the next page loads behind the closed board, then the board drops away, the lights come up and the first view's text comes in. The board reads the page it is going to ("Scene 2 · Telkomsel · 2005–2009", director Achmad Farizky; Home reads "Home").
@@ -101,4 +103,4 @@ Its camera moves are in the `community` entry of `SECTIONS` in `section.js`:
 | 7 → 8 | `fly`: over the roof of the street building, down in front of the locker room (3.4 s) |
 | 8 → 9 | `travel`: back and up over the street building, to the whole lot (3 s) |
 
-`route` is a move kind added for this page (`routePath` in `board.js`): a walk in one take through given points on the ground (`via`, here the gate opening and a bend of the path), so the camera can go through an opening instead of through a wall. Going back, the same path is walked backwards.
+`route` is a move kind added for this page (`routePath` in `board.js`): a walk in one take through given points on the ground (`via`, here the gate opening and a bend of the path), so the camera can go through an opening instead of through a wall. Going back, the same path is walked backwards. It is also used on University and Telkomsel (see above).

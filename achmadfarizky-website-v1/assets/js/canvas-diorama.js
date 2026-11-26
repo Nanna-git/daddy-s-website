@@ -425,11 +425,13 @@ export class CanvasDiorama {
       // three picnic tables under umbrellas, planters, a bike rack and a short walk to the print-shop path. Drawn before the buildings, which stand in front of it.
       (function () { const p0 = I.length; const WD = '#B98E62', LG = '#6B4A33', UMB = ['#C9524A', '#E7C14B', '#2F5C99'];
         add(B(-15, 35.6, 0, 20, 10.6, 0.05, '#D9CDB4', { nc: '#5E5A52' }));
-        [[-13, 38.2], [-6.5, 41.6], [0, 38.2]].forEach(function (t, i) { const x = t[0], y = t[1];
+        const pot = function (p) { add(B(p[0], p[1], 0, 0.9, 0.9, 0.8, '#C9C2B4'), S(p[0] + 0.45, p[1] + 0.45, 1.25, 0.6, '#6E9A66')); };
+        [[-14.6, 35.8], [4.0, 35.8]].forEach(pot); // painted far to near: the back planters, the two back tables, the front table, the front planters, the rack
+        [[-13, 38.2, 0], [0, 38.2, 2], [-6.5, 41.6, 1]].forEach(function (t) { const x = t[0], y = t[1], i = t[2];
           add(B(x + 0.2, y + 0.3, 0, 0.18, 1.0, 1.55, LG), B(x + 2.8, y + 0.3, 0, 0.18, 1.0, 1.55, LG), B(x, y, 1.55, 3.2, 1.6, 0.16, WD));
           add(B(x, y - 0.9, 0.85, 3.2, 0.5, 0.12, WD), B(x, y + 2.0, 0.85, 3.2, 0.5, 0.12, WD), B(x + 0.3, y - 0.8, 0, 0.14, 0.3, 0.85, LG), B(x + 2.7, y - 0.8, 0, 0.14, 0.3, 0.85, LG), B(x + 0.3, y + 2.1, 0, 0.14, 0.3, 0.85, LG), B(x + 2.7, y + 2.1, 0, 0.14, 0.3, 0.85, LG));
           add(C(x + 1.6, y + 0.8, 1.7, 0.07, 2.6, '#3D4A63', { n: 6 }), K(x + 1.6, y + 0.8, 4.0, 2.2, 1.0, UMB[i], { n: 8 })); });
-        [[-14.6, 35.8], [-14.6, 44.4], [4.0, 35.8], [4.0, 44.4]].forEach(function (p) { add(B(p[0], p[1], 0, 0.9, 0.9, 0.8, '#C9C2B4'), S(p[0] + 0.45, p[1] + 0.45, 1.25, 0.6, '#6E9A66')); });
+        [[-14.6, 44.4], [4.0, 44.4]].forEach(pot);
         for (let k = 0; k < 4; k++) add(B(-11 + k * 1.0, 45.1, 0, 0.08, 0.08, 1.1, '#9AA3B2'), B(-11 + k * 1.0, 45.1, 1.1, 0.08, 0.7, 0.08, '#9AA3B2'));
         add(B(-11.2, 45.15, 0.3, 3.6, 0.04, 0.06, '#9AA3B2'));
         add(B(-6.4, 46.2, 0, 2.6, 18.4, 0.04, '#E4DCCB'));
@@ -741,13 +743,13 @@ export class CanvasDiorama {
         add(B(43, 1, 0.12, 16, 0.4, 9.2, '#E7DFD0', { nc: '#67625B' }), B(43, 1, 0.12, 0.4, 11, 9.2, '#EFE8DA', { nc: '#6F6A63' }), B(58.6, 1, 0.12, 0.4, 11, 9.2, '#EFE8DA', { nc: '#6F6A63' }));
         add(B(45.5, 1.4, 7.6, 11, 0.06, 1.1, '#2F5C99'), T(51.0, 1.48, 8.05, 0.5, 'PERCETAKAN KAMPUS', { al: 'c', wt: 800, ff: 'Manrope, sans-serif', c: '#F7F3EA', nc: '#F7F3EA' }));
         // Proof sheet on the back wall: cream paper, black crop marks at the corners, CMYK colour bar along the foot.
-        const OV = UV === 11, SB = OV ? 3.6 : 5.0; // the overview is far away: a taller sheet with larger text so it can be read
+        const SB = 5.0; // the overview shows the same sheet as V1.09: the crane out of the shop keeps its words where they are
         add(B(47.2, 1.42, SB, 7.6, 0.02, 7.45 - SB, '#FFFDF7', { nc: '#C9CEDA' }));
         // Crop marks just outside each corner of the sheet (x 47.2 to 54.8, z 2.6 to 7.2).
         [[47.2, 7.45, -1, 1], [54.8, 7.45, 1, 1], [47.2, SB, -1, -1], [54.8, SB, 1, -1]].forEach(function (m) { add(B(m[2] < 0 ? m[0] - 0.5 : m[0] + 0.15, 1.45, m[1] - 0.015, 0.35, 0.005, 0.03, '#1E2430'), B(m[0] - 0.015, 1.45, m[3] > 0 ? m[1] + 0.15 : m[1] - 0.5, 0.03, 0.005, 0.35, '#1E2430')); });
         ['#29B6D6', '#D6338C', '#F2D33A', '#1E2430'].forEach(function (c, i) { add(B(53.0 + i * 0.4, 1.45, SB + 0.12, 0.36, 0.005, 0.22, c, { nc: c })); });
-        add(T(47.65, 1.48, 7.12, OV ? 0.62 : 0.38, W9[0] || '', { al: 'l', wt: 800, ff: 'Manrope, sans-serif', c: INK2, nc: INK2 }));
-        lines(wrap(W9[1] || '', OV ? 30 : 46), 47.65, 1.48, OV ? 6.3 : 6.55, OV ? 0.44 : 0.28, OV ? 0.56 : 0.42, OY);
+        add(T(47.65, 1.48, 7.12, 0.38, W9[0] || '', { al: 'l', wt: 800, ff: 'Manrope, sans-serif', c: INK2, nc: INK2 }));
+        lines(wrap(W9[1] || '', 46), 47.65, 1.48, 6.55, 0.28, 0.42, OY);
         // Counter with the print run on it.
         add(B(45.2, 6.8, 0.12, 11.6, 1.7, 2.5, '#8C6A4A'), B(45.0, 6.7, 2.62, 12.0, 1.9, 0.14, '#B98E62'));
         for (let k = 0; k < 3; k++) for (let j = 0; j < 4; j++) add(B(46.0 + k * 1.6, 7.0, 2.76 + j * 0.14, 1.3, 1.0, 0.12, j === 3 ? '#7A93B8' : '#F4EEDF', { nc: j === 3 ? '#7A93B8' : '#C9CEDA' }));
@@ -978,7 +980,7 @@ export class CanvasDiorama {
       // The test call: signal waves (three arcs either side) off the tower's antennas, and two small arcs over the car's roof antenna
       // receiving it. Each arc is a run of small overlapping squares facing the camera; the arcs pulse in turn.
       (function () { const arc = function (cx, cy, cz, r, a0, a1, k) { const n = Math.ceil(r * (a1 - a0) / 0.11);
-          for (let j = 0; j <= n; j++) { const a = a0 + (a1 - a0) * j / n; add(B(cx + r * Math.cos(a) - 0.09, cy, cz + r * Math.sin(a) - 0.09, 0.18, 0.03, 0.18, '#7FD8CB', { e: 1, nc: '#7FD8CB', a: k % 2 ? 'dz-twinkle' : 'dz-pulse' })); } };
+          for (let j = 0; j <= n; j++) { const a = a0 + (a1 - a0) * j / n; add(B(cx + r * Math.cos(a) - 0.09, cy, cz + r * Math.sin(a) - 0.09, 0.18, 0.03, 0.18, '#2FA89A', { e: 1, nc: '#7FD8CB', a: 'dz-sig' + (k + 1) })); } }; // inner to outer, one after another, like the other towers
         [1.2, 2.0, 2.8].forEach(function (r, k) { arc(TX + 0.7, 2.2, 22.6, r, -0.75, 0.75, k); arc(TX - 0.7, 2.2, 22.6, r, Math.PI - 0.75, Math.PI + 0.75, k); }); // low on the antennas, so V2.02's frame catches them
         [0.6, 1.1].forEach(function (r, k) { arc(TX + 1.0, 6.6, 8.5, r, 0.75, Math.PI - 0.75, k); });
       })();
@@ -1295,8 +1297,9 @@ export class CanvasDiorama {
         // One row of windows only, on the left side: every camera that sees the plane's side stands to its left. (A row on the right side
         // too showed through the body as a second row.)
         const body = function () { P(-2, -37, 1, 4, 3, 4, WH); P(-3, -34, 0, 6, 34, 6, WH);
-          for (let i = 0; i < 10; i++) P(-3.04, -30.5 + i * 2.6, 3.4, 0.03, 1.4, 1.1, '#5C7FA8', { nc: LITW, e: 1, ub: 0 });
-          P(-2.04, -36.6, 3.0, 0.03, 2.0, 1.1, '#5C7FA8', { nc: '#FFE7A8', e: 1, ub: 0 });
+          // only while the camera is left of that side: from below (the gate) they showed through the body as thin lines
+          for (let i = 0; i < 10; i++) P(-3.04, -30.5 + i * 2.6, 3.4, 0.03, 1.4, 1.1, '#5C7FA8', { nc: LITW, e: 1, ub: 0, vx: [-1e9, px - 3.04 * k] });
+          P(-2.04, -36.6, 3.0, 0.03, 2.0, 1.1, '#5C7FA8', { nc: '#FFE7A8', e: 1, ub: 0, vx: [-1e9, px - 2.04 * k] });
           P(-0.6, -8, 6, 1.2, 8, 4, BLUE, { nc: BLUE }); P(-0.6, -5.5, 10, 1.2, 5.5, 3.6, BLUE, { nc: BLUE });
           P(-2, 0, 1.2, 4, 1.6, 4, WH); P(-3, -0.02, 2.6, 6, 0.03, 0.5, BLUE, { nc: BLUE }); };
         // From the gate (behind and below) nothing of the body hides a wing, so both sides go in first. The overview looks from the front

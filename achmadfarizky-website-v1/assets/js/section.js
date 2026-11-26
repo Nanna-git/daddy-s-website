@@ -21,11 +21,13 @@ import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 //   { kind: 'slide' }  sideways along the front of the sets and in or out of one of them, facing the walls all the way, in one take
 //             (slidePath in board.js): for two views that face the same way, one of them standing further in.
 //   { kind: 'route', via }  on foot through the points in via ([[x, y], …]: a gate, a door), in one take (routePath in board.js).
-//             Going back, the same path is walked backwards.
-const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000, fly: 3600, slide: 3200, route: 5000 };
+//             Going back, the same path is walked backwards. fixed: it keeps facing the walls instead of turning to the path.
+//   { kind: 'drone', c1, c2 }  turn left on the spot as it lifts off, fly a curve through the ground points c1, c2, spin on round to
+//             the left as it glides down onto the view (dronePath in board.js).
+const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000, fly: 3600, slide: 3200, route: 5000, drone: 6000 };
 const SECTIONS = {
-  // 2→3: turn left towards the studio, walk a little, cut to where view 6 stands, walk on to view 3
-  university: { scene: 'uni', moves: ['travel', { kind: 'via', turn: 'left', walk: 6, via: 5, dur: 3000 }, 'travel', 'travel', 'travel', 'travel', 'travel', 'crane'], views: [
+  // 1→2: on foot through the gate, up the walk and round to the antenna lab. 2→3: turn round, across the lawn and into the studio.
+  university: { scene: 'uni', moves: [{ kind: 'route', via: [[26, 48], [25.5, 26]], dur: 5000 }, { kind: 'route', via: [[34, 24], [5, 24.5], [-24, 27.5]], dur: 6500 }, 'travel', 'travel', 'travel', 'travel', 'travel', 'crane'], views: [
   { cam: 'u1', uv: 1, ut: '1. University: an engineer|who loved design (2000–2005)||In 2000, I started studying Telecommunication Engineering at Telkom University in Bandung, Indonesia. (Back then, it was called Sekolah Tinggi Teknologi Telkom, or STT Telkom.)' },
   { cam: 'u2', uv: 2, ut: 'My classes were real engineering stuff: switching techniques, traffic engineering, transmission lines, antenna and propagation, digital signal processing, and optical and satellite communication systems.||There was a lot of calculus, physics and lab work, and I enjoyed it. Programming was only a small part: one introduction to computers and one programming lab.' },
   { cam: 'u3', uv: 3, ut: 'But outside the classroom, I spent a lot of my time on something else: design. I taught myself Adobe Photoshop and CorelDraw, then web design with HTML, CSS and JavaScript, and animation with Macromedia Flash.||Nobody asked me to. I just liked making things look good.' },
@@ -36,9 +38,12 @@ const SECTIONS = {
   { cam: 'u9', uv: 9, ut: "A moment I'm proud of||Getting paid, as a student, to design my own university's calendar and its academic book. Those were my first real design clients." },
   { cam: 'u11', uv: 11, ut: '' },
   ] },
-  // 1→2: turn left until the rural site is in view, cut, walk in. 2→3: turn right, walk on for a while, cut to
-  // some way back from the desk, walk in on it. 5→6 (Thread 1 → Thread 2): a quicker glide across the floor.
-  telkomsel: { scene: 'tsel', moves: [{ kind: 'via', turn: 'left', walk: 0, dur: 3000 }, { kind: 'via', turn: 'right', walk: 20, back: 14, dolly: true, dur: 3400 }, 'travel', 'travel', { kind: 'travel', dur: 1100 }, 'cut', 'travel', 'travel', 'crane'], views: [
+  // Every move is one take. 1→2: on foot, turning left, in an arc down the field to the rural site, which stays in sight. 2→3: a flight back over the lot,
+  // down through the open front of the office. 5→6: out of the office and into the meeting room. 6→7: back out of the meeting room,
+  // along the front and into the office, facing the walls the whole way. 9→10: a slow rise to the whole lot.
+  telkomsel: { scene: 'tsel', moves: [{ kind: 'route', watch: true, via: [[-50, 50]], dur: 5000 }, { kind: 'fly', out: 6, in: 30, up: 18, climb: 25, dur: 5000 },
+    { kind: 'travel', dur: 1800 }, { kind: 'travel', dur: 2200 }, { kind: 'route', via: [[68, 46]], dur: 3400 }, { kind: 'route', fixed: true, via: [[96, 46], [56, 46]], dur: 4600 },
+    { kind: 'travel', dur: 1800 }, { kind: 'travel', dur: 1800 }, { kind: 'crane', dur: 3400 }], views: [
   { cam: 't1', uv: 1, ut: "2. Telkomsel: the desk guy|who discovered data (2005–2009)||After graduating in 2005, I joined Telkomsel, Indonesia's biggest mobile operator, as a radio network engineer in operations and network performance, first in Medan and later in Jakarta." },
   { cam: 't2', uv: 2, ut: 'Honestly, I was a bit jealous in my first years. My colleagues travelled for technical training and went to the field with drive test tools. I stayed at my desk with spreadsheets.||One night I begged to join them, and they sent me to a rural site at 2 AM just to make a test call. I was so happy, like a kid in an amusement park.' },
   { cam: 't3', uv: 3, ut: 'At my desk, I started doing more than delivering numbers. I learned UNIX scripting by myself and used it to build small automations for our daily work. I used my old web skills to build a web dashboard for network performance. Then I combined Google Earth with UNIX scripts to build a live GIS view of our 2G radio network, so management could see how the network was running from their own workstations.' },
@@ -61,10 +66,10 @@ const SECTIONS = {
   ] },
   // 2→3, 6→7, 9→10, 11→12: a side-step along the wall. 3→4 and 5→6: a crane: up, forward, a glide down
   // (3→4 turns right as it rises and flies along the back of the operations room; 5→6 goes straight over the back wall).
-  // 4→5: a drone: up and backwards in an arc, turning right, along the back of the operations room, then backwards over
-  // its back wall and down, facing it. 7→8: pulling back and to the right out of the tent, low over the sand and the back wall.
+  // 4→5: a drone: it turns left as it lifts off, flies an arc over the operations room, and spins on round to the left (about
+  // 270°) as it glides down in front of it. 7→8: pulling back and to the right out of the tent, low over the sand and the back wall.
   // 8→9: back out of the room, turn right, walk, cut to the road, then turn in to the last room. 12→13: fast, straight through.
-  ericsson: { scene: 'er', moves: ['fade', 'travel', { kind: 'fly', dur: 4400, out: 4, in: 40, climb: 40 }, { kind: 'fly', reverse: true, dur: 4600, up: 16, out: 18, in: 40, climb: 30, glide: 0.25 },
+  ericsson: { scene: 'er', moves: ['fade', 'travel', { kind: 'fly', dur: 4400, out: 4, in: 40, climb: 40 }, { kind: 'drone', c1: [112, -34], c2: [82, 16], up: 18, dur: 6500 },
     { kind: 'fly', dur: 3200, climb: 16 }, 'travel', { kind: 'fly', reverse: true, dur: 3000, up: 9, out: 8, in: 8, glide: 0.35 }, { kind: 'via', turn: 'right', out: 12, walk: 10, viaEye: [172, 31, 5.2], dur: 4600 },
     'travel', 'fade', 'travel', { kind: 'travel', dur: 1000 }, 'fade', 'crane'], views: [
   { cam: 'e1', uv: 1, ut: '4. Ericsson: 13 years with|Saudi telecom operators (2010–2023)||At Ericsson, I was a Data Solution Professional in managed services. I worked from Riyadh and Jeddah for telecom operators in Saudi Arabia, and later supported projects in the GCC and Africa. I was on the business side, close to the network operations teams, not in IT.' },
@@ -241,7 +246,7 @@ function moveTo(next, opts, move, pair) {
   const forward = next > prev; // the turn hand and the cut-in spot are written for going forward
   const playing = kind === 'via'
     ? viaMove(board, a, b, forward ? { ...move, viaEye: move.viaEye || (move.via == null ? null : povOf(viewProps(move.via)).eye) } : { walk: move.walk, out: move.out }, dur)
-    : cameraMove(board, a, b, kind === 'walk' || kind === 'fly' || kind === 'slide' || kind === 'route' ? kind : 'travel', dur, { ...move, flip: !forward });
+    : cameraMove(board, a, b, ['walk', 'fly', 'slide', 'route', 'drone'].includes(kind) ? kind : 'travel', dur, { ...move, flip: !forward });
   playing.then((smooth) => {
     if (!smooth) heavy.add(pair);
     drawn.delete(prev); // the old board is left at the new camera; it is redrawn as a neighbour
