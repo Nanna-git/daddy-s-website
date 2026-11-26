@@ -91,6 +91,9 @@ html:not(.u-ready) .u-view { transition: none; } /* the first view appears at on
 .u-card-wide .u-story-body strong { font-size: 15px; }
 /* a wide card with a single story (Kanzway): narrower, one column; on a phone it follows the phone rules below */
 .u-card-one { width: 460px; }
+/* six stories (Community): three across the top, over the sky */
+.u-card-three { width: 1100px; }
+.u-card-three .u-stories { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .u-card-one .u-stories { grid-template-columns: minmax(0, 1fr); }
 
 /* timeline of the seven chapters, bottom left (HUD) */

@@ -1,9 +1,9 @@
-// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway). Each view is the canvas board: the scene
+// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway, 2.6 Learning through community). Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
 // The page picks its section with <body data-section="…">.
 import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 
-// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15 and KZ01…KZ07 (ut = the text painted into the scene).
+// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15, KZ01…KZ07 and LC01…LC09 (ut = the text painted into the scene).
 // moves: how the camera gets from each view to the next one:
 //   'travel'  it really goes there (1.5 s); the old view's text stays where it is
 //   'cut'     walk, cut, walk: for spots too far apart (1.8 s). The two pictures are moved, not redrawn:
@@ -20,7 +20,9 @@ import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 //             in board.js; reverse: flying backwards). Going back it flies the same curve the other way.
 //   { kind: 'slide' }  sideways along the front of the sets and in or out of one of them, facing the walls all the way, in one take
 //             (slidePath in board.js): for two views that face the same way, one of them standing further in.
-const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000, fly: 3600, slide: 3200 };
+//   { kind: 'route', via }  on foot through the points in via ([[x, y], …]: a gate, a door), in one take (routePath in board.js).
+//             Going back, the same path is walked backwards.
+const DURATION = { travel: 1500, cut: 1800, crane: 2400, walk: 7000, fly: 3600, slide: 3200, route: 5000 };
 const SECTIONS = {
   // 2→3: turn left towards the studio, walk a little, cut to where view 6 stands, walk on to view 3
   university: { scene: 'uni', moves: ['travel', { kind: 'via', turn: 'left', walk: 6, via: 5, dur: 3000 }, 'travel', 'travel', 'travel', 'travel', 'travel', 'crane'], views: [
@@ -92,6 +94,22 @@ const SECTIONS = {
   { cam: 'k5', uv: 5, ut: 'When things end, you still have everything you learned.' },
   { cam: 'k6', uv: 6, ut: '' },
   { cam: 'k7', uv: 7, ut: '' },
+  ] },
+  // Four places stand apart on one park lot. 1→2: on foot through the gate, beside Achmad, up the path and round to the park wall.
+  // 2→3: back from the wall, then sideways past the lawn to the hall. 3→4: a flight backwards, up over the street building and down
+  // in front of it. 4→5: a flight over that roof and across the lot, down to the middle of the park wall. 5→6: along the wall.
+  // 6→7: walk, cut, walk (the street is too far to walk to). 7→8: a flight over the roof, down in front of the locker room.
+  // 8→9: back and up over the street building, to the whole lot.
+  community: { scene: 'lc', moves: [{ kind: 'route', via: [[-55.2, 30], [-58, 2]] }, { kind: 'slide', dur: 4200 }, { kind: 'fly', reverse: true, up: 18, glide: 0.4 }, { kind: 'fly', up: 18, dur: 4200 }, 'travel', 'cut', { kind: 'fly', up: 16, dur: 3400 }, { kind: 'travel', dur: 3000 }], views: [
+  { cam: 'c1', uv: 1, ut: '6. Learning through community (2025)||At the end of 2024, I decided to learn Power BI properly. I already knew BI from SAP BusinessObjects, but I wanted to learn the modern way. So I joined online communities and followed their instructions exactly.' },
+  { cam: 'c2', uv: 2, ut: 'Power BI Park||(led by Injae Park), from January 2025. One project after another, posting my progress on LinkedIn twice a week because the community asked us to. I was #1 on the monthly leaderboard from January to March, and then I was asked to be a moderator.' },
+  { cam: 'c3', uv: 3, ut: 'Fabric Dojo||(led by Will Needham), April 2025. I finished all the classes in one month, reached #1 on the leaderboard, and earned the blue belt.||The Data Vis Forge||(led by Gustaw Dudek), May–June 2025. Advanced "workouts" where I chose not to open the solution files. I learned corporate-style reporting there.' },
+  { cam: 'c4', uv: 4, ut: 'In July, I built a simple portfolio website and started looking for a job. In August, two big companies interviewed me on the same day, and both offered me a job. My LinkedIn posts really helped.||During the hiring process, I passed DP-700 (Microsoft Fabric) and PL-300 (Power BI) to make sure my foundation was solid.' },
+  { cam: 'c5', uv: 5, ut: 'Just do the thing.||Follow the mentor\'s instructions exactly. Don\'t skip steps. I even typed the datasets myself instead of downloading them, and rebuilt the visuals instead of copying them. That\'s where I found the "hidden treasures."||Find your community.||My first community was Pentaho-Indonesia in 2010. Fifteen years later, communities changed my career again.' },
+  { cam: 'c6', uv: 6, ut: 'Thread 1 again.||I was over 40, with 20 years of experience, and still a student. Age is just a number.' },
+  { cam: 'c7', uv: 7, ut: 'A moment I\'m proud of||Two job offers on the same day, after only eight months of learning in public.' },
+  { cam: 'c8', uv: 8, ut: '' },
+  { cam: 'c9', uv: 9, ut: '' },
   ] },
 };
 const SLUG = document.body.dataset.section;
@@ -223,7 +241,7 @@ function moveTo(next, opts, move, pair) {
   const forward = next > prev; // the turn hand and the cut-in spot are written for going forward
   const playing = kind === 'via'
     ? viaMove(board, a, b, forward ? { ...move, viaEye: move.viaEye || (move.via == null ? null : povOf(viewProps(move.via)).eye) } : { walk: move.walk, out: move.out }, dur)
-    : cameraMove(board, a, b, kind === 'walk' || kind === 'fly' || kind === 'slide' ? kind : 'travel', dur, { ...move, flip: !forward });
+    : cameraMove(board, a, b, kind === 'walk' || kind === 'fly' || kind === 'slide' || kind === 'route' ? kind : 'travel', dur, { ...move, flip: !forward });
   playing.then((smooth) => {
     if (!smooth) heavy.add(pair);
     drawn.delete(prev); // the old board is left at the new camera; it is redrawn as a neighbour

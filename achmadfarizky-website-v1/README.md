@@ -1,6 +1,6 @@
 # achmadfarizky.com
 
-Achmad Farizky's story-telling website. It has **Home** (V01–V06), **University**, **Telkomsel**, **A year of trying**, **Ericsson** and **Kanzway**, built from the design canvas (Claude Design) in `design/` and its view map.
+Achmad Farizky's story-telling website. It has **Home** (V01–V06), **University**, **Telkomsel**, **A year of trying**, **Ericsson**, **Kanzway** and **Learning through community**, built from the design canvas (Claude Design) in `design/` and its view map.
 
 ## Run it
 
@@ -68,7 +68,7 @@ node tools/sync-diorama.mjs path/to/Diorama.dc.html
 
 ## My story · Kanzway
 
-`kanzway.html` is section 2.5 (V5.01–V5.07, links `#/kanzway/1` … `#/kanzway/7`), built the same way from boards KZ01–KZ07 and the `kz` scene: one paved yard with the warehouse front on the left, the data office across the back and the goods-out dock on the right. Ericsson's last view, the timeline on every section page and Home's Chapters sheet link to it. Everything after Kanzway points to `#`.
+`kanzway.html` is section 2.5 (V5.01–V5.07, links `#/kanzway/1` … `#/kanzway/7`), built the same way from boards KZ01–KZ07 and the `kz` scene: one paved yard with the warehouse front on the left, the data office across the back and the goods-out dock on the right. Ericsson's last view, the timeline on every section page and Home's Chapters sheet link to it.
 
 Its camera moves are in the `kanzway` entry of `SECTIONS` in `section.js`. The three sets stand side by side, so the camera slides from one to the next and always faces the walls:
 
@@ -83,3 +83,22 @@ Its camera moves are in the `kanzway` entry of `SECTIONS` in `section.js`. The t
 `slide` is a move kind added for this page (`slidePath` in `board.js`): for two views that face the same way, one of them standing further in. The camera goes sideways along the line of the view that stands further back, and in or out of the other one, with the corner rounded so it is one take.
 
 In the `kz` scene a few things depend on where the camera stands (the two halves of the warehouse roof, and the order the office furniture is drawn in), because the engine does not sort by depth. The scene reads the camera from its own camera list, or from `pov` during a move.
+
+## My story · Learning through community
+
+`community.html` is section 2.6 (V6.01–V6.09, links `#/community/1` … `#/community/9`), built the same way from boards LC01–LC09 and the `lc` scene: a park lot with four places standing apart, each on its own patch of ground: the park gate, the painted park wall on its lawn, the hall (dojo, forge, locker room) and the street front. Kanzway's last view, the timeline on every section page, the slate and Home's Chapters sheet link to it. Everything after it points to `#`.
+
+Its camera moves are in the `community` entry of `SECTIONS` in `section.js`:
+
+| Move | What the camera does |
+|---|---|
+| 1 → 2 | `route`: on foot through the gate, beside Achmad, up the path and round to the park wall (5 s) |
+| 2 → 3 | `slide`: back from the wall, then sideways past the lawn to the hall (4.2 s) |
+| 3 → 4 | `fly`, backwards: up out of the hall, over the roof of the street building and down in front of it (3.6 s) |
+| 4 → 5 | `fly`: over that roof, across the lot, down to the middle of the park wall (4.2 s) |
+| 5 → 6 | `travel`: along the park wall (1.5 s) |
+| 6 → 7 | `cut`: walk, cut, walk; the street is too far to walk to (1.8 s) |
+| 7 → 8 | `fly`: over the roof of the street building, down in front of the locker room (3.4 s) |
+| 8 → 9 | `travel`: back and up over the street building, to the whole lot (3 s) |
+
+`route` is a move kind added for this page (`routePath` in `board.js`): a walk in one take through given points on the ground (`via`, here the gate opening and a bend of the path), so the camera can go through an opening instead of through a wall. Going back, the same path is walked backwards.

@@ -2186,6 +2186,349 @@ export class CanvasDiorama {
         for (let i = 0; i < 6; i++) add(C(-22 + i * 8.8, 15.4, 0, 0.28, 1.3, YEL, { n: 8, nc: '#B8922E' })); // bollards along the yard's edge
         add(L.lampPost(-25.5, 17.6, 0, 11), L.lampPost(25.5, 17.6, 0, 11));
       });
+    } else if (id === 'lc') {
+      // Learning through community at human scale (same scale as 'uni', 'tsel', 'yt', 'er' and 'kz': desk 2.4 = 0.75 m, a man about 5.3
+      // units), eye-level walk. A park lot on the studio floor after light rain. Four places stand well apart, each on its own patch of
+      // ground, joined by a footpath that bends: the park gate where he decides and joins (V6.01), front left; the park wall, a long
+      // painted garden wall on a lawn, back left (V6.02 Power BI Park, V6.05 the two lessons, V6.06 Thread 1); the hall, three cutaway
+      // rooms in a row, back right (V6.03 the dojo and the forge side by side, V6.08 the lockers with the tools); and the street front,
+      // front right (V6.04 the portfolio, the interviews and the exams, V6.07 the two doors). V6.09 is the whole lot from the front.
+      // Every camera looks toward -y, so each set is authored back (small y) to front, and the sets go in back to front too.
+      // Each view passes uv (1-9) and its text in ut ("||").
+      def.label = 'Learning through community set: a park gate, a long painted park wall with a leaderboard, a dojo and a forge gym side by side with a locker room, and a street front with two doors, on a studio floor after light rain';
+      def.sky = ['#C9D3DE', '#EEF0EE']; def.nsky = ['#0B1026', '#1F1B45']; def.nmix = '#24204A'; def.fog = 0; def.clouds = true;
+      const LV = Number(opt.uv || 0), LT = String(opt.ut || '').split('||');
+      if (LV === 9) def.tmin = 0.05; // the overview keeps the small painted texts instead of dropping them
+      const wrap = function (txt, ch) { const ws = String(txt || '').trim().split(/\s+/), o = []; let cur = ''; ws.forEach(function (w) { if (!w) return; if (cur && (cur + ' ' + w).length > ch) { o.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }); if (cur) o.push(cur); return o; };
+      const INK = '#13203A', INK2 = '#44506A', LITE = '#EEF2F8', WHITE = '#F7F3EA', SOFT = '#B4BFD2';
+      const say = function (txt, x, y, z, s, o) { add(T(x, y, z, s, txt, Object.assign({ al: 'l', wt: 500, ff: 'Inter, sans-serif', c: INK, nc: INK }, o || {}))); };
+      const para = function (txt, ch, x, y, z, s, step, o) { const ls = wrap(txt, ch); ls.forEach(function (ln, k) { say(ln, x, y, z - k * step, s, o); }); return ls.length * step; };
+      const head = function (txt, x, y, z, s, o) { say(txt, x, y, z, s, Object.assign({ wt: 800, ff: 'Manrope, sans-serif', c: INK2, nc: INK2 }, o || {})); };
+      const bold = function (txt, x, y, z, s, o) { say(txt, x, y, z, s, Object.assign({ wt: 800, ff: 'Manrope, sans-serif' }, o || {})); };
+      const hand = function (txt, x, y, z, s, c, o) { say(txt, x, y, z, s, Object.assign({ wt: 700, ff: 'Kalam, cursive', c: c, nc: c }, o || {})); };
+      const mono = function (txt, x, y, z, s, c, o) { say(txt, x, y, z, s, Object.assign({ wt: 600, ff: 'IBM Plex Mono, monospace', c: c, nc: c }, o || {})); };
+      const label = function (txt, x, y, z, s, o) { add(T(x, y, z, s, txt, Object.assign({ wt: 700, ff: 'Manrope, sans-serif', c: WHITE, nc: WHITE }, o || {}))); };
+      const tick = function (x, y, z, s, c) { add(T(x, y, z, s, '✓', { wt: 700, ff: 'Inter, sans-serif', c: c || '#2E7D4F', nc: c || '#7FD8A0' })); };
+      // Each set shows its own view's text; seen from another view it shows the board copy, so the lot reads the same from every camera.
+      const SX = {
+        1: ['6. Learning through community (2025)', 'At the end of 2024, I decided to learn Power BI properly. I already knew BI from SAP BusinessObjects, but I wanted to learn the modern way. So I joined online communities and followed their instructions exactly.'],
+        2: ['Power BI Park', '(led by Injae Park), from January 2025. One project after another, posting my progress on LinkedIn twice a week because the community asked us to. I was #1 on the monthly leaderboard from January to March, and then I was asked to be a moderator.'],
+        3: ['Fabric Dojo', '(led by Will Needham), April 2025. I finished all the classes in one month, reached #1 on the leaderboard, and earned the blue belt.', 'The Data Vis Forge', '(led by Gustaw Dudek), May–June 2025. Advanced "workouts" where I chose not to open the solution files. I learned corporate-style reporting there.'],
+        4: ['In July, I built a simple portfolio website and started looking for a job. In August, two big companies interviewed me on the same day, and both offered me a job. My LinkedIn posts really helped.', 'During the hiring process, I passed DP-700 (Microsoft Fabric) and PL-300 (Power BI) to make sure my foundation was solid.'],
+        5: ['Just do the thing.', 'Follow the mentor\'s instructions exactly. Don\'t skip steps. I even typed the datasets myself instead of downloading them, and rebuilt the visuals instead of copying them. That\'s where I found the "hidden treasures."', 'Find your community.', 'My first community was Pentaho-Indonesia in 2010. Fifteen years later, communities changed my career again.'],
+        6: ['Thread 1 again.', 'I was over 40, with 20 years of experience, and still a student. Age is just a number.'],
+        7: ['A moment I\'m proud of', 'Two job offers on the same day, after only eight months of learning in public.']
+      };
+      const SU = function (n) { return LV === n ? LT : (SX[n] || ['', '']); };
+      // "6. Learning through community (2025)" → its number, title, subtitle and years.
+      const parts = function (h) { const m = String(h || '').replace('|', ' ').match(/^(\d+\w?)\.\s*(.*?)\s*\((.*)\)\s*$/); if (!m) return null; const k = m[2].indexOf(':'); return { n: m[1], yrs: m[3], title: k < 0 ? m[2] : m[2].slice(0, k).trim(), sub: k < 0 ? '' : m[2].slice(k + 1).trim() }; };
+      const RED = '#C0392B', TEAL = '#1D6A5A', BLUE = '#2F5C99', OCHRE = '#B7791F', GOLD = '#D9A441', GREEN = '#2E7D4F', ORANGE = '#D9682E', YEL = '#F2C811', PURPLE = '#7A5C99', GL = '#A9C6E8', LITW = '#FFD27A', PAPER = '#F7F3EA', NPAPER = '#C9CEDA', DK = '#3D4A63', NIGHT = '#20242E', SKIN = '#B07A55', SHIRT = '#5C7FA8', TROUS = '#3D4A63', WOOD = '#B98B5E', NWOOD = '#55473A', LINE = '#B4BFD2';
+      const NEON = { park: '#F2C811', dojo: '#4FD1C5', forge: '#F0935A' };
+      // where the park gate, the park wall, the hall (dojo, forge, lockers) and the street front stand on the lot
+      const GT = [-52, 30], PK = [-92, -50], HL = [6, -34], ST = [46, 30];
+      { const E = function (o, x, d, az, fov, ez) { return { pov: { eye: [o[0] + x, o[1] + d, ez || 5.2], at: [o[0] + x, o[1], az], fov: fov || 64, off: 0 } }; };
+        def.cams = {
+          c1: { pov: { eye: [GT[0], GT[1] + 34, 5.0], at: [GT[0], GT[1] + 2, 7.6], fov: 72, off: 0 } },
+          c2: E(PK, 12, 19, 6.0), c5: E(PK, 35.2, 19, 6.0), c6: E(PK, 58.6, 19, 6.0),
+          c3: E(HL, 16, 26, 5.8), c8: E(HL, 44.3, 19, 6.0),
+          c4: E(ST, -12, 19, 6.0), c7: E(ST, 12, 19, 6.0),
+          c9: { pov: { eye: [-10, 156, 84], at: [-10, -24, 14], fov: 62, off: 0 } } // the whole lot from the front, from above the road
+        }; }
+      // Where the camera stands (a camera move passes its own eye point): rows of things side by side need it, see byEye.
+      const P0 = this.props || {}, EYE = (P0.pov && P0.pov.eye) || (def.cams[P0.cam] && def.cams[P0.cam].pov && def.cams[P0.cam].pov.eye) || [GT[0], GT[1] + 34, 5];
+      const at = function (o, f) { const i0 = I.length; f(); for (let i = i0; i < I.length; i++) { I[i].x += o[0]; I[i].y += o[1]; } }; // a set is authored around its own origin, then moved
+      // seen(k, lo, hi, f): what f adds is drawn only while the camera's x (k 'vx') or y (k 'vy') is in [lo, hi), in lot coordinates.
+      // Nothing is depth-sorted, so anything that must cover its surroundings from both sides goes in twice, early and late.
+      const FAR = 1e9, seen = function (k, lo, hi, f) { const i0 = I.length; f(); for (let i = i0; i < I.length; i++) { const r = I[i][k]; I[i][k] = r ? [Math.max(r[0], lo), Math.min(r[1], hi)] : [lo, hi]; } };
+      // byEye(ex, list, lo, hi): groups of things that stand side by side between x = lo and x = hi, each given as [its x, a function that
+      // adds it]. A camera beyond one end of the row needs the further group first; a camera in front takes the row as written.
+      const byEye = function (ex, list, lo, hi) { const l = list.slice(); if (ex < lo) l.sort(function (a, b) { return b[0] - a[0]; }); else if (ex > hi) l.sort(function (a, b) { return a[0] - b[0]; }); l.forEach(function (g) { g[1](); }); };
+      // A standing man (o.back: seen from behind).
+      const man = function (px, py, z0, o) { o = o || {}; const sh = o.shirt || SHIRT;
+        add(B(px - 0.45, py - 0.25, z0, 0.38, 0.5, 2.5, TROUS), B(px + 0.07, py - 0.25, z0, 0.38, 0.5, 2.5, TROUS));
+        add(B(px + 0.65, py - 0.2, z0 + 2.7, 0.3, 0.4, 1.65, sh, { nc: '#3E5470' }), B(px - 0.62, py - 0.35, z0 + 2.45, 1.24, 0.7, 1.95, sh, { nc: '#3E5470' }), B(px - 0.95, py - 0.2, z0 + 2.7, 0.3, 0.4, 1.65, sh, { nc: '#3E5470' }));
+        add(S(px, py, z0 + 4.98, 0.46, SKIN, { nc: '#8A6248' })); }; // a plain head, no hair drawn, from the front or from behind
+      const mug = function (x, y, z, c) { add(C(x, y, z, 0.3, 0.55, c || '#C9785E', { n: 10 }), B(x + 0.28, y - 0.05, z + 0.15, 0.13, 0.1, 0.28, c || '#C9785E')); };
+      const paper = function (x, y, z, w, h, c, nc) { add(B(x, y, z, w, 0.03, h, c || PAPER, { nc: nc || NPAPER })); };
+      const disc = function (x, y, z, r, c, o) { add(L.D(x, y, z, r, c, Object.assign({ n: 14, nc: c }, o || {}))); };
+      const lamp = function (x, y, h) { add(C(x, y, 0, 0.14, h, DK, { n: 6 }), B(x - 0.5, y - 0.25, h, 1.0, 0.5, 0.18, DK), S(x, y, h - 0.25, 0.34, '#FFE7A8', { e: 1 }), G(x, y, h - 1, 9, '#FFD27A')); };
+      const tree = function (x, y, s) { add(C(x, y, 0, 0.16 * s, 1.0 * s, '#8C6A4A', { n: 6, nc: '#3E3428' }), S(x - 0.5 * s, y, 1.25 * s, 0.62 * s, '#7FA36B', { nc: '#2B4440' }), S(x + 0.52 * s, y, 1.2 * s, 0.6 * s, '#6E9A66', { nc: '#263E3C' }), S(x, y + 0.1, 1.62 * s, 0.78 * s, '#8DB27A', { nc: '#2F4A44' })); };
+      const shrub = function (x, y, s) { add(B(x - 1.0 * s, y - 0.8 * s, 0, 2.0 * s, 1.6 * s, 1.0 * s, '#B5694A', { nc: '#5A3A3A' }), S(x - 0.35 * s, y, 1.55 * s, 0.85 * s, '#6E9A66', { nc: '#2F4A40' }), S(x + 0.45 * s, y + 0.1 * s, 1.75 * s, 0.75 * s, '#7FA36B', { nc: '#355246' })); };
+      // A name sign that stands on top of a wall: dark by day, a neon glow at night.
+      const sign = function (txt, x, y, z, w, c) { add(B(x, y - 0.4, z, w, 0.4, 1.7, NIGHT, { nc: '#161B28' }), B(x + 0.2, y, z + 0.2, w - 0.4, 0.02, 1.3, '#2B3142', { nc: '#1B2030' }), T(x + w / 2, y + 0.04, z + 0.85, 0.78, txt, { wt: 800, ff: 'Manrope, sans-serif', c: c, nc: c, a: 'dz-flicker' }), G(x + w / 2, y + 0.6, z + 0.85, w * 0.7, c, { a: 'dz-flicker' })); };
+      // Flat ground: a patch (its top at z 0) or a thin layer lying on one; a strip of that layer between two points; a path or road along a line of points.
+      const patch = function (c, nc, pts, lay, o) { add(C(0, 0, lay ? 0 : -0.6, 0, lay ? lay : 0.6, c, Object.assign({ nc: nc, pts: pts }, o || {}))); };
+      const strip = function (a, b, w, c, nc, lay) { const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l * w / 2, ny = dx / l * w / 2; patch(c, nc, [[a[0] + nx, a[1] + ny], [b[0] + nx, b[1] + ny], [b[0] - nx, b[1] - ny], [a[0] - nx, a[1] - ny]], lay || 0.04); };
+      const path = function (P, w, c, nc, lay) { for (let i = 0; i < P.length - 1; i++) strip(P[i], P[i + 1], w, c, nc, lay); P.slice(1, -1).forEach(function (p) { add(C(p[0], p[1], 0, w / 2, lay || 0.04, c, { nc: nc, n: 14 })); }); };
+      const road = function (P, w, c, nc) { path(P, w, c, nc);
+        for (let i = 0; i < P.length - 1; i++) { const a = P[i], b = P[i + 1], l = Math.hypot(b[0] - a[0], b[1] - a[1]), pt = function (t) { return [a[0] + (b[0] - a[0]) * t / l, a[1] + (b[1] - a[1]) * t / l]; };
+          for (let t = 2; t + 2.6 < l; t += 6) strip(pt(t), pt(t + 2.6), 0.3, '#EDE7D8', '#EDE7D8', 0.05); } };
+      const puddle = function (x, y, r, k) { add(C(x, y, 0.05, r, 0.012, '#B4C8DC', { n: 9, rot: k || 0.3, nc: '#4B4A9C', op: 0.8 })); };
+      // A cutaway room (back wall y 0, open to the front): floor, back wall, and the two side walls, which are behind the room's things while
+      // the camera is between them and in front of them (painted last) once it is outside. inside() adds the room's things.
+      const room = function (o, w, d, h, fl, wall, inside, dl, dr) { at(o, function () { // dl, dr: how far the left and right walls come forward (default: the whole depth)
+        const lwall = function () { add(B(-0.4, 0, 0.25, 0.4, dl || d, h, wall[2], { nc: wall[3] })); }, rwall = function () { add(B(w, 0, 0.25, 0.4, dr || d, h, wall[2], { nc: wall[3] })); };
+        const bwall = function () { add(B(-0.4, -0.4, 0.25, w + 0.8, 0.4, h, wall[0], { nc: wall[1] })); }; // from behind (a camera move) it goes in last, over what is in the room
+        add(B(0, 0, 0, w, d, 0.25, fl[0], { nc: fl[1] })); seen('vy', o[1], FAR, bwall);
+        seen('vx', o[0], FAR, lwall); seen('vx', -FAR, o[0] + w + 0.4, rwall);
+        add(B(0, 0, 0.25, w, 0.03, 0.6, '#C9C2B4', { nc: '#55504A' })); // skirting board
+        inside();
+        seen('vx', -FAR, o[0], lwall); seen('vx', o[0] + w + 0.4, FAR, rwall); seen('vy', -FAR, o[1], bwall); }); };
+
+      // ---- The ground. The studio floor; on it a pale base with slanted edges, and on that each place's own patch: the lawn of the park,
+      // the court of the hall, the gravel in front of the gate and the pavement of the street. A road bends past the gate and the street;
+      // a footpath joins the four places.
+      add(B(-700, -560, -0.66, 1400, 980, 0.06, '#5B606B', { nc: '#22263A' }));
+      if (LV === 9) add(B(-260, -84, -0.63, 520, 130, 0.02, '#CBCFD3', { nc: '#262A44' })); // the overview: a pale sheet behind the lot, up to the painted sky
+      patch('#DAD5C8', '#2F3146', [[-130, 112], [-138, 24], [-134, -40], [-116, -76], [-20, -82], [48, -70], [100, -62], [120, -20], [112, 112]]);
+      patch('#B9CFA2', '#2C4238', [[-106, -20], [-102, -58], [-62, -64], [-16, -58], [-8, -42], [-14, -22], [-44, -12], [-86, -10]], 0.05);
+      patch('#CDB894', '#4A4238', [[-2, -40], [70, -40], [80, -30], [78, -8], [52, -2], [8, -4], [-4, -16]], 0.05);
+      patch('#E6DFD0', '#3A3A4E', [[-82, 26], [-22, 26], [-16, 40], [-26, 47], [-78, 47], [-88, 38]], 0.05);
+      road([[-260, 66], [-124, 60], [-40, 52], [44, 52], [112, 60], [260, 76]], 10, '#8E949E', '#2E323A');
+      path([[-52, 29], [-57, 8], [-47, -12], [-55, -30]], 4.2, '#EFE9DB', '#4A4A5E', 0.06);
+      path([[-16, -36], [-6, -24], [8, -14]], 4.2, '#EFE9DB', '#4A4A5E', 0.06);
+      path([[30, -6], [18, 6], [15, 26], [21, 38]], 4.2, '#EFE9DB', '#4A4A5E', 0.06);
+      [[-60, 12, 2.6, 0.2], [-44, -6, 1.8, 0.9], [-2, -18, 2.2, 0.5], [22, 2, 2.0, 1.2], [-34, 40, 2.4, 0.4], [8, 44, 2.8, 0.1], [-70, -22, 2.0, 0.7], [40, -8, 1.7, 0.2]].forEach(function (p) { puddle(p[0], p[1], p[2], p[3]); });
+
+      // ---- Far away, under the clearing sky: the tree line of the park and a few roofs of the town (not in the overview, where a painted
+      // sky backdrop stands at the back of the lot instead, so the lot reads against a pale ground and not against the dark studio floor).
+      if (LV === 9) add(B(-260, -85.2, -0.6, 520, 1.2, 130, '#D3DBE4', { nc: '#151936' }));
+      else { [[-250, 40, 18], [-196, 30, 26], [-150, 44, 15], [-92, 32, 22], [-40, 28, 17], [6, 44, 25], [64, 30, 16], [108, 40, 22], [160, 34, 28], [212, 40, 18]].forEach(function (b) { add(B(b[0], -300, 0, b[1], 18, b[2], '#C4CBD4', { nc: '#262A52' })); });
+        for (let i = 0; i < 16; i++) add(K(-270 + i * 36 + (i % 3) * 7, -246, 0, 17 + (i % 4) * 3, 30 + (i % 5) * 5, i % 2 ? '#9DB596' : '#A9BFA0', { n: 7, nc: '#232F4A' }));
+        // the haze is one flat sheet: seen from the air (a camera move on the site) its edges would show, so it thins out as the camera rises
+        const up = this.props && this.props.pov ? this.props.pov.eye[2] : 0;
+        add(B(-1400, -226, 0, 2800, 0.05, 110, '#DDE3EA', { nc: '#1B1C44', op: 0.55 * Math.max(0, Math.min(1, (11 - up) / 5)) })); }
+
+      // The sets go in back to front: the park wall, the hall, then the gate and the street front.
+
+      // ---- Set 2, the park wall (V6.02 Power BI Park, V6.05 the two lessons, V6.06 Thread 1): a long garden wall on the lawn, painted
+      // from end to end, with the park's trees behind it. Everything on the wall goes in first, then what stands on the lawn.
+      at(PK, function () {
+        const W = 70, H = 11, WALL = '#EFE8D8', NWALL = '#4A4A63';
+        const trees = function () { [[-9, -6, 6.0], [7, -9, 7.4], [26, -12, 8.2], [44, -8, 7.0], [62, -11, 7.8], [80, -5, 6.2]].forEach(function (t) { tree(t[0], t[1], t[2]); }); };
+        const wall = function () { add(B(-1.2, -0.9, 0, W + 2.4, 0.9, H, WALL, { nc: NWALL }), B(-1.5, -1.1, H, W + 3.0, 1.3, 0.4, '#B5694A', { nc: '#5A3A3A' }), B(-1.2, 0, 0, W + 2.4, 0.05, 0.7, '#D6CCB8', { nc: '#3E3E55' })); };
+        seen('vy', PK[1], FAR, trees); seen('vy', PK[1], FAR, wall);
+        seen('vy', PK[1], FAR, function () {
+          sign('POWER BI PARK', 6.2, 0, H + 0.4, 11.6, NEON.park);
+          // V6.02: "What I did", the community's name and the paragraph. Under them, one project after another and the posting calendar;
+          // beside them the monthly leaderboard and, under it, the moderator's badge.
+          { const U = SU(2); head('What I did', 1.5, 0.03, 10.15, 0.4, { nc: SOFT }); bold(U[0], 1.5, 0.03, 9.42, 0.5, { nc: LITE }); para(U[1] || '', 52, 1.5, 0.03, 8.72, 0.31, 0.5, { nc: LITE }); }
+          hand('one project after another', 1.5, 0.03, 5.85, 0.3, INK2, { nc: SOFT });
+          [BLUE, TEAL, OCHRE, PURPLE, RED].forEach(function (c, i) { const x = 1.5 + i * 1.85; add(B(x, 0.03, 3.85, 1.6, 0.03, 1.55, '#FFFFFF', { nc: '#E8ECF2' }), B(x, 0.065, 5.12, 1.6, 0.005, 0.28, c, { nc: c }));
+            mono('0' + (i + 1), x + 0.1, 0.08, 5.26, 0.17, '#FFFFFF'); [0.5, 0.85, 0.65, 1.0].forEach(function (h, k) { add(B(x + 0.18 + k * 0.33, 0.065, 3.97, 0.22, 0.005, h * (0.7 + ((i + k) % 3) * 0.15), k === 3 ? c : LINE, { nc: k === 3 ? c : LINE })); });
+            if (i < 4) hand('→', x + 1.58, 0.03, 4.55, 0.34, INK2, { nc: SOFT }); });
+          add(B(1.5, 0.03, 1.15, 5.0, 0.03, 2.35, '#FFFFFF', { nc: '#E8ECF2' }), B(1.5, 0.065, 3.05, 5.0, 0.005, 0.45, BLUE, { nc: BLUE })); label('LinkedIn · twice a week', 1.68, 0.08, 3.28, 0.21, { al: 'l' });
+          for (let r = 0; r < 4; r++) for (let q = 0; q < 7; q++) { const x = 1.72 + q * 0.67, z = 2.5 - r * 0.42, on = q === 1 || q === 4; add(B(x, 0.065, z, 0.55, 0.005, 0.32, on ? BLUE : '#E6EAF0', { nc: on ? BLUE : '#C9CFDA' })); }
+          hand('because the', 6.9, 0.03, 2.6, 0.3, BLUE, { nc: '#9FC0F0' }); hand('community asked', 6.9, 0.03, 2.1, 0.3, BLUE, { nc: '#9FC0F0' });
+          // the leaderboard: three months, one name on top
+          add(B(11.9, 0.03, 5.3, 10.9, 0.08, 5.0, NIGHT, { nc: '#161B28' }), B(11.9, 0.11, 9.6, 10.9, 0.005, 0.7, GOLD, { nc: GOLD })); label('LEADERBOARD · monthly', 12.2, 0.13, 9.95, 0.3, { al: 'l', c: INK, nc: INK });
+          ['JAN', 'FEB', 'MAR'].forEach(function (m, i) { const x = 12.2 + i * 3.55; mono(m + ' 2025', x, 0.13, 9.15, 0.2, SOFT);
+            add(B(x, 0.11, 7.95, 3.25, 0.005, 0.8, GOLD, { nc: GOLD })); bold('#1', x + 0.12, 0.13, 8.35, 0.4, { nc: INK }); bold('Achmad', x + 1.0, 0.13, 8.35, 0.34, { nc: INK });
+            [0, 1, 2].forEach(function (k) { const z = 7.1 - k * 0.6; add(B(x, 0.11, z, 3.25, 0.005, 0.46, '#39415A', { nc: '#2B3142' }), B(x + 1.0, 0.115, z + 0.16, 1.5 - k * 0.3, 0.004, 0.13, '#6E7896', { nc: '#6E7896' })); mono('#' + (k + 2), x + 0.12, 0.13, z + 0.23, 0.19, SOFT); }); });
+          hand('then →', 11.9, 0.03, 3.75, 0.42, OCHRE, { nc: '#E0B060' });
+          add(B(15.75, 0.03, 4.75, 0.1, 0.02, 0.5, DK), B(14.4, 0.03, 2.5, 2.8, 0.05, 2.3, '#FFFFFF', { nc: '#E8ECF2' }), B(14.4, 0.085, 4.1, 2.8, 0.005, 0.7, TEAL, { nc: TEAL })); label('MODERATOR', 15.8, 0.1, 4.45, 0.27);
+          disc(15.05, 0.085, 3.35, 0.42, '#DCE6F0'); disc(15.05, 0.09, 3.45, 0.17, SKIN); bold('Achmad', 15.65, 0.1, 3.5, 0.26); add(B(15.65, 0.085, 2.95, 1.3, 0.005, 0.1, LINE));
+
+          // V6.05: "What I learned" and its two lessons side by side, each above a sketch of it.
+          { const U = SU(5); head('What I learned', 24.8, 0.03, 10.15, 0.4, { nc: SOFT });
+            add(B(24.8, 0.03, 9.3, 0.24, 0.01, 0.24, TEAL, { nc: '#7FD8CB' })); bold(U[0], 25.3, 0.03, 9.42, 0.46, { nc: LITE }); para(U[1] || '', 50, 24.8, 0.03, 8.72, 0.31, 0.5, { nc: LITE });
+            add(B(36.6, 0.03, 9.3, 0.24, 0.01, 0.24, OCHRE, { nc: '#E0B060' })); bold(U[2] || '', 37.1, 0.03, 9.42, 0.46, { nc: LITE }); para(U[3] || '', 42, 36.6, 0.03, 8.72, 0.31, 0.5, { nc: LITE }); }
+          // 1: every step in its order, the dataset typed, the visual rebuilt
+          hand('every step, in order', 24.8, 0.03, 5.75, 0.28, TEAL, { nc: '#7FD8CB' });
+          for (let i = 0; i < 5; i++) { const x = 24.8 + i * 1.05, h = 0.5 * (i + 1); add(B(x, 0.03, 2.4, 1.0, 0.03, h, i % 2 ? '#3F8C7A' : TEAL, { nc: i % 2 ? '#3F8C7A' : TEAL })); label(String(i + 1), x + 0.5, 0.08, 2.4 + h - 0.26, 0.3); tick(x + 0.5, 0.05, 2.4 + h + 0.26, 0.34); }
+          paper(30.7, 0.03, 4.25, 4.0, 1.5, '#FFFFFF', '#E8ECF2'); mono('dataset', 30.85, 0.07, 5.5, 0.17, INK2); for (let r = 0; r < 3; r++) for (let q = 0; q < 3; q++) add(B(30.85 + q * 0.62, 0.065, 5.05 - r * 0.3, 0.52, 0.005, 0.2, r ? '#E6EAF0' : LINE, { nc: r ? '#C9CFDA' : LINE }));
+          hand('typed', 32.95, 0.07, 5.2, 0.3, BLUE); hand('by hand', 32.95, 0.07, 4.72, 0.3, BLUE);
+          paper(30.7, 0.03, 2.4, 4.0, 1.5, '#FFFFFF', '#E8ECF2'); mono('visual', 30.85, 0.07, 3.65, 0.17, INK2); [0.45, 0.75, 0.6, 0.95].forEach(function (h, k) { add(B(30.9 + k * 0.42, 0.065, 2.55, 0.3, 0.005, h, k === 3 ? OCHRE : LINE, { nc: k === 3 ? OCHRE : LINE })); });
+          hand('rebuilt,', 32.95, 0.07, 3.35, 0.3, OCHRE); hand('not copied', 32.95, 0.07, 2.87, 0.3, OCHRE);
+          hand('"hidden treasures"', 34.1, 0.03, 1.6, 0.32, OCHRE, { nc: '#E0B060' });
+          // 2: the first community, and the ones fifteen years later
+          add(B(36.6, 0.03, 3.5, 3.5, 0.08, 3.1, '#8C6A4A', { nc: '#4A3A30' }), B(36.8, 0.11, 3.7, 3.1, 0.01, 2.7, '#E6D5B0', { nc: '#B8A888' }));
+          [0, 1, 2, 3].forEach(function (k) { disc(37.4 + k * 0.65, 0.125, 5.3 - (k % 2) * 0.35, 0.26, '#8C7355'); add(B(37.14 + k * 0.65, 0.125, 4.3 - (k % 2) * 0.35, 0.52, 0.004, 0.72, '#A8906A', { nc: '#8C7355' })); });
+          mono('Pentaho-Indonesia', 36.6, 0.03, 3.15, 0.2, INK2, { nc: SOFT }); mono('2010', 36.6, 0.03, 2.75, 0.24, INK, { nc: LITE });
+          hand('15 years', 40.3, 0.03, 5.75, 0.28, OCHRE, { nc: '#E0B060' }); hand('later →', 40.3, 0.03, 5.3, 0.28, OCHRE, { nc: '#E0B060' });
+          add(B(42.3, 0.03, 3.5, 3.9, 0.08, 3.1, '#FFFFFF', { nc: '#E8ECF2' }), B(42.5, 0.11, 3.7, 3.5, 0.01, 2.7, '#DCEBF5', { nc: '#9FB8D0' }));
+          [YEL, NEON.dojo, NEON.forge].forEach(function (c, k) { disc(43.2 + k * 1.05, 0.125, 5.75, 0.36, c); });
+          [0, 1, 2, 3, 4].forEach(function (k) { disc(42.95 + k * 0.65, 0.125, 4.85 - (k % 2) * 0.3, 0.24, [SKIN, '#8A6248', '#C99A7A'][k % 3]); add(B(42.71 + k * 0.65, 0.125, 3.95 - (k % 2) * 0.3, 0.48, 0.004, 0.62, [BLUE, TEAL, OCHRE, PURPLE, RED][k], { nc: [BLUE, TEAL, OCHRE, PURPLE, RED][k] })); });
+          mono('my communities', 42.3, 0.03, 3.15, 0.2, INK2, { nc: SOFT }); mono('2025', 42.3, 0.03, 2.75, 0.24, INK, { nc: LITE });
+
+          // V6.06: "What I learned", Thread 1 in its colour and the sentence; a ruler of twenty years; the number; his student card.
+          { const U = SU(6); head('What I learned', 48.6, 0.03, 10.15, 0.4, { nc: SOFT }); hand(U[0], 48.6, 0.03, 9.3, 0.56, TEAL, { nc: '#7FD8CB' }); para(U[1] || '', 40, 48.6, 0.03, 8.35, 0.4, 0.68, { nc: LITE }); }
+          hand('20 years of experience', 48.6, 0.03, 5.95, 0.3, INK2, { nc: SOFT });
+          add(B(48.6, 0.03, 4.85, 10.06, 0.01, 0.07, DK, { nc: SOFT })); for (let i = 0; i <= 20; i++) add(B(48.6 + i * 0.5, 0.03, 4.85, 0.06, 0.01, i % 5 ? 0.32 : 0.62, DK, { nc: SOFT }));
+          mono('2005', 48.6, 0.03, 4.5, 0.2, INK2, { nc: SOFT }); mono('2025', 58.0, 0.03, 4.5, 0.2, INK2, { nc: SOFT });
+          add(T(48.6, 0.03, 2.75, 2.0, '40+', { al: 'l', wt: 800, ff: 'Manrope, sans-serif', c: '#C2B79E', nc: '#6A6A88' })); hand('just a number', 53.6, 0.03, 2.75, 0.44, TEAL, { nc: '#7FD8CB' });
+          add(B(64.2, 0.03, 10.0, 0.12, 0.02, 0.6, DK), B(60.2, 0.03, 5.5, 8.4, 0.06, 4.6, '#FFFFFF', { nc: '#E8ECF2' }), B(60.2, 0.095, 9.2, 8.4, 0.005, 0.9, TEAL, { nc: TEAL })); label('STUDENT', 60.5, 0.11, 9.65, 0.4, { al: 'l' }); mono('2025', 67.2, 0.11, 9.65, 0.24, '#FFFFFF');
+          add(B(60.6, 0.095, 6.0, 2.6, 0.005, 2.8, '#DCE6F0', { nc: '#B8C8DC' }), B(61.2, 0.1, 6.0, 1.4, 0.004, 1.1, SHIRT, { nc: SHIRT })); disc(61.9, 0.1, 7.7, 0.62, SKIN); // the portrait: a plain head, no hair drawn
+          bold('Achmad', 63.6, 0.11, 8.3, 0.52); mono('experience: 20 years', 63.6, 0.11, 7.5, 0.21, INK2); mono('still learning', 63.6, 0.11, 7.0, 0.21, INK2); add(B(63.6, 0.095, 6.2, 4.6, 0.005, 0.07, LINE)); hand('still a student', 63.6, 0.11, 5.85, 0.3, TEAL);
+        });
+        // The lawn, in groups from one end of the wall to the other, drawn in the order the camera needs (byEye). V6.02: a flower bed and
+        // the bar-chart sculpture. V6.05: the chest of hidden treasures. V6.06: a student's desk, his chair and his bag.
+        const ex = EYE[0] - PK[0], row = function (list) { byEye(ex, list, 0, W); };
+        seen('vy', PK[1], FAR, function () { row([
+          [6, function () { add(B(7.2, 0.2, 0, 3.4, 1.0, 0.4, '#8C6A4A', { nc: '#3E3428' })); [0, 1, 2, 3, 4].forEach(function (k) { add(S(7.6 + k * 0.65, 0.7, 0.62, 0.26, [RED, YEL, '#E08AA0', '#FFFFFF', ORANGE][k], { nc: [RED, YEL, '#E08AA0', '#C9CEDA', ORANGE][k] })); }); }],
+          [18.3, function () { add(B(16.2, 1.6, 0, 4.2, 1.8, 0.3, '#C9C2B4', { nc: '#55504A' })); byEye(ex, [0, 1, 2].map(function (k) { return [16.6 + k * 1.2, function () { add(B(16.5 + k * 1.2, 2.0, 0.3, 0.9, 0.9, 0.9 + k * 0.8, YEL, { nc: '#B8922E' })); }]; }), 16.2, 20.4); }],
+          [23.6, function () { lamp(23.6, 2.4, 9.5); }],
+          [32.4, function () { add(B(31.3, 1.3, 0, 2.3, 1.5, 0.9, '#8C5A3A', { nc: '#4A3428' }), B(31.3, 1.3, 0.9, 2.3, 0.28, 0.9, '#7A4C30', { nc: '#3E2C22' }), B(31.3, 2.8, 0.36, 2.3, 0.02, 0.14, GOLD, { nc: GOLD }));
+            [[31.8, 1.9], [32.4, 2.25], [33.0, 1.95], [32.1, 2.4]].forEach(function (p, k) { add(S(p[0], p[1], 0.98 + (k % 2) * 0.1, 0.3, '#F2C14E', { e: 1, nc: '#FFD27A' })); }); add(G(32.4, 2.3, 1.3, 2.6, '#FFD27A', { day: 1, a: 'dz-pulse' })); }],
+          [47, function () { lamp(47, 2.4, 9.5); }],
+          [60.9, function () { add(L.desk(57.8, 0.9, 0, 6.2, 3.4, 2.4, WOOD), L.laptop(59.4, 1.6, 2.4), B(62.2, 2.3, 2.4, 1.3, 1.0, 0.12, '#FFFFFF', { nc: '#C9CEDA' })); mug(58.5, 2.6, 2.4, '#6E9C8F'); add(L.chair(60.2, 4.9, 0, '#5C6E91')); }],
+          [66.2, function () { add(B(65.4, 3.4, 0, 1.6, 1.0, 2.0, '#B8472E', { nc: '#6A3028' }), B(65.65, 4.4, 0.3, 1.1, 0.12, 0.8, '#D9682E', { nc: '#7A4030' })); }] // the bag stands clear of the desk, a step to its right and forward
+        ]); });
+        seen('vy', -FAR, PK[1], wall); seen('vy', -FAR, PK[1], trees);
+      });
+
+      // ---- Set 3, the hall (V6.03 the dojo and the forge, V6.08 the lockers): three cutaway rooms in a row, each open to the court. The
+      // room further from the camera goes in first.
+      { const DJ = [HL[0], HL[1]], FG = [HL[0] + 16.4, HL[1]], LK = [HL[0] + 32.8, HL[1]];
+        const dojo = function () { room(DJ, 15.6, 16, 10.5, ['#DCD2A6', '#4A4636'], ['#F1E9D6', '#57525E', '#D9C49A', '#5E5448'], function () {
+          const ex = EYE[0] - DJ[0];
+          sign('FABRIC DOJO', 3.0, 0, 10.75, 9.6, NEON.dojo);
+          [5.2, 10.4].forEach(function (x) { add(B(x, 0, 0.25, 0.06, 16, 0.006, '#B9AE80', { nc: '#3A372C' })); }); add(B(0, 8, 0.25, 15.6, 0.06, 0.006, '#B9AE80', { nc: '#3A372C' }));
+          // V6.03, first half: the community's name and its sentence; the classes of one month, all done; the leaderboard; the belts.
+          { const U = SU(3); bold(U[0], 1.2, 0.03, 9.85, 0.62, { nc: LITE }); para(U[1] || '', 34, 1.2, 0.03, 8.95, 0.44, 0.72, { nc: LITE }); }
+          paper(1.2, 0.03, 1.5, 7.4, 3.9, '#FFFFFF', '#E8ECF2'); add(B(1.2, 0.065, 4.75, 7.4, 0.005, 0.65, NEON.dojo, { nc: '#2E8C84' })); label('APRIL 2025 · all the classes', 1.45, 0.08, 5.07, 0.3, { al: 'l', c: INK, nc: INK });
+          for (let r = 0; r < 4; r++) for (let q = 0; q < 6; q++) { const x = 1.5 + q * 0.88, z = 3.95 - r * 0.72; add(B(x, 0.065, z, 0.74, 0.005, 0.56, '#E6F2EC', { nc: '#C9DCD2' })); tick(x + 0.37, 0.08, z + 0.28, 0.36); }
+          hand('one', 6.95, 0.08, 3.4, 0.4, TEAL); hand('month', 6.95, 0.08, 2.8, 0.4, TEAL);
+          add(B(9.7, 0.03, 7.9, 5.3, 0.08, 2.3, NIGHT, { nc: '#161B28' }), B(9.7, 0.11, 9.6, 5.3, 0.005, 0.6, GOLD, { nc: GOLD })); label('LEADERBOARD', 9.9, 0.13, 9.9, 0.3, { al: 'l', c: INK, nc: INK });
+          add(B(9.9, 0.11, 8.6, 4.9, 0.005, 0.8, GOLD, { nc: GOLD })); bold('#1', 10.05, 0.13, 9.0, 0.44, { nc: INK }); bold('Achmad', 11.1, 0.13, 9.0, 0.38, { nc: INK }); add(B(9.9, 0.11, 8.05, 4.9, 0.005, 0.4, '#39415A', { nc: '#2B3142' }));
+          add(B(9.7, 0.03, 2.3, 5.3, 0.1, 5.1, '#C9A77A', { nc: '#5E5040' })); mono('BELTS', 9.95, 0.15, 7.0, 0.22, INK2, { nc: LITE });
+          add(B(10.1, 0.13, 5.55, 4.5, 0.08, 0.6, '#FFFFFF', { nc: '#C9CEDA' }), B(11.9, 0.21, 5.4, 0.9, 0.06, 0.9, '#F1EEE6', { nc: '#B8BECC' })); mono('white · day one', 10.1, 0.15, 5.1, 0.2, INK2, { nc: LITE });
+          add(B(10.1, 0.13, 3.55, 4.5, 0.08, 0.6, BLUE, { nc: '#4F7FD8', e: 1 }), B(11.9, 0.21, 3.4, 0.9, 0.06, 0.9, '#254A80', { nc: '#3E66B8' }), G(12.3, 0.6, 3.85, 4.2, '#4F7FD8')); hand('blue belt ✓', 10.1, 0.15, 2.9, 0.38, BLUE, { nc: '#9FC0F0' });
+          // the floor: a low table with his laptop and tea, two cushions, a paper lantern
+          byEye(ex, [
+            [2.6, function () { add(C(2.6, 7.4, 0.25, 1.2, 0.32, '#8C3B3B', { n: 12, nc: '#4A2630' })); }],
+            [8.8, function () { add(B(5.8, 2.4, 0.25, 6.0, 3.0, 1.0, '#8C6A4A', { nc: '#453A30' }), L.laptop(9.6, 3.2, 1.25)); mug(7.0, 4.2, 1.25, '#6E9C8F'); }],
+            [11.8, function () { add(C(11.8, 7.8, 0.25, 1.2, 0.32, '#3F6A8C', { n: 12, nc: '#26384A' })); }],
+            [14.3, function () { add(B(13.75, 0.7, 0.25, 1.1, 1.1, 0.15, NIGHT), B(13.85, 0.8, 0.4, 0.9, 0.9, 1.2, '#F6E7C0', { e: 1, nc: '#FFE7A8' }), B(13.75, 0.7, 1.6, 1.1, 1.1, 0.15, NIGHT), G(14.3, 1.6, 1.0, 5, '#FFD27A')); }]
+          ], 0, 15.6);
+        }, 0, 3); };
+        const forge = function () { room(FG, 15.6, 16, 10.5, ['#8F949C', '#33363F'], ['#E6E3DD', '#55545E', '#C9C6BF', '#4A4952'], function () {
+          const ex = EYE[0] - FG[0];
+          sign('THE DATA VIS FORGE', 1.6, 0, 10.75, 12.4, NEON.forge);
+          add(B(0, 0, 6.35, 15.6, 0.02, 0.12, ORANGE, { nc: '#8A4A2A' }));
+          // V6.03, second half: the community's name and its sentence; the workouts, the solution files still sealed; a report in the
+          // corporate style.
+          { const U = SU(3); bold(U[2] || '', 1.2, 0.03, 9.85, 0.62, { nc: LITE }); para(U[3] || '', 34, 1.2, 0.03, 8.95, 0.44, 0.72, { nc: LITE }); }
+          add(B(1.2, 0.03, 3.75, 7.6, 0.08, 1.8, NIGHT, { nc: '#161B28' })); mono('WORKOUTS · advanced', 1.4, 0.13, 5.22, 0.22, '#F2C14E');
+          for (let i = 0; i < 6; i++) { disc(1.85 + i * 1.22, 0.12, 4.4, 0.46, i % 2 ? '#39415A' : '#2B3142'); mono('0' + (i + 1), 1.56 + i * 1.22, 0.14, 4.42, 0.24, '#FFFFFF'); tick(2.25 + i * 1.22, 0.14, 3.98, 0.3, '#7FD8A0'); }
+          add(B(1.2, 0.03, 1.95, 3.9, 0.06, 1.5, '#E0B060', { nc: '#8A6A30' }), B(1.2, 0.09, 3.2, 1.6, 0.005, 0.25, '#C99A4A', { nc: '#6A5226' }), B(1.2, 0.095, 2.55, 3.9, 0.005, 0.3, RED, { nc: RED })); mono('solution files', 1.38, 0.11, 2.25, 0.22, INK); label('SEALED', 3.15, 0.11, 2.7, 0.22);
+          hand('not opened', 5.5, 0.03, 2.7, 0.44, RED, { nc: '#E8A49B' });
+          paper(9.7, 0.03, 2.4, 5.3, 7.4, '#FFFFFF', '#E8ECF2'); add(B(9.7, 0.065, 9.2, 5.3, 0.005, 0.6, NIGHT, { nc: NIGHT })); label('REPORT', 9.95, 0.08, 9.5, 0.3, { al: 'l' }); mono('actual vs plan', 9.95, 0.07, 8.8, 0.2, INK2);
+          [2.2, 1.6, 2.6, 1.2, 1.9, 2.4].forEach(function (w, i) { const z = 8.0 - i * 0.8, d = [0.5, -0.4, 0.7, -0.3, 0.4, 0.6][i]; add(B(9.95, 0.065, z + 0.1, 0.8, 0.005, 0.1, LINE), B(11.0, 0.065, z, w, 0.005, 0.34, NIGHT, { nc: '#3D4A63' }), B(d > 0 ? 13.85 : 13.85 + d, 0.065, z, Math.abs(d), 0.005, 0.34, d > 0 ? GREEN : RED, { nc: d > 0 ? GREEN : RED })); });
+          add(B(13.84, 0.065, 3.9, 0.03, 0.005, 4.5, INK2), B(9.95, 0.065, 3.6, 4.8, 0.005, 0.05, NIGHT)); hand('corporate style', 9.95, 0.07, 3.05, 0.36, INK2);
+          // the floor: the anvil and its hammer, three kettlebells
+          byEye(ex, [
+            [11.2, function () { add(B(10.4, 1.6, 0.25, 1.6, 1.3, 0.9, '#4A5468', { nc: '#2B3142' }), B(9.5, 1.4, 1.15, 3.4, 1.7, 0.6, '#5C6475', { nc: '#353D52' }), B(9.8, 2.2, 1.75, 2.2, 0.24, 0.2, WOOD, { nc: NWOOD }), B(11.8, 2.05, 1.75, 0.6, 0.55, 0.45, DK)); }],
+            [7.4, function () { byEye(ex, [0, 1, 2].map(function (k) { return [5.9 + k * 1.5, function () { const x = 5.9 + k * 1.5, r = 0.55 + k * 0.08; add(S(x, 1.9, 0.25 + r, r, [DK, ORANGE, NIGHT][k], { nc: ['#2B3142', '#8A4A2A', '#161B28'][k] }), B(x - 0.3, 1.8, 0.25 + r * 1.9, 0.6, 0.2, 0.42, '#20242E')); }]; }), 5.3, 9.7); }]
+          ], 0, 15.6);
+        }, 3, 0); };
+        const lockers = function () { room(LK, 23, 16, 10.5, ['#B9B4A6', '#44423E'], ['#E6E3DA', '#5F5B58', '#EDEAE2', '#6F6A63'], function () {
+          // V6.08: "Tools I picked up" over six lockers, one for each tool, its parts listed on the door. One block with seams drawn on
+          // it: separate lockers would paint their sides over their neighbours' labels, since nothing is depth-sorted.
+          head('Tools I picked up', 1.2, 0.03, 9.75, 0.78, { c: INK, nc: LITE });
+          add(B(1.0, 0, 0.25, 21.4, 1.6, 8.55, '#8FA0B8', { nc: '#39435E' }));
+          [['Power BI', ['DAX', 'TMDL', 'field parameters', 'visual calculations', 'SVG'], '#B8922E'], ['Tabular Editor', ['C# macros'], '#3D6A8C'], ['JSON themes', [], '#7A5C99'], ['Microsoft Fabric', ['lakehouse', 'warehouse', 'pipelines', 'real-time', 'CI/CD'], '#1D6A5A'], ['Azure DevOps', [], '#2F5C99'], ['Figma', ['icons'], '#B8472E']].forEach(function (t, i) {
+            const x = 1.2 + i * 3.5, y = 1.6;
+            add(B(x, y, 0.5, 3.3, 0.02, 8.05, '#A9B8CC', { nc: '#4A5878' })); [7.95, 7.7, 7.45].forEach(function (z) { add(B(x + 0.9, y + 0.02, z, 1.5, 0.005, 0.09, DK, { nc: '#232B3E' })); });
+            add(B(x + 0.2, y + 0.02, 3.6, 2.9, 0.01, 3.5, '#FFFDF7', { nc: '#E8ECF2' }), B(x + 0.2, y + 0.03, 6.72, 2.9, 0.005, 0.38, t[2], { nc: t[2] }));
+            add(T(x + 1.65, y + 0.04, 6.25, 0.31, t[0], { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }));
+            t[1].forEach(function (s, k) { add(T(x + 1.65, y + 0.04, 5.68 - k * 0.4, 0.2, s, { wt: 600, ff: 'IBM Plex Mono, monospace', c: INK2, nc: INK2 })); });
+            add(B(x + 2.85, y + 0.02, 2.5, 0.14, 0.09, 0.7, '#E6EAF0', { nc: '#B8C0D0' })); mono('0' + (i + 1), x + 0.25, y + 0.04, 3.0, 0.24, DK, { nc: LITE }); });
+          // the bench: a bag, a towel, a bottle
+          add(B(4.6, 5.4, 0.25, 0.3, 1.4, 1.2, DK), B(18.1, 5.4, 0.25, 0.3, 1.4, 1.2, DK), B(4.0, 5.2, 1.45, 15.0, 1.8, 0.22, WOOD, { nc: NWOOD }));
+          byEye(EYE[0] - LK[0], [[7.4, function () { add(B(6.0, 5.5, 1.67, 2.8, 1.2, 1.1, '#3D6A8C', { nc: '#26384A' }), B(6.9, 6.7, 2.3, 1.0, 0.02, 0.3, '#FFFFFF', { nc: '#C9CEDA' })); }], [12.6, function () { add(B(11.6, 5.5, 1.67, 2.1, 1.3, 0.26, '#FFFFFF', { nc: '#C9CEDA' })); }], [15.6, function () { add(C(15.6, 6.0, 1.67, 0.3, 1.0, TEAL, { n: 10 }), C(15.6, 6.0, 2.67, 0.16, 0.2, '#FFFFFF', { n: 8 })); }]], 0, 23);
+        }); };
+        const cx = EYE[0] - HL[0];
+        at(HL, function () { add(B(15.6, 0, 0, 0.8, 16, 0.25, '#8C6A4A', { nc: '#453A30' }), B(32.0, 0, 0, 0.8, 16, 0.25, '#8C6A4A', { nc: '#453A30' })); }); // the sills between the rooms
+        [[7.8, dojo], [24.2, forge], [44.3, lockers]].sort(function (a, b) { return Math.abs(b[0] - cx) - Math.abs(a[0] - cx); }).forEach(function (r) { r[1](); });
+        at(HL, function () { add(B(-1, 16, 0, 57.6, 2.2, 0.16, '#B98B5E', { nc: NWOOD })); shrub(-7, 6, 1.3); lamp(-2.6, 15, 9.5); lamp(58.8, 15, 9.5); }); } // the shrub stands clear of the lamp post, seen from the front and from above
+
+      // ---- Set 1 (V6.01), the park gate: where he decides and joins. The heading is painted on the beam; "Context" is the notice on the
+      // left wall; on the right wall the visuals follow the paragraph: what he already knew and the modern way, the three communities to
+      // join, and their instructions, followed exactly. He stands in the opening, about to walk in.
+      at(GT, function () {
+        const WALL = '#E3D3B8', NWALL = '#4A4658', trees = function () { tree(-17.5, -7, 8.8); tree(18.5, -8, 9.6); };
+        seen('vy', GT[1], FAR, trees);
+        add(B(-22, -1.2, 0, 16.4, 1.2, 11.6, WALL, { nc: NWALL }), B(5.6, -1.2, 0, 16.4, 1.2, 11.6, WALL, { nc: NWALL }));
+        [-23.4, -7.2, 5.2, 21.6].forEach(function (x) { add(B(x, -1.6, 0, 1.8, 2.2, 12.0, '#B5694A', { nc: '#5A3A3A' })); });
+        add(B(-23.6, -1.5, 12.0, 47.2, 2.0, 4.9, '#F1EBDD', { nc: '#3A3F58', ub: 1 }), B(-24.0, -1.8, 16.9, 48.0, 2.6, 0.5, '#B5694A', { nc: '#5A3A3A' }));
+        seen('vy', GT[1], FAR, function () {
+          { const U1 = SU(1), hm = parts(U1[0]), yb = 0.55;
+            if (hm) add(T(0, yb, 15.75, 0.66, hm.n + '  ·  ' + hm.yrs, { wt: 700, ff: 'Manrope, sans-serif', c: RED, nc: '#E8A49B' }), T(0, yb, 13.85, 1.9, hm.title, { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: LITE }), hm.sub ? T(0, yb, 12.6, 0.6, hm.sub, { wt: 600, ff: 'Manrope, sans-serif', c: INK2, nc: '#D6DCE8' }) : null);
+            else String(U1[0] || '').split('|').forEach(function (ln, k) { add(T(0, yb, 14.9 - k * 1.5, 1.2, ln.trim(), { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: LITE })); });
+            // The notice on the left wall: "Context" and its paragraph; under it, the month he decided.
+            add(B(-20.9, 0, 1.5, 12.6, 0.2, 9.6, '#C4A27A', { nc: '#5E5040' }), B(-20.6, 0.2, 1.8, 12.0, 0.03, 9.0, PAPER, { nc: NPAPER }));
+            head('Context', -20.1, 0.26, 10.1, 0.56); para(U1[1] || '', 44, -20.1, 0.26, 9.15, 0.48, 0.84); }
+          add(B(-20.1, 0.24, 2.2, 2.3, 0.02, 2.1, '#FFFFFF', { nc: '#FFFFFF' }), B(-20.1, 0.26, 3.75, 2.3, 0.005, 0.55, RED, { nc: RED })); label('DEC', -18.95, 0.28, 4.02, 0.3); bold('2024', -19.85, 0.28, 2.95, 0.62);
+          hand('decided: learn', -17.3, 0.26, 3.55, 0.44, TEAL); hand('Power BI properly', -17.3, 0.26, 2.75, 0.44, TEAL);
+          // The right wall. What he knew, and the modern way.
+          mono('WHAT I ALREADY KNEW', 8.0, 0.03, 10.95, 0.34, INK2, { nc: SOFT });
+          add(B(8.0, 0.03, 8.6, 7.2, 0.05, 1.95, '#B9B4A6', { nc: '#55504A' })); bold('SAP BusinessObjects', 8.25, 0.1, 9.85, 0.54, { c: INK2, nc: LITE }); mono('BI · since 2010', 8.25, 0.1, 9.05, 0.34, INK2, { nc: SOFT });
+          hand('→', 15.4, 0.03, 9.6, 0.9, OCHRE, { nc: '#E0B060' });
+          add(B(16.5, 0.03, 8.6, 4.3, 0.05, 1.95, YEL, { nc: '#B8922E' })); bold('the modern way', 16.7, 0.1, 9.85, 0.46); mono('Power BI', 16.7, 0.1, 9.05, 0.36, INK);
+          // The three communities he joined, as way signs into the park.
+          mono('ONLINE COMMUNITIES · JOINED', 8.0, 0.03, 7.85, 0.34, INK2, { nc: SOFT });
+          [['Power BI Park', '#A8892E'], ['Fabric Dojo', '#1D7A72'], ['The Data Vis Forge', '#B8562E']].forEach(function (p, i) { const z = 6.45 - i * 1.15; add(B(8.0, 0.03, z, 10.6, 0.06, 1.0, p[1], { nc: p[1] })); label(p[0], 8.35, 0.11, z + 0.5, 0.56, { al: 'l' }); label('→', 17.8, 0.11, z + 0.5, 0.6); });
+          // Their instructions, followed exactly.
+          paper(8.0, 0.03, 0.9, 6.4, 2.9, '#FFFFFF', '#E8ECF2'); add(B(8.0, 0.065, 3.25, 6.4, 0.005, 0.55, DK, { nc: DK })); label('INSTRUCTIONS', 8.25, 0.08, 3.52, 0.36, { al: 'l' });
+          [0, 1, 2].forEach(function (k) { const z = 2.75 - k * 0.65; disc(8.5, 0.07, z, 0.24, INK2); add(T(8.5, 0.08, z, 0.28, String(k + 1), { wt: 800, ff: 'Manrope, sans-serif', c: '#FFFFFF', nc: '#FFFFFF' }), B(9.0, 0.065, z - 0.07, 3.8 - k * 0.5, 0.005, 0.14, LINE)); tick(13.7, 0.08, z, 0.5); });
+          hand('followed', 15.0, 0.03, 2.7, 0.62, GREEN, { nc: '#7FD8A0' }); hand('exactly', 15.0, 0.03, 1.75, 0.62, GREEN, { nc: '#7FD8A0' });
+          // Achmad in the opening, his bag on his back; bollards and lamps along the gravel. Nothing stands in front of the two walls.
+          man(0.6, 4.6, 0.05, { back: true }); add(B(0.05, 4.95, 2.75, 1.1, 0.5, 1.5, '#B8472E', { nc: '#6A3028' }));
+          for (let i = 0; i < 6; i++) add(C(-22 + i * 8.8, 14.6, 0, 0.28, 1.3, '#E0D8C4', { n: 8, nc: '#5A5670' }));
+          lamp(-26, 6, 11); lamp(26, 6, 11);
+        });
+        seen('vy', -FAR, GT[1], trees);
+      });
+
+      // ---- Set 4, the street front (V6.04 the portfolio, the interviews and the exams; V6.07 the two doors): one long building on the
+      // pavement. Left half: the two paragraphs, the two certificates, a shop window with his portfolio, the posts that led to August,
+      // and its calendar. Right half: the proud moment over the two doors, an offer on each, and the eight months between them.
+      at(ST, function () {
+        const rtree = function () { shrub(29.5, 8, 1.5); }, ltree = function () { shrub(-29.2, 2.2, 1.5); }; // each stands clear of its lamp post from every view
+        add(B(-30, 0, 0, 60, 13.6, 0.1, '#E3DBCB', { nc: '#3A3D48' }), B(-30, 13.6, 0, 60, 0.3, 0.16, '#B9B2A4', { nc: '#2E313A' })); // the pavement and its kerb
+        add(B(-24, -14, 0, 48, 14, 15, '#DDD5C6', { nc: '#3E3E58' }), B(-24.4, -14.4, 15, 48.8, 14.8, 0.6, '#9AA3B2', { nc: '#2E3548' }));
+        seen('vy', ST[1], FAR, function () {
+          add(B(-24, 0, 0, 48, 0.06, 1.0, '#B9B2A4', { nc: '#33334A' }), B(-24, 0, 13.6, 48, 0.06, 0.3, '#B5694A', { nc: '#5A3A3A' }));
+          // V6.04
+          { const U = SU(4); para(U[0], 52, -22.6, 0.03, 10.15, 0.31, 0.5, { nc: LITE }); para(U[1] || '', 52, -22.6, 0.03, 7.75, 0.31, 0.5, { nc: LITE }); }
+          [['DP-700', 'Microsoft Fabric', '#1D6A5A'], ['PL-300', 'Power BI', '#A8892E']].forEach(function (c, i) { const x = -22.6 + i * 4.5;
+            add(B(x, 0.03, 2.0, 4.1, 0.08, 3.8, GOLD, { nc: '#8A6A30' }), B(x + 0.2, 0.11, 2.2, 3.7, 0.01, 3.4, '#FFFDF7', { nc: '#E8ECF2' }), B(x + 0.2, 0.125, 5.1, 3.7, 0.005, 0.5, c[2], { nc: c[2] })); label('CERTIFIED', x + 0.4, 0.14, 5.35, 0.22, { al: 'l' });
+            add(T(x + 2.05, 0.14, 4.35, 0.74, c[0], { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }), T(x + 2.05, 0.14, 3.65, 0.27, c[1], { wt: 600, ff: 'Inter, sans-serif', c: INK2, nc: INK2 })); disc(x + 1.1, 0.125, 2.85, 0.42, GOLD); tick(x + 1.1, 0.14, 2.85, 0.4, '#FFFFFF'); hand('passed', x + 1.75, 0.14, 2.85, 0.36, GREEN); });
+          // the shop window: his portfolio website
+          add(B(-12.6, 0.03, 8.0, 6.4, 0.1, 0.8, DK, { nc: '#232B3E' })); label('JULY · my portfolio website', -12.35, 0.15, 8.4, 0.3, { al: 'l' });
+          add(B(-12.6, 0.03, 2.2, 6.4, 0.1, 5.6, DK, { nc: '#232B3E' }), B(-12.4, 0.13, 2.4, 6.0, 0.02, 5.2, '#F4F6FA', { nc: '#FFF3D6', e: 1 }), B(-12.4, 0.155, 7.1, 6.0, 0.005, 0.5, '#C9CED6', { nc: '#C9CED6' }));
+          [RED, YEL, GREEN].forEach(function (c, k) { disc(-12.1 + k * 0.36, 0.165, 7.35, 0.11, c); });
+          bold('Achmad Farizky', -12.05, 0.165, 6.45, 0.44); add(B(-12.05, 0.155, 5.75, 3.6, 0.005, 0.12, LINE), B(-12.05, 0.155, 5.45, 2.6, 0.005, 0.12, LINE));
+          [BLUE, TEAL, OCHRE].forEach(function (c, k) { const x = -12.05 + k * 1.92; add(B(x, 0.155, 2.75, 1.7, 0.005, 2.2, '#FFFFFF', { nc: '#FFFFFF' }), B(x + 0.12, 0.16, 3.85, 1.46, 0.004, 0.98, c, { nc: c }), B(x + 0.12, 0.16, 3.4, 1.1, 0.004, 0.1, LINE), B(x + 0.12, 0.16, 3.1, 0.8, 0.004, 0.1, LINE)); });
+          hand('looking for a job', -12.4, 0.03, 1.55, 0.38, TEAL, { nc: '#7FD8CB' });
+          // his posts, and where they led
+          hand('my LinkedIn posts', -12.6, 0.03, 10.3, 0.3, BLUE, { nc: '#9FC0F0' });
+          for (let i = 0; i < 5; i++) { const x = -12.6 + i * 1.3; add(B(x, 0.03, 9.1, 1.14, 0.03, 0.8, '#FFFFFF', { nc: '#E8ECF2' }), B(x, 0.065, 9.1, 0.16, 0.005, 0.8, BLUE, { nc: BLUE }), B(x + 0.28, 0.065, 9.55, 0.7, 0.005, 0.09, LINE), B(x + 0.28, 0.065, 9.32, 0.5, 0.005, 0.09, LINE)); }
+          hand('→', -6.0, 0.03, 9.5, 0.6, BLUE, { nc: '#9FC0F0' });
+          paper(-5.2, 0.03, 5.3, 4.5, 5.0, '#FFFFFF', '#E8ECF2'); add(B(-5.2, 0.065, 9.55, 4.5, 0.005, 0.75, RED, { nc: RED })); label('AUGUST', -2.95, 0.08, 9.93, 0.36);
+          for (let r = 0; r < 4; r++) for (let q = 0; q < 7; q++) { const x = -4.95 + q * 0.58, z = 8.85 - r * 0.5, on = r === 1 && q === 3; add(B(x, 0.065, z, 0.48, 0.005, 0.38, on ? RED : '#E6EAF0', { nc: on ? RED : '#C9CFDA' })); }
+          hand('same day:', -4.95, 0.07, 6.65, 0.32, RED); mono('interview 1', -4.95, 0.07, 6.15, 0.21, INK); mono('interview 2', -4.95, 0.07, 5.75, 0.21, INK);
+          [0, 1].forEach(function (k) { const x = -5.2 + k * 2.35; add(B(x, 0.03, 2.5, 2.15, 0.04, 1.45, '#FFFFFF', { nc: '#E8ECF2' }), B(x, 0.075, 3.6, 2.15, 0.005, 0.05, LINE), B(x + 0.2, 0.075, 3.3, 0.9, 0.005, 0.08, LINE)); mono('OFFER', x + 0.2, 0.09, 2.85, 0.24, INK); disc(x + 1.7, 0.075, 2.95, 0.3, GREEN); tick(x + 1.7, 0.09, 2.95, 0.3, '#FFFFFF'); });
+          hand('both', -4.95, 0.03, 4.4, 0.36, GREEN, { nc: '#7FD8A0' });
+
+          // V6.07
+          { const U = SU(7); hand(U[0], 1.6, 0.03, 10.45, 0.56, OCHRE, { nc: '#E0B060' }); para(U[1] || '', 48, 1.6, 0.03, 9.55, 0.44, 0.76, { nc: LITE }); }
+          [[2.6, '#4E7A8C', '#2A4652'], [16.4, '#8C5A48', '#4A3028']].forEach(function (d, k) { const x = d[0];
+            add(B(x - 0.3, 0, 0, 5.0, 0.08, 7.5, DK, { nc: '#232B3E' }), B(x, 0.08, 0.15, 4.4, 0.04, 7.05, d[1], { nc: d[2] }), B(x + 0.5, 0.12, 5.6, 3.4, 0.02, 1.3, GL, { nc: LITW, e: 1 }), S(x + 3.9, 0.3, 3.3, 0.16, GOLD));
+            add(B(x - 0.3, 0, 7.6, 5.0, 0.1, 0.62, NIGHT, { nc: '#161B28' })); label('big company · ' + (k + 1), x + 2.2, 0.12, 7.91, 0.27);
+            add(B(x + 0.8, 0.12, 2.9, 2.8, 0.03, 2.2, '#FFFFFF', { nc: '#FFFFFF' }), B(x + 0.8, 0.155, 4.6, 2.8, 0.005, 0.5, GREEN, { nc: GREEN })); label('JOB OFFER', x + 2.2, 0.17, 4.85, 0.25);
+            add(B(x + 1.05, 0.155, 4.1, 2.0, 0.005, 0.09, LINE), B(x + 1.05, 0.155, 3.8, 1.5, 0.005, 0.09, LINE)); disc(x + 1.45, 0.155, 3.3, 0.3, GREEN); tick(x + 1.45, 0.17, 3.3, 0.3, '#FFFFFF'); hand('yes', x + 2.0, 0.17, 3.3, 0.34, GREEN);
+            add(B(x + 0.2, 0.4, 0.1, 4.0, 1.6, 0.04, '#8C6A4A', { nc: '#3E3428' })); });
+          paper(9.6, 0.03, 3.9, 4.2, 3.7, '#FFFFFF', '#E8ECF2'); add(B(9.6, 0.065, 6.9, 4.2, 0.005, 0.7, RED, { nc: RED })); label('AUGUST', 11.7, 0.08, 7.25, 0.32);
+          add(T(11.7, 0.08, 5.85, 0.86, 'same', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }), T(11.7, 0.08, 4.85, 0.86, 'day', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: INK }));
+          hand('←', 8.0, 0.03, 5.5, 0.9, GREEN, { nc: '#7FD8A0' }); hand('→', 14.3, 0.03, 5.5, 0.9, GREEN, { nc: '#7FD8A0' });
+          mono('8 MONTHS · IN PUBLIC', 8.2, 0.03, 3.05, 0.24, INK2, { nc: SOFT });
+          ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'].forEach(function (m, i) { const x = 8.2 + i * 0.89, c = i === 7 ? GOLD : (i % 2 ? '#3F8C7A' : TEAL); add(B(x, 0.03, 1.6, 0.8, 0.03, 0.95, c, { nc: c })); label(m, x + 0.4, 0.08, 2.1, 0.25, i === 7 ? { c: INK, nc: INK } : null); disc(x + 0.4, 0.065, 1.78, 0.09, '#FFFFFF'); });
+        });
+        // lamps and planters
+        seen('vy', ST[1], FAR, function () { ltree(); lamp(-25.2, 6, 11); lamp(25.2, 6, 11); rtree(); });
+      });
     } else if (id === 'kanzway') {
       def.label = 'Kanzway warehouse: catalog shelves of industrial tools, an ERD board, a pallet and a small team at three desks';
       def.sky = ['#D5DAE0', '#EDEDEB']; def.nsky = ['#141B2E', '#2A3450']; def.fog = 0.15; def.haze = '#E3E6EA';
