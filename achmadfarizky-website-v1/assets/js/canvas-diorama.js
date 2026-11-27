@@ -3267,13 +3267,15 @@ export class CanvasDiorama {
       const topic = function (U, k, x, z) { const n = U[2 + k * 3], l = U[3 + k * 3], rows = Number(U[4 + k * 3]) || 0; if (!n) return;
         bold(n, x, 0.03, z, 0.5, { nc: LITE }); say(l || '', x, 0.03, z - 0.7, 0.33, { nc: LITE }); if (rows) say('→', x, 0.03, z - 1.45, 0.33, { nc: LITE }); };
 
+      // small lanterns on the top of a shop front, at the given x; their glow stays above the painted text
+      const lanterns = function (xs, z) { xs.forEach(function (x) { add(C(x, 0.2, z, 0.08, 0.45, DK, { n: 6 }), S(x, 0.2, z + 0.72, 0.3, '#FFE7A8', { e: 1 }), G(x, 0.4, z + 0.72, 1.0, '#FFD27A')); }); };
       // A shop: a small building whose front wall stands on y 0, from x -2 to BW + 2, with window niches cut into it.
       //   top: the height of its wall; wall: [front, front at night, side, side at night]; trim: [day, night];
       //   wins: one entry per window: { x, w, z, h, c: [back, floor, inner sides], inside: adds the diorama, authored from the
       //   window's own left-back-bottom corner (x 0..w, y -ND..0, z 0..h) };
       //   front(): the painted text and anything else on the wall; roof(): what stands on the roof; walk(): what stands on the pavement.
       const ND = 2.6, W0 = -2, W1 = BW + 2, DP = 9;
-      const shop = function (o, top, wall, trim, wins, front, roof, walk) { at(o, function () {
+      const shop = function (o, top, wall, trim, wins, front, roof, walk, lan) { at(o, function () {
         const wc = { nc: wall[1] }, backW = function () { add(B(W0, -DP, 0, W1 - W0, 0.4, top, wall[2], { nc: wall[3] })); }, sideL = function () { add(B(W0, -DP + 0.4, 0, 0.4, DP - 0.8, top, wall[2], { nc: wall[3] })); }, sideR = function () { add(B(W1 - 0.4, -DP + 0.4, 0, 0.4, DP - 0.8, top, wall[2], { nc: wall[3] })); };
         const sides = function () { seen('vx', o[0] + W1, FAR, sideR); seen('vx', -FAR, o[0] + W0, sideL); };
         // The shell goes in here, behind the windows, for a camera in front; a camera behind or beside the shop (a camera move) gets
@@ -3294,12 +3296,19 @@ export class CanvasDiorama {
         { const xs = [W0], ps = []; wins.forEach(function (q) { xs.push(q.x, q.x + q.w); }); xs.push(W1);
           for (let i = 0; i < xs.length - 1; i++) ps.push({ q: i % 2 ? wins[(i - 1) / 2] : null, x: xs[i], w: xs[i + 1] - xs[i] });
           const ex = EYE[0] - o[0]; ps.sort(function (a, b) { return Math.abs(b.x + b.w / 2 - ex) - Math.abs(a.x + a.w / 2 - ex); });
-          ps.forEach(function (p) { const q = p.q; if (!q) add(B(p.x, -0.4, 0, p.w, 0.4, top, wall[0], wc)); else add(B(p.x, -0.4, 0, p.w, 0.4, q.z, wall[0], wc), B(p.x, -0.4, q.z + q.h, p.w, 0.4, top - q.z - q.h, wall[0], Object.assign({ ub: 1 }, wc))); }); }
+          // the pieces under and over a window reach a little into the piers beside them, so no hairline shows where two pieces meet
+          ps.forEach(function (p) { const q = p.q; if (!q) add(B(p.x, -0.4, 0, p.w, 0.4, top, wall[0], wc)); else add(B(p.x - 0.04, -0.4, 0, p.w + 0.08, 0.4, q.z, wall[0], wc), B(p.x - 0.04, -0.4, q.z + q.h, p.w + 0.08, 0.4, top - q.z - q.h, wall[0], Object.assign({ ub: 1 }, wc))); }); }
         add(B(W0, 0, 0, W1 - W0, 0.12, 0.9, trim[0], { nc: trim[1] })); // a painted base along the foot of the wall
-        add(B(W0 - 0.3, -0.5, top, W1 - W0 + 0.6, 0.9, 0.35, trim[0], { nc: trim[1] })); // the cornice
+        // The cornice: the part over the wall, and the part that stands out in front of it, whose underside is drawn (seen from the
+        // street, the roof would show through a strip under the cornice without it). The lanterns stand on its front part: for a
+        // camera below, they go in first, so the cornice hides their feet.
+        const lant = function () { if (lan) lanterns(lan, top + 0.35); };
+        if (EYE[2] <= top + 0.35) lant();
+        add(B(W0 - 0.3, -0.5, top, W1 - W0 + 0.6, 0.5, 0.35, trim[0], { nc: trim[1] }), B(W0 - 0.3, 0, top, W1 - W0 + 0.6, 0.4, 0.35, trim[0], { nc: trim[1], ub: 1, ubf: 0.82 }));
+        if (EYE[2] > top + 0.35) lant();
         seen('vy', o[1], FAR, function () {
           wins.forEach(function (q) { // each window's frame, its sill and a striped valance under the top of the frame
-            add(B(q.x - 0.18, 0, q.z, 0.18, 0.1, q.h, trim[0], { nc: trim[1] }), B(q.x + q.w, 0, q.z, 0.18, 0.1, q.h, trim[0], { nc: trim[1] }), B(q.x - 0.18, 0, q.z + q.h, q.w + 0.36, 0.1, 0.18, trim[0], { nc: trim[1] }), B(q.x - 0.3, 0, q.z - 0.28, q.w + 0.6, 0.4, 0.28, trim[0], { nc: trim[1] }));
+            add(B(q.x - 0.18, 0, q.z, 0.18, 0.1, q.h, trim[0], { nc: trim[1] }), B(q.x + q.w, 0, q.z, 0.18, 0.1, q.h, trim[0], { nc: trim[1] }), B(q.x - 0.18, 0, q.z + q.h, q.w + 0.36, 0.1, 0.18, trim[0], { nc: trim[1], ub: 1, ubf: 0.82 }), B(q.x - 0.3, 0, q.z - 0.28, q.w + 0.6, 0.4, 0.28, trim[0], { nc: trim[1] }));
             const n = Math.round(q.w / 0.7), sw = q.w / n; for (let i = 0; i < n; i++) add(B(q.x + i * sw, -0.05, q.z + q.h - 0.34, sw, 0.05, 0.34, i % 2 ? WHITE : trim[0], { nc: i % 2 ? '#C9CEDA' : trim[1] })); });
           if (front) front();
           if (walk) walk();
@@ -3307,8 +3316,6 @@ export class CanvasDiorama {
         seen('vy', -FAR, o[1], function () { backW(); sides(); });
         seen('vy', o[1], FAR, lamps);
       }); };
-      // small lanterns on the top of a shop front, at the given x; their glow stays above the painted text
-      const lanterns = function (xs, z) { xs.forEach(function (x) { add(C(x, 0, z, 0.08, 0.45, DK, { n: 6 }), S(x, 0, z + 0.72, 0.3, '#FFE7A8', { e: 1 }), G(x, 0.3, z + 0.72, 1.0, '#FFD27A')); }); };
       const AX = 1.3, BX = 12.65, WW = 9.8, WZ = 1.9, WH = 4.7; // the two windows of a shop front: left edges, width, sill height, height
 
       // ---- The ground. The studio floor; on it a pale base with slanted edges, and on that each shop's own patch of paving. A street
@@ -3345,21 +3352,21 @@ export class CanvasDiorama {
             add(B(0.95, -1.8, 0, 0.1, 0.1, 3.0, WOOD), B(3.05, -1.8, 0, 0.1, 0.1, 3.0, WOOD), B(2.0, -2.25, 0, 0.1, 0.1, 2.8, WOOD), B(0.7, -1.7, 0.9, 2.7, 0.1, 1.95, DK), B(0.8, -1.6, 1.0, 2.5, 0.01, 1.75, CANVAS));
             F(0.8, -1.59, 2.35, 2.5, 0.4, '#27457A'); F(0.95, -1.585, 2.5, 1.1, 0.1, '#FFFFFF'); [0, 1, 2].forEach(function (k) { disc(1.02, -1.59, 2.08 - k * 0.3, 0.06, OCHRE); F(1.2, -1.59, 2.04 - k * 0.3, 0.9 - k * 0.15, 0.08, INK2); }); [0.3, 0.5, 0.75].forEach(function (h, k) { F(2.45 + k * 0.26, -1.59, 1.2, 0.2, h, k === 2 ? OCHRE : LINE); }); });
           add(C(4.75, -0.9, 0, 0.28, 0.55, '#8FA0B8', { n: 8 })); [RED, YEL, BLUE].forEach(function (c, k) { add(B(4.59 + k * 0.13, -0.92, 0.55, 0.07, 0.07, 0.5, c)); });
-          [BLUE, MINT, GOLD, RUST].forEach(function (c, k) { add(B(5.5 + k * 0.42, -0.6 - (k % 2) * 0.2, 0, 0.34, 0.34, 0.06, c)); });
+          [BLUE, MINT, GOLD, RUST].forEach(function (c, k) { add(B(5.3 + k * 0.5, -0.6, 0, 0.32, 0.32, 0.06, c)); });
           add(B(7.0, -1.6, 0, 0.1, 0.1, 0.7, WOOD), B(9.0, -1.6, 0, 0.1, 0.1, 0.7, WOOD), B(6.8, -1.55, 0.7, 2.5, 0.08, 2.0, CARD), B(6.8, -1.5, 0.62, 2.5, 0.2, 0.08, WOOD));
           disc(8.05, -1.46, 1.7, 0.52, PURPLE); F(7.4, -1.45, 1.05, 1.3, 0.03, BLUE); F(7.4, -1.45, 2.32, 1.3, 0.03, BLUE); F(7.4, -1.45, 1.05, 0.03, 1.3, BLUE); F(8.67, -1.45, 1.05, 0.03, 1.3, BLUE);
           [[7.4, 1.05], [8.7, 1.05], [7.4, 2.35], [8.7, 2.35]].forEach(function (p) { F(p[0] - 0.09, -1.44, p[1] - 0.09, 0.18, 0.18, '#FFFFFF'); F(p[0] - 0.06, -1.435, p[1] - 0.06, 0.12, 0.12, BLUE); });
           add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } },
         // Healthcare analytics: a small hospital, a bed, a screen of bars, and the desk where a new subject is learned.
         { x: BX, w: WW, z: WZ, h: WH, c: ['#EAF3F1', '#CFE0DC', '#DCE9E6'], inside: function () {
-          add(B(0.6, -2.4, 0, 2.7, 0.9, 3.3, '#F7F7F2'), B(0.5, -2.45, 3.3, 2.9, 1.0, 0.16, MINT)); [0, 1].forEach(function (r) { [0, 1, 2].forEach(function (c) { F(0.9 + c * 0.8, -1.49, 0.5 + r * 0.85, 0.5, 0.5, '#A9C6E8'); }); }); add(L.cross(1.95, -1.5, 2.25, 0.75, TEAL));
-          add(B(3.7, -1.3, 0, 0.1, 0.9, 0.45, DK), B(5.5, -1.3, 0, 0.1, 0.9, 0.45, DK), B(3.6, -1.35, 0.45, 2.1, 1.0, 0.22, CARD), B(3.6, -1.35, 0.45, 0.12, 1.0, 0.75, '#C9CED8'), B(3.78, -1.2, 0.67, 0.55, 0.7, 0.14, '#DCE6F2'), B(4.45, -1.35, 0.67, 1.25, 1.0, 0.1, MINT));
-          add(C(6.75, -2.0, 0, 0.07, 1.9, DK, { n: 6 }), B(6.15, -2.05, 1.9, 1.3, 0.12, 0.95, DK), B(6.23, -1.93, 1.98, 1.14, 0.01, 0.79, '#EAF4EC')); [0.3, 0.5, 0.4, 0.62].forEach(function (h, k) { F(6.35 + k * 0.25, -1.92, 2.04, 0.17, h, k === 3 ? TEAL : MINT); });
-          add(L.desk(7.5, -1.3, 0, 1.7, 0.9, 1.0, '#D8CBB0'), B(7.7, -1.1, 1.0, 0.5, 0.6, 0.05, CARD), B(8.22, -1.1, 1.0, 0.5, 0.6, 0.05, CARD), B(8.19, -1.1, 1.0, 0.04, 0.6, 0.07, TEAL));
+          add(B(0.35, -2.4, 0, 2.5, 0.9, 3.3, '#F7F7F2'), B(0.25, -2.45, 3.3, 2.7, 1.0, 0.16, MINT)); [0, 1].forEach(function (r) { [0, 1, 2].forEach(function (c) { F(0.6 + c * 0.75, -1.49, 0.5 + r * 0.85, 0.5, 0.5, '#A9C6E8'); }); }); add(L.cross(1.6, -1.5, 2.25, 0.75, TEAL));
+          at([-0.35, 0], function () { add(B(3.7, -1.3, 0, 0.1, 0.9, 0.45, DK), B(5.5, -1.3, 0, 0.1, 0.9, 0.45, DK), B(3.6, -1.35, 0.45, 2.1, 1.0, 0.22, CARD), B(3.6, -1.35, 0.45, 0.12, 1.0, 0.75, '#C9CED8'), B(3.78, -1.2, 0.67, 0.55, 0.7, 0.14, '#DCE6F2'), B(4.45, -1.35, 0.67, 1.25, 1.0, 0.1, MINT)); });
+          at([-0.55, 0], function () { add(C(6.75, -2.0, 0, 0.07, 1.9, DK, { n: 6 }), B(6.15, -2.05, 1.9, 1.3, 0.12, 0.95, DK), B(6.23, -1.93, 1.98, 1.14, 0.01, 0.79, '#EAF4EC')); [0.3, 0.5, 0.4, 0.62].forEach(function (h, k) { F(6.35 + k * 0.25, -1.92, 2.04, 0.17, h, k === 3 ? TEAL : MINT); }); });
+          at([-0.65, -0.3], function () { add(L.desk(7.5, -1.3, 0, 1.6, 0.9, 1.0, '#D8CBB0'), B(7.7, -1.1, 1.0, 0.5, 0.6, 0.05, CARD), B(8.22, -1.1, 1.0, 0.5, 0.6, 0.05, CARD), B(8.19, -1.1, 1.0, 0.04, 0.6, 0.07, TEAL)); });
           add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } }
-      ], function () { const U = SU(4); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); lanterns([2.2, 6.2, 13.6, 21.6], 11.1); },
-      function () { add(C(17.6, -2.2, 11.05, 1.4, 2.3, '#A9B6CA', { n: 10, nc: '#3A4458' }), C(17.6, -2.2, 13.35, 1.52, 0.14, '#8FA0B8', { n: 10, nc: '#2E3548' }), B(9.3, -2.0, 11.05, 1.1, 1.1, 2.0, '#C9785E', { nc: '#5A3A34' }), B(9.2, -2.1, 13.05, 1.3, 1.3, 0.16, '#8C5A48', { nc: '#4A2E2A' })); },
-      function () { pot(8.7, 2.0, 0, 0.8); [15.6, 18.4].forEach(function (x) { add(C(x, 1.6, 0, 0.24, 0.85, '#8FA0B8', { n: 8, nc: '#39435E' }), S(x, 1.6, 0.92, 0.24, '#8FA0B8', { nc: '#39435E' })); }); });
+      ], function () { const U = SU(4); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); },
+      function () { add(C(17.6, -2.2, 11.05, 1.4, 2.3, '#A9B6CA', { n: 10, nc: '#3A4458' }), C(17.6, -2.2, 13.35, 1.4, 0.14, '#8FA0B8', { n: 10, nc: '#2E3548' }), B(9.3, -2.0, 11.05, 1.1, 1.1, 2.0, '#C9785E', { nc: '#5A3A34' }), B(9.3, -2.0, 13.05, 1.1, 1.1, 0.16, '#8C5A48', { nc: '#4A2E2A' })); },
+      function () { pot(8.7, 2.0, 0, 0.8); [15.6, 18.4].forEach(function (x) { add(C(x, 1.6, 0, 0.24, 0.85, '#8FA0B8', { n: 8, nc: '#39435E' }), S(x, 1.6, 0.92, 0.24, '#8FA0B8', { nc: '#39435E' })); }); }, [2.2, 6.2, 13.6, 21.6]);
 
       // ---- Shop two (V4.02): Data management & the CDMP road, Automation & clever tricks.
       shop(SB, 10.75, ['#E4ECEA', '#465260', '#D2DCDA', '#3C4854'], [TEAL, '#2E6F68'], [
@@ -3367,23 +3374,25 @@ export class CanvasDiorama {
         { x: AX, w: WW, z: WZ, h: WH, c: ['#EFE6D4', '#D9CFB8', '#E4DAC6'], inside: function () {
           disc(7.9, -ND + 0.01, 3.2, 1.05, '#C9D9F0'); disc(7.9, -ND + 0.02, 3.2, 0.7, '#7FA3D6'); disc(7.9, -ND + 0.03, 3.2, 0.33, GOLD);
           add(L.books(1.0, -2.3, 0, 5, [BLUE, '#C9785E', MINT, GOLD]));
-          path([[1.0, -0.45], [3.0, -1.2], [4.4, -0.8], [5.5, -1.7]], 0.6, '#8E99A8', '#8E99A8', 0.03);
-          [[3.2, -1.75], [4.6, -1.4]].forEach(function (p) { add(B(p[0], p[1], 0, 0.22, 0.12, 0.5, CARD), B(p[0], p[1], 0.5, 0.22, 0.12, 0.1, RED)); });
+          path([[3.6, -0.55], [4.3, -1.15], [5.0, -0.8], [5.5, -1.7]], 0.6, '#8E99A8', '#8E99A8', 0.03);
+          [[4.0, -1.75], [4.9, -1.4]].forEach(function (p) { add(B(p[0], p[1], 0, 0.22, 0.12, 0.5, CARD), B(p[0], p[1], 0.5, 0.22, 0.12, 0.1, RED)); });
           add(C(5.75, -2.0, 0, 0.5, 0.25, '#B9CF9A', { n: 10 }), C(5.75, -2.0, 0.25, 0.05, 1.7, DK, { n: 6 }), B(5.8, -2.02, 1.45, 0.8, 0.04, 0.5, RED));
           add(B(7.5, -1.2, 0, 1.5, 0.8, 0.9, WOOD), B(7.8, -1.05, 0.9, 0.9, 0.5, 0.2, DK), B(7.7, -0.95, 1.12, 1.1, 0.26, 0.16, '#2B2F3A'));
           add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } },
         // Automation: envelopes ride a belt into a small machine with two cogs; colour cards come out; a clock for the time saved.
         { x: BX, w: WW, z: WZ, h: WH, c: ['#E9E4DA', '#CFC8BC', '#DDD6CA'], inside: function () {
           add(L.clock(8.4, -ND + 0.1, 3.5, 0.6));
-          add(B(0.6, -1.5, 0, 0.14, 0.7, 0.6, DK), B(3.9, -1.5, 0, 0.14, 0.7, 0.6, DK), B(0.4, -1.6, 0.6, 4.4, 0.9, 0.16, '#596379'));
-          [0, 1, 2, 3].forEach(function (k) { const x = 0.7 + k * 0.95; add(B(x, -1.15, 0.76, 0.66, 0.04, 0.44, CARD)); F(x, -1.105, 1.04, 0.66, 0.03, LINE); F(x + 0.46, -1.105, 0.82, 0.13, 0.13, RED); });
-          add(B(4.8, -2.0, 0, 2.3, 1.5, 2.5, SHIRT), B(5.25, -1.7, 2.5, 1.4, 0.9, 0.45, '#44628A'), B(4.8, -0.5, 0.62, 0.5, 0.01, 0.5, '#2B2F3A'));
-          disc(5.75, -0.49, 1.55, 0.5, GOLD); disc(5.75, -0.485, 1.55, 0.18, '#8A6A30'); disc(6.5, -0.49, 0.95, 0.34, '#C9CED8'); disc(6.5, -0.485, 0.95, 0.12, '#596379'); add(S(6.7, -0.5, 2.15, 0.12, '#7FD8A0', { e: 1, a: 'dz-blink' }));
-          [BLUE, MINT, GOLD, RUST].forEach(function (c, k) { add(B(7.45 + k * 0.5, -1.3 + k * 0.12, 0, 0.42, 0.04, 0.95, c)); });
+          add(B(0.5, -1.5, 0, 0.14, 0.7, 0.6, DK), B(3.5, -1.5, 0, 0.14, 0.7, 0.6, DK), B(0.3, -1.6, 0.6, 4.0, 0.9, 0.16, '#596379'));
+          [0, 1, 2, 3].forEach(function (k) { const x = 0.55 + k * 0.88; add(B(x, -1.15, 0.76, 0.66, 0.04, 0.44, CARD)); F(x, -1.105, 1.04, 0.66, 0.03, LINE); F(x + 0.46, -1.105, 0.82, 0.13, 0.13, RED); });
+          at([-0.5, 0], function () { add(B(4.8, -2.0, 0, 2.3, 1.5, 2.5, SHIRT), B(5.25, -1.7, 2.5, 1.4, 0.9, 0.45, '#44628A'), B(4.8, -0.5, 0.62, 0.5, 0.01, 0.5, '#2B2F3A'));
+          disc(5.75, -0.49, 1.55, 0.5, GOLD); disc(5.75, -0.485, 1.55, 0.18, '#8A6A30'); disc(6.5, -0.49, 0.95, 0.34, '#C9CED8'); disc(6.5, -0.485, 0.95, 0.12, '#596379'); add(S(6.7, -0.5, 2.15, 0.12, '#7FD8A0', { e: 1, a: 'dz-blink' })); });
+          [BLUE, MINT, GOLD, RUST].forEach(function (c, k) { add(B(7.3 + k * 0.44, -1.4, 0, 0.34, 0.04, 0.95, c)); });
           add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } }
-      ], function () { const U = SU(2); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); lanterns([2.2, 6.2, 17.6, 21.6], 11.1); },
-      function () { add(B(8.9, -0.4, 11.1, 5.95, 0.4, 0.8, '#E4ECEA', { nc: '#465260' }), B(10.4, -0.4, 11.9, 2.95, 0.4, 0.6, '#E4ECEA', { nc: '#465260' }), B(8.75, -0.5, 11.9, 1.65, 0.6, 0.14, TEAL, { nc: '#2E6F68' }), B(13.35, -0.5, 11.9, 1.65, 0.6, 0.14, TEAL, { nc: '#2E6F68' }), B(10.25, -0.5, 12.5, 3.25, 0.6, 0.14, TEAL, { nc: '#2E6F68' })); },
-      function () { pot(8.7, 2.0, 0, 0.8, '#8FA0B8'); seat(14.6, 1.6, 0, 4.4); });
+      ], function () { const U = SU(2); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); },
+      function () { const caps = function () { add(B(8.9, -0.4, 11.9, 1.5, 0.4, 0.14, TEAL, { nc: '#2E6F68' }), B(13.35, -0.4, 11.9, 1.5, 0.4, 0.14, TEAL, { nc: '#2E6F68' })); }; // the caps of the lower step: from the street the blocks hide their ends, from the air they lie on the lower block
+        if (EYE[2] <= 11.9) caps(); add(B(8.9, -0.4, 11.1, 5.95, 0.4, 0.8, '#E4ECEA', { nc: '#465260' })); if (EYE[2] > 11.9) caps();
+        add(B(10.4, -0.4, 11.9, 2.95, 0.4, 0.6, '#E4ECEA', { nc: '#465260' }), B(10.4, -0.4, 12.5, 2.95, 0.4, 0.14, TEAL, { nc: '#2E6F68' })); }, // caps and lids on the roofs sit flush: an overhang seen from the street would need an underside
+      function () { pot(8.7, 2.0, 0, 0.8, '#8FA0B8'); seat(14.6, 1.6, 0, 4.4); }, [2.2, 6.2, 17.6, 21.6]);
 
       // ---- Along the street: trees in round beds, benches, lamps and two sandwich boards.
       [[-150, 8, 3.4], [-118, -22, 3.2], [-30, -34, 3.4], [-8, -40, 3.2], [36, 2, 3.4], [84, -26, 3.2], [146, -30, 3.4], [-52, 30, 3.2], [60, 34, 3.4]].forEach(function (p) { tree(p[0], p[1], p[2]); });
@@ -3394,24 +3403,24 @@ export class CanvasDiorama {
       shop(SC, 10.75, ['#F1E3D8', '#52485A', '#E2D2C6', '#463E50'], [BLUE, '#27457A'], [
         // Data storytelling: a bookshelf (one yellow book), an armchair under a reading lamp, a flip chart with one point picked out.
         { x: AX, w: WW, z: WZ, h: WH, c: ['#F1E7D3', '#C9A27A', '#E6DAC2'], inside: function () {
-          add(B(1.0, -2.5, 0, 2.4, 0.7, 3.7, WOOD)); [0, 1, 2].forEach(function (r) { F(1.12, -1.79, 0.2 + r * 1.2, 2.16, 1.0, '#6A5038'); let x = 1.2; [0, 1, 2, 3, 4, 5].forEach(function (k) { const w = [0.3, 0.24, 0.36, 0.28, 0.32, 0.26, 0.3][(k + r) % 7], h = [0.8, 0.9, 0.7, 0.86, 0.76, 0.92, 0.82][(k + r * 2) % 7]; F(x, -1.78, 0.2 + r * 1.2, w, h, r === 1 && k === 2 ? YEL : [BLUE, RUST, MINT, PURPLE, '#C9785E', TEAL, GOLD][(k + r * 3) % 7]); x += w + 0.04; }); });
-          add(B(3.95, -1.75, 0, 1.5, 0.25, 1.9, MINT), B(3.95, -1.5, 0, 0.25, 1.0, 1.0, '#3F8A80'), B(5.2, -1.5, 0, 0.25, 1.0, 1.0, '#3F8A80'), B(4.2, -1.5, 0, 1.0, 1.0, 0.65, '#5FB0A5'));
-          add(C(6.15, -1.9, 0, 0.3, 0.08, DK, { n: 8 }), C(6.15, -1.9, 0.08, 0.05, 2.7, DK, { n: 6 }), K(6.15, -1.9, 2.6, 0.45, 0.5, GOLD, { n: 8 }), S(6.15, -1.9, 2.6, 0.13, '#FFE7A8', { e: 1 }), G(6.15, -1.6, 2.4, 1.3, '#FFD27A'));
-          at([0.15, 0], function () {
-            add(B(7.05, -1.7, 0, 0.1, 0.1, 3.3, DK), B(9.05, -1.7, 0, 0.1, 0.1, 3.3, DK), B(6.9, -1.6, 1.1, 2.4, 0.08, 2.4, CARD));
-            F(7.1, -1.51, 1.35, 2.0, 0.04, INK2); F(7.1, -1.51, 1.35, 0.04, 1.5, INK2); [[7.4, 1.65], [7.85, 1.9], [8.3, 1.8], [8.75, 2.45]].forEach(function (p, k) { disc(p[0], -1.51, p[1], k === 3 ? 0.17 : 0.09, k === 3 ? RUST : LINE); }); F(7.2, -1.51, 3.1, 1.3, 0.1, INK); F(7.2, -1.51, 2.88, 0.9, 0.07, LINE); });
+          add(B(0.7, -2.5, 0, 2.4, 0.7, 3.7, WOOD)); [0, 1, 2].forEach(function (r) { F(0.82, -1.79, 0.2 + r * 1.2, 2.16, 1.0, '#6A5038'); let x = 0.9; [0, 1, 2, 3, 4, 5].forEach(function (k) { const w = [0.3, 0.24, 0.36, 0.28, 0.32, 0.26, 0.3][(k + r) % 7], h = [0.8, 0.9, 0.7, 0.86, 0.76, 0.92, 0.82][(k + r * 2) % 7]; F(x, -1.78, 0.2 + r * 1.2, w, h, r === 1 && k === 2 ? YEL : [BLUE, RUST, MINT, PURPLE, '#C9785E', TEAL, GOLD][(k + r * 3) % 7]); x += w + 0.04; }); });
+          at([0.1, 0], function () { add(B(3.95, -1.75, 0, 1.5, 0.25, 1.9, MINT), B(3.95, -1.5, 0, 0.25, 1.0, 1.0, '#3F8A80'), B(5.2, -1.5, 0, 0.25, 1.0, 1.0, '#3F8A80'), B(4.2, -1.5, 0, 1.0, 1.0, 0.65, '#5FB0A5')); });
+          add(C(6.3, -1.9, 0, 0.3, 0.08, DK, { n: 8 }), C(6.3, -1.9, 0.08, 0.05, 2.7, DK, { n: 6 }), K(6.3, -1.9, 2.6, 0.45, 0.5, GOLD, { n: 8 }), S(6.3, -1.9, 2.6, 0.13, '#FFE7A8', { e: 1 }), G(6.3, -1.6, 2.4, 1.3, '#FFD27A'));
+          at([0.3, 0], function () {
+            add(B(7.05, -1.7, 0, 0.1, 0.1, 3.3, DK), B(8.75, -1.7, 0, 0.1, 0.1, 3.3, DK), B(6.9, -1.6, 1.1, 2.1, 0.08, 2.4, CARD));
+            F(7.1, -1.51, 1.35, 1.75, 0.04, INK2); F(7.1, -1.51, 1.35, 0.04, 1.5, INK2); [[7.4, 1.65], [7.8, 1.9], [8.2, 1.8], [8.6, 2.45]].forEach(function (p, k) { disc(p[0], -1.51, p[1], k === 3 ? 0.17 : 0.09, k === 3 ? RUST : LINE); }); F(7.2, -1.51, 3.1, 1.2, 0.1, INK); F(7.2, -1.51, 2.88, 0.85, 0.07, LINE); });
           add(G(4.9, -0.6, 2.4, 2.0, '#FFE2A8')); } },
         // Career & learning journey: a flight of steps, a school desk at its foot, and a man with a school bag still climbing; the
         // flag at the top carries the words of the line.
         { x: BX, w: WW, z: WZ, h: WH, c: ['#E6EEF2', '#D8D0B4', '#D9E2E6'], inside: function () {
           add(B(0.45, -1.5, 0, 1.1, 0.7, 0.7, WOOD), B(0.55, -1.4, 0.7, 0.5, 0.4, 0.07, BLUE));
-          [0, 1, 2, 3, 4, 5, 6].forEach(function (k) { add(B(2.0 + k * 0.82, -2.1, 0, 0.82, 1.3, 0.32 * (k + 1), k % 2 ? '#C9B48C' : '#D9C7A0')); });
-          add(B(5.02, -1.72, 1.6 + 0.95, 0.14, 0.3, 0.6, RUST)); fig(5.69, -1.45, 1.6, 0.4);
-          add(C(7.35, -1.5, 2.24, 0.05, 1.75, DK, { n: 6 }), B(7.4, -1.52, 3.3, 2.0, 0.04, 0.66, RUST)); add(T(8.4, -1.47, 3.63, 0.34, '21 years', { wt: 700, ff: 'Manrope, sans-serif', c: '#FFFFFF', nc: '#FFFFFF' }));
+          [0, 1, 2, 3, 4, 5, 6].forEach(function (k) { add(B(1.9 + k * 0.74, -2.1, 0, 0.74, 1.3, 0.32 * (k + 1), k % 2 ? '#C9B48C' : '#D9C7A0')); });
+          add(B(4.63, -1.72, 1.6 + 0.95, 0.14, 0.3, 0.6, RUST)); fig(5.13, -1.45, 1.6, 0.4);
+          add(C(6.7, -1.5, 2.24, 0.05, 1.75, DK, { n: 6 }), B(6.75, -1.52, 3.3, 2.0, 0.04, 0.66, RUST)); add(T(7.75, -1.47, 3.63, 0.34, '21 years', { wt: 700, ff: 'Manrope, sans-serif', c: '#FFFFFF', nc: '#FFFFFF' }));
           add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } }
-      ], function () { const U = SU(3); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); lanterns([2.2, 6.2, 17.6, 21.6], 11.1); },
-      function () { [0, 1, 2].forEach(function (k) { add(B(8.75 + k * 0.9, -0.4, 11.1 + k * 0.45, 6.25 - k * 1.8, 0.4, 0.45, '#F1E3D8', { nc: '#52485A' })); }); add(B(10.4, -0.5, 12.45, 2.95, 0.6, 0.14, BLUE, { nc: '#27457A' })); },
-      function () { add(B(8.3, 1.7, 0, 0.9, 0.9, 0.9, WOOD, { nc: NWOOD }), L.books(8.2, 1.75, 0.9, 3, [BLUE, RUST, GOLD])); add(B(14.8, 1.6, 0, 4.6, 0.9, 0.8, '#C9785E', { nc: '#6A4038' })); [0, 1, 2, 3].forEach(function (k) { add(S(15.4 + k * 1.15, 2.05, 1.15, 0.5, k % 2 ? '#8FA66B' : '#9BB97E', { nc: '#2F4A40' })); }); });
+      ], function () { const U = SU(3); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); },
+      function () { [0, 1, 2].forEach(function (k) { add(B(8.75 + k * 0.9, -0.4, 11.1 + k * 0.45, 6.25 - k * 1.8, 0.4, 0.45, '#F1E3D8', { nc: '#52485A' })); }); add(B(10.55, -0.4, 12.45, 2.65, 0.4, 0.14, BLUE, { nc: '#27457A' })); },
+      function () { add(B(8.3, 1.7, 0, 0.9, 0.9, 0.9, WOOD, { nc: NWOOD }), L.books(8.2, 1.75, 0.9, 3, [MINT, RUST, GOLD])); add(B(14.8, 1.6, 0, 4.6, 0.9, 0.8, '#C9785E', { nc: '#6A4038' })); [0, 1, 2, 3].forEach(function (k) { add(S(15.4 + k * 1.15, 2.05, 1.15, 0.5, k % 2 ? '#8FA66B' : '#9BB97E', { nc: '#2F4A40' })); }); }, [2.2, 6.2, 17.6, 21.6]);
 
       // ---- Shop five (V4.05): Life beyond data. One window like the others, and one tall window for the mountain.
       shop(SE, 10.75, ['#EEF0DE', '#4A5248', '#DDE0CC', '#40483E'], [PURPLE, '#5A4476'], [
@@ -3425,17 +3434,17 @@ export class CanvasDiorama {
           add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } },
         // hiking: a mountain with snow on it and a flag on top, a lower hill, pines, a tent, a signpost and a walker on the trail.
         { x: BX, w: WW, z: WZ, h: 8.3, c: ['#DCEBF5', '#B9CF9A', '#D2E0EA'], inside: function () {
-          disc(8.0, -ND + 0.01, 7.0, 0.62, YEL); [[1.3, 6.7, 0.45], [2.0, 6.85, 0.55], [2.7, 6.65, 0.42]].forEach(function (p) { disc(p[0], -ND + 0.01, p[1], p[2], '#FFFFFF'); });
-          add(K(6.9, -1.9, 0, 2.6, 4.0, '#A9BBA0', { n: 6, rot: 0.3 }), K(3.8, -1.6, 0, 3.0, 5.6, '#8FA0A8', { n: 6, rot: 0.1 }), K(3.8, -1.6, 4.2, 0.75, 1.4, '#FFFFFF', { n: 6, rot: 0.1 }));
-          add(C(3.8, -1.6, 5.55, 0.04, 0.8, DK, { n: 6 }), B(3.84, -1.61, 6.0, 0.55, 0.03, 0.34, RED));
-          add(L.pine(0.9, -1.0, 0, 0.85), L.pine(8.6, -1.0, 0, 0.95));
-          add(K(2.9, -0.7, 0, 0.8, 0.9, GOLD, { n: 3, rot: 0.6 }));
-          add(C(5.2, -0.6, 0, 0.06, 1.5, WOOD, { n: 6 }), B(5.2, -0.62, 1.2, 0.85, 0.06, 0.24, WOOD), B(4.41, -0.62, 0.86, 0.85, 0.06, 0.24, WOOD));
-          add(B(6.52, -0.82, 0.86, 0.14, 0.26, 0.5, GREEN)); fig(7.05, -0.6, 0, 0.34, RUST);
+          disc(8.0, -ND + 0.01, 7.0, 0.62, YEL); [[4.9, 6.85, 0.45], [5.6, 7.0, 0.55], [6.3, 6.8, 0.42]].forEach(function (p) { disc(p[0], -ND + 0.01, p[1], p[2], '#FFFFFF'); });
+          add(K(7.6, -2.5, 0, 1.6, 3.3, '#A9BBA0', { n: 6, rot: 0.3 }), K(3.05, -2.5, 0, 2.3, 5.6, '#8FA0A8', { n: 6, rot: 0.1 }), K(3.05, -2.5, 4.2, 0.575, 1.4, '#FFFFFF', { n: 6, rot: 0.1 }));
+          add(C(3.05, -2.5, 5.55, 0.04, 0.8, DK, { n: 6 }), B(3.09, -2.51, 6.0, 0.55, 0.03, 0.34, RED));
+          add(L.pine(0.9, -1.0, 0, 0.8), L.pine(8.0, -1.0, 0, 0.8));
+          add(K(2.8, -0.7, 0, 0.75, 0.9, GOLD, { n: 3, rot: 0.6 }));
+          add(C(4.9, -0.6, 0, 0.06, 1.5, WOOD, { n: 6 }), B(4.9, -0.62, 1.2, 0.8, 0.06, 0.24, WOOD), B(4.16, -0.62, 0.86, 0.8, 0.06, 0.24, WOOD));
+          add(B(6.13, -0.82, 0.86, 0.14, 0.26, 0.5, GREEN)); fig(6.55, -0.6, 0, 0.34, RUST);
           add(G(4.9, -0.6, 3.6, 2.6, '#FFE2A8')); } }
-      ], function () { const U = SU(5); topic(U, 0, AX, 10.0); lanterns([2.2, 6.2, 10.2, 13.6, 21.6], 11.1); },
+      ], function () { const U = SU(5); topic(U, 0, AX, 10.0); },
       function () { add(C(17.5, -3.5, 11.05, 0.07, 2.4, DK, { n: 6 }), B(17.55, -3.52, 12.7, 1.5, 0.04, 0.7, PURPLE, { nc: '#9C82BA' })); },
-      function () { pot(8.7, 2.0, 0, 0.8, '#B98B5E'); seat(14.6, 1.6, 0, 4.4, MINT, '#2E6F68'); });
+      function () { pot(8.7, 2.0, 0, 0.8, '#B98B5E'); seat(14.6, 1.6, 0, 4.4, MINT, '#2E6F68'); }, [2.2, 6.2, 10.2, 13.6, 21.6]);
 
       // ---- Shop one (V4.01): where the street starts. The heading is painted on the fascia, the intro under it; the windows are
       // Power BI design craft and Data engineering & Fabric.
@@ -3445,27 +3454,30 @@ export class CanvasDiorama {
           strip([0.2, -0.45], [9.6, -0.9], 0.6, '#E9DEC6', '#E9DEC6', 0.03);
           add(C(1.75, -1.8, 0, 0.13, 1.2, '#8C6A4A', { n: 6 }), S(1.45, -1.8, 1.75, 0.6, '#8FB07A'), S(2.1, -1.7, 1.85, 0.55, '#A3BF86'), S(1.75, -1.7, 2.4, 0.55, '#9BB97E'));
           add(B(3.2, -1.5, 0, 0.12, 0.5, 0.45, DK), B(4.28, -1.5, 0, 0.12, 0.5, 0.45, DK), B(3.1, -1.55, 0.45, 1.4, 0.6, 0.1, WOOD), B(3.1, -1.6, 0.75, 1.4, 0.08, 0.4, WOOD));
-          at([0.35, 0], function () {
+          at([0.2, 0], function () {
             add(B(4.85, -1.85, 0, 0.1, 0.1, 3.3, WOOD), B(7.05, -1.85, 0, 0.1, 0.1, 3.3, WOOD), B(5.95, -2.3, 0, 0.1, 0.1, 3.0, WOOD), B(4.6, -1.75, 1.0, 2.8, 0.1, 2.3, DK), B(4.7, -1.65, 1.1, 2.6, 0.01, 2.1, CANVAS));
             F(4.7, -1.64, 2.82, 2.6, 0.38, '#27457A'); F(4.82, -1.635, 2.96, 0.7, 0.1, '#FFFFFF'); [0, 1, 2].forEach(function (k) { F(6.1 + k * 0.38, -1.635, 2.97, 0.28, 0.07, '#C9D9F0'); });
             F(4.85, -1.64, 2.05, 2.3, 0.62, '#FBF1DC'); F(5.0, -1.635, 2.42, 1.0, 0.1, INK); F(5.0, -1.635, 2.2, 0.6, 0.14, RUST); disc(6.65, -1.635, 2.36, 0.22, MINT);
             [0, 1, 2].forEach(function (k) { F(4.85 + k * 0.8, -1.64, 1.25, 0.7, 0.66, PALE); F(4.92 + k * 0.8, -1.635, 1.32, 0.56, [0.2, 0.36, 0.28][k], [BLUE, MINT, OCHRE][k]); }); });
-          add(B(8.2, -1.5, 0, 0.8, 0.7, 0.45, '#4A5468'), B(8.35, -1.45, 0.45, 0.5, 0.6, 0.35, '#596379'), B(7.95, -1.55, 0.8, 1.4, 0.8, 0.38, DK), B(8.15, -1.2, 1.18, 0.9, 0.2, 0.1, '#F2A03D', { e: 1, nc: '#FFB347' }));
+          at([0.2, 0], function () { add(B(8.2, -1.5, 0, 0.8, 0.7, 0.45, '#4A5468'), B(8.35, -1.45, 0.45, 0.5, 0.6, 0.35, '#596379'), B(7.95, -1.55, 0.8, 1.4, 0.8, 0.38, DK), B(8.15, -1.2, 1.18, 0.9, 0.2, 0.1, '#F2A03D', { e: 1, nc: '#FFB347' })); });
           add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } },
         // Data engineering & Fabric: a kettle on a stove, pipes along the wall, drums of data and the racks of a warehouse.
         { x: BX, w: WW, z: WZ, h: WH, c: ['#DCE4EA', '#C9CED6', '#D0D8DE'], inside: function () {
-          F(1.4, -ND + 0.01, 2.6, 5.4, 0.2, MINT); F(1.4, -ND + 0.01, 1.3, 0.2, 1.5, MINT); F(4.1, -ND + 0.01, 1.4, 0.2, 1.4, MINT); F(6.6, -ND + 0.01, 2.6, 0.2, 1.6, MINT); [2.6, 5.3].forEach(function (x) { F(x, -ND + 0.02, 2.52, 0.3, 0.36, '#3F8A80'); });
+          F(1.4, -ND + 0.01, 2.75, 4.1, 0.2, MINT); F(1.4, -ND + 0.01, 2.15, 0.2, 0.8, MINT); F(4.1, -ND + 0.01, 2.15, 0.2, 0.8, MINT); F(5.3, -ND + 0.01, 2.75, 0.2, 1.5, MINT); [2.6, 4.6].forEach(function (x) { F(x, -ND + 0.02, 2.67, 0.3, 0.36, '#3F8A80'); });
           add(B(0.6, -1.9, 0, 1.7, 1.2, 1.0, '#8E99A8'), B(0.6, -0.71, 0.3, 1.7, 0.01, 0.45, '#596379'), C(1.45, -1.3, 1.0, 0.5, 0.62, '#C9785E', { n: 10 }), S(1.45, -1.3, 1.7, 0.13, DK), B(1.9, -1.36, 1.3, 0.42, 0.12, 0.12, '#C9785E'));
           [0, 1].forEach(function (s) { [0, 1, 2].forEach(function (k) { add(C(3.3 + s * 1.45, -1.6 + s * 0.3, k * 0.58, 0.58, 0.46, [BLUE, '#4C78B8', '#7FA3D6'][k], { n: 12 })); }); });
-          add(L.racking(6.3, -2.0, 0, 2.6, 3, 1));
+          { const X = 6.4, Wd = 2.3, post = function (y) { add(B(X, y, 0, 0.1, 0.1, 3.2, DK), B(X + Wd - 0.1, y, 0, 0.1, 0.1, 3.2, DK)); };
+            post(-2.0);
+            [[[0.65, 0.8, 0.6, '#C9785E']], [[0.6, 0.5, 0.55, MINT], [1.4, 0.55, 0.42, '#D8CBB0']], [[0.95, 0.85, 0.48, GOLD]]].forEach(function (bs, k) { add(B(X, -2.0, 0.25 + k, Wd, 0.9, 0.08, WOOD)); bs.forEach(function (b) { add(B(X + b[0], -1.8, 0.33 + k, b[1], 0.5, b[2], b[3])); }); });
+            post(-1.2); }
           add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } }
       ], function () { const U = SU(1);
         add(B(W0 + 0.6, 0, 11.25, W1 - W0 - 1.2, 0.08, 1.3, '#FBF3E4', { nc: '#3A3F58' }));
         add(T(BW / 2, 0.1, 11.9, 0.85, U[0] || '', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: LITE }));
         say(U[1] || '', 8.0, 0.03, 10.85, 0.33, { nc: LITE });
-        topic(U, 0, AX, 9.9); topic(U, 1, BX, 9.9); lanterns([7.5, 11.875, 16.25, 20.6], 13.1); },
+        topic(U, 0, AX, 9.9); topic(U, 1, BX, 9.9); },
       null,
-      function () { pot(8.7, 2.0, 0, 0.8); add(B(15.2, 1.6, 0, 1.5, 0.9, 1.7, WOOD, { nc: NWOOD }), B(15.33, 2.5, 0.35, 1.24, 0.03, 1.2, WHITE, { nc: '#C9CEDA' })); add(B(18.3, 1.6, 0, 1.7, 1.1, 0.8, WOOD, { nc: NWOOD })); [0, 1, 2, 3].forEach(function (k) { add(B(18.42 + k * 0.4, 1.75, 0.8, 0.3, 0.8, 0.3 + (k % 2) * 0.1, [BLUE, RUST, MINT, GOLD][k], { nc: '#3A4458' })); }); });
+      function () { pot(8.7, 2.0, 0, 0.8); add(B(15.2, 1.6, 0, 1.5, 0.9, 1.7, WOOD, { nc: NWOOD }), B(15.33, 2.5, 0.35, 1.24, 0.03, 1.2, WHITE, { nc: '#C9CEDA' })); add(B(18.3, 1.6, 0, 1.7, 1.1, 0.8, WOOD, { nc: NWOOD })); [0, 1, 2, 3].forEach(function (k) { add(B(18.42 + k * 0.4, 1.75, 0.8, 0.3, 0.8, 0.3 + (k % 2) * 0.1, [BLUE, RUST, MINT, GOLD][k], { nc: '#3A4458' })); }); }, [7.5, 11.875, 16.25, 20.6]);
     } else if (id === 'kanzway') {
       def.label = 'Kanzway warehouse: catalog shelves of industrial tools, an ERD board, a pallet and a small team at three desks';
       def.sky = ['#D5DAE0', '#EDEDEB']; def.nsky = ['#141B2E', '#2A3450']; def.fog = 0.15; def.haze = '#E3E6EA';
