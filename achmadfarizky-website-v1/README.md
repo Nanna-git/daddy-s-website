@@ -127,7 +127,7 @@ The hospital's ground floor has back and side walls that are drawn twice (`seen`
 
 ## Portfolio
 
-`portfolio.html` is section 3 (V3.01–V3.13, links `#/portfolio/1` … `#/portfolio/13`), built the same way from boards PF01–PF13 and the `pf` scene: a gallery street at golden hour with six places, each on its own paving: the gallery front, two halls of the Power BI gallery in the back row, the workshop (Programming & automation) and two small pavilions (Data engineering, Graphic design) in the front row. One project per view: its label is painted on the left of its bay, its framed work hangs on the right. JHAH's last view, the slate and Home's Chapters sheet link to it. Everything after it (What I write about) points to `#`. It is not a chapter of the timeline, so no node is current there.
+`portfolio.html` is section 3 (V3.01–V3.13, links `#/portfolio/1` … `#/portfolio/13`), built the same way from boards PF01–PF13 and the `pf` scene: a gallery street at golden hour with six places, each on its own paving: the gallery front, two halls of the Power BI gallery in the back row, the workshop (Programming & automation) and two small pavilions (Data engineering, Graphic design) in the front row. One project per view: its label is painted on the left of its bay, its framed work hangs on the right. JHAH's last view, the slate and Home's Chapters sheet link to it. Its last view links to What I write about. It is not a chapter of the timeline, so no node is current there.
 
 A project's links are not painted, because painted text cannot be followed. The scene paints "Links:" and keeps the line after it free; the links are real links in a `.u-pin` layer, which is scaled like the scene (`--cover`), so they stay on that line at any window size. Their place is in board pixels in each view's `style` (left 277; top = the painted "Links:" minus 5.8). If the label's layout in the scene changes, measure again (`linkTops()` on the test page of the canvas tools). On a phone the wall links are hidden and the same links show in the sheet, inside the written copy (`.u-copy-links`).
 
@@ -143,3 +143,18 @@ Its camera moves are in the `portfolio` entry of `SECTIONS` in `section.js`:
 | 9 → 10, 10 → 11 | `travel`: along the workshop wall (1.5 s) |
 | 11 → 12 | `slide`: back out of the workshop and sideways to the data engineering pavilion (3.6 s) |
 | 12 → 13 | `fly`: a short flight over the corner of that pavilion to the graphic design one (3.8 s) |
+
+## What I write about
+
+`writing.html` is section 4 (V4.01–V4.05, links `#/writing/1` … `#/writing/5`), built the same way from boards WR01–WR05 and the `wr` scene: a library street by day with five small shops, each on its own paving, one shop per view. Each topic has a shop window with a small diorama inside; its name and its line are painted over the window. Portfolio's last view, the slate and Home's Chapters sheet link to it. Everything after it (Community & recognition) points to `#`.
+
+A topic's stories are not painted, because painted text cannot be followed. The scene paints the arrow and keeps the lines under it free; the stories are real links in the `.u-pin` layer (as on Portfolio), one per line (`.u-links-col`). "all stories" is a real link after the painted "Full list:". Their place is in board pixels in each `style` (view 1: left 115 and 797.6, top 323.1; the other views: left 112.8 and 797.8, top 280.4); it comes from the scene's own numbers (`gen-boards.mjs` in the canvas tools), so measure again if the shop layout changes. No story page exists yet, so every one of these links is `#`. On a phone the wall links are hidden and the same links show in the sheet.
+
+Its camera moves are in the `writing` entry of `SECTIONS` in `section.js`:
+
+| Move | What the camera does |
+|---|---|
+| 1 → 2 | `fly`: up the front of the first shop, over its roof and across the street, down to the second shop (5 s) |
+| 2 → 3 | `fly`, backwards: up out of the back row, across the street and over the third shop, down in front of it (5 s) |
+| 3 → 4 | `slide`: sideways along the street, facing the shops, then down the lane to the fourth shop (4.6 s) |
+| 4 → 5 | `fly`, backwards: up out of the back row, over the last shop and down in front of it (5 s) |

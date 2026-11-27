@@ -113,6 +113,10 @@ html:not(.u-ready) .u-view { transition: none; } /* the first view appears at on
 .u-links { position: absolute; width: 500px; font: 600 20px/31.6px var(--font-body); color: var(--ink); pointer-events: auto; }
 .u-links span { white-space: nowrap; }
 .u-links a { padding: 6px 0; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+/* What I write about: a topic's stories, one link per line under the painted arrow */
+.u-links-col { width: 560px; line-height: 31.5px; }
+.u-links-col > span { display: block; }
+.u-stop { font-weight: 500; } /* the full stop after "all stories", in the weight of the painted intro */
 .u-copy-links { visibility: hidden; } /* desktop: the links on the wall are the ones to use */
 
 /* desktop: the written copy is for screen readers only (the scene shows it) */

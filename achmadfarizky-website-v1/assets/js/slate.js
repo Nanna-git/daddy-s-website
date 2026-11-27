@@ -16,7 +16,8 @@
     'kanzway.html': { scene: '5', title: 'Kanzway', years: '2023–2025' },
     'community.html': { scene: '6', title: 'Learning through community', years: '2025' },
     'jhah.html': { scene: '7', title: 'Johns Hopkins Aramco Healthcare', years: '2025–now' },
-    'portfolio.html': { title: 'Portfolio' }
+    'portfolio.html': { title: 'Portfolio' },
+    'writing.html': { title: 'What I write about' }
   };
   var RISE = 620, CLAP = 220, DROP = 650, FADE = 260; // ms: board up and lights down, the clap, board away, plain fade
   var KEY = 'af-slate';

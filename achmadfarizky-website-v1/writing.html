@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>What I write about · Achmad Farizky</title>
+  <meta name="description" content="My stories, grouped by topic: Power BI design craft, data engineering, data management, automation, data storytelling, career and learning, creative design, healthcare analytics and life beyond data.">
+  <meta property="og:title" content="What I write about">
+  <meta property="og:description" content="My stories, grouped by topic: Power BI design craft, data engineering, data management, automation, data storytelling, career and learning, creative design, healthcare analytics and life beyond data.">
+  <meta property="og:type" content="article">
+  <meta name="theme-color" content="#F4F1EA">
+  <script>
+    // Theme and reduced motion are decided before first paint (same keys as Home).
+    (function () {
+      var d = document.documentElement, t = null, r = null;
+      try { t = localStorage.getItem('theme'); r = localStorage.getItem('af-reduce'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      d.setAttribute('data-theme', t);
+      if (r === '1' || (r === null && matchMedia('(prefers-reduced-motion: reduce)').matches)) d.classList.add('reduce-motion');
+      d.classList.add('js');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=Kalam:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/diorama.css">
+  <link rel="stylesheet" href="assets/css/university.css">
+</head>
+<body class="u-page" data-section="writing">
+  <script src="assets/js/slate.js"></script>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#views">Skip to content</a>
+
+  <header class="hud-top">
+    <div class="hud-id">
+      <a class="af-mark" href="index.html" aria-label="Achmad Farizky, home">AF</a>
+      <span class="hud-divider" aria-hidden="true"></span>
+      <p class="hud-section"><span>What I write about</span></p>
+    </div>
+    <div class="hud-menu" id="hud-menu">
+      <button type="button" class="hud-glass hud-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="hud-menu-items"><svg class="ic ic-22"><use href="#i-menu"/></svg></button>
+      <div class="hud-menu-items" id="hud-menu-items">
+        <div class="hud-glass seg seg-icons" role="group" aria-label="Colour mode">
+          <button type="button" data-theme-set="light" aria-label="Day" aria-pressed="true"><svg class="ic ic-18"><use href="#i-sun"/></svg></button>
+          <button type="button" data-theme-set="dark" aria-label="Night" aria-pressed="false"><svg class="ic ic-18"><use href="#i-moon"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="hud-phone">
+      <span class="phone-chip">What I write about <span class="phone-count"><span data-idx>1</span>/5</span></span>
+      <span class="phone-btns">
+        <a class="round-glass" href="index.html" aria-label="Home"><span class="af-mark" aria-hidden="true">AF</span></a>
+        <button type="button" class="round-glass" data-theme-toggle aria-label="Switch to night"><svg class="ic ic-18"><use href="#i-moon"/></svg></button>
+      </span>
+    </div>
+  </header>
+
+  <main id="views" tabindex="-1">
+    <!-- V4.01 · the first shop -->
+    <section class="u-view" aria-label="View 1 of 5">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h1>What I write about</h1>
+          <p>My stories, grouped by topic. Full list: <span class="u-copy-links"><a href="#">all stories</a></span>.</p>
+          <p><strong>Power BI design craft:</strong> dashboards that don't look like Power BI. → <span class="u-copy-links"><a href="#">My Power BI Park lab</a> · <a href="#">The Data Vis Forge gym</a> · <a href="#">Rebuilding Nick Desbarats' CEO dashboard</a></span></p>
+          <p><strong>Data engineering &amp; Fabric:</strong> the part nobody sees. → <span class="u-copy-links"><a href="#">Kettle, Pentaho and my first data warehouse</a> · <a href="#">One month in the Fabric Dojo</a></span></p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links u-links-col" aria-label="Full list" style="left:846.4px;top:181.5px"><span><a href="#">all stories</a><span class="u-stop">.</span></span></nav><nav class="u-links u-links-col" aria-label="Stories: Power BI design craft" style="left:115px;top:323.1px"><span><a href="#">My Power BI Park lab</a> ·</span><span><a href="#">The Data Vis Forge gym</a> ·</span><span><a href="#">Rebuilding Nick Desbarats' CEO dashboard</a></span></nav><nav class="u-links u-links-col" aria-label="Stories: Data engineering &amp; Fabric" style="left:797.6px;top:323.1px"><span><a href="#">Kettle, Pentaho and my first data warehouse</a> ·</span><span><a href="#">One month in the Fabric Dojo</a></span></nav></div>
+    </section>
+
+    <!-- V4.02 · the second shop, in the back row -->
+    <section class="u-view" aria-label="View 2 of 5">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <p><strong>Data management &amp; the CDMP road:</strong> the "core of the core." → <span class="u-copy-links"><a href="#">Road to CDMP Master</a> · <a href="#">Hey reporter, you're part of the brain!</a></span></p>
+          <p><strong>Automation &amp; clever tricks:</strong> small hacks, big time savings. → <span class="u-copy-links"><a href="#">Sending hundreds of emails at once?</a> · <a href="#">My own Power BI theme machine</a> · <a href="#">Small Power BI tricks I love</a></span></p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links u-links-col" aria-label="Stories: Data management &amp; the CDMP road" style="left:112.8px;top:280.4px"><span><a href="#">Road to CDMP Master</a> ·</span><span><a href="#">Hey reporter, you're part of the brain!</a></span></nav><nav class="u-links u-links-col" aria-label="Stories: Automation &amp; clever tricks" style="left:797.8px;top:280.4px"><span><a href="#">Sending hundreds of emails at once?</a> ·</span><span><a href="#">My own Power BI theme machine</a> ·</span><span><a href="#">Small Power BI tricks I love</a></span></nav></div>
+    </section>
+
+    <!-- V4.03 · the third shop, in the middle of the street -->
+    <section class="u-view" aria-label="View 3 of 5">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <p><strong>Data storytelling:</strong> it's not a bonus, it's mandatory. → <span class="u-copy-links"><a href="#">My data storytelling bookshelf</a> · <a href="#">Why must a data analyst learn the business?</a></span></p>
+          <p><strong>Career &amp; learning journey:</strong> 21 years and still a student. → <span class="u-copy-links"><a href="#">2025: from learning to a new career chapter</a> · <a href="#">Just do the thing!</a> · <a href="#">I cheated! (But it turned out okay.)</a></span></p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links u-links-col" aria-label="Stories: Data storytelling" style="left:112.8px;top:280.4px"><span><a href="#">My data storytelling bookshelf</a> ·</span><span><a href="#">Why must a data analyst learn the business?</a></span></nav><nav class="u-links u-links-col" aria-label="Stories: Career &amp; learning journey" style="left:797.8px;top:280.4px"><span><a href="#">2025: from learning to a new career chapter</a> ·</span><span><a href="#">Just do the thing!</a> ·</span><span><a href="#">I cheated! (But it turned out okay.)</a></span></nav></div>
+    </section>
+
+    <!-- V4.04 · the fourth shop, back right -->
+    <section class="u-view" aria-label="View 4 of 5">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <p><strong>Creative design:</strong> PowerPoint, Flash and Figma. → <span class="u-copy-links"><a href="#">PowerPoint: my first "Power Platform"</a> · <a href="#">SVG animation took me back to Macromedia Flash</a></span></p>
+          <p><strong>Healthcare analytics:</strong> learning a new industry after 40. → <span class="u-copy-links"><a href="#">The CHDA exam shocked me</a> · <a href="#">Learn my language if you want to talk to me</a></span></p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links u-links-col" aria-label="Stories: Creative design" style="left:112.8px;top:280.4px"><span><a href="#">PowerPoint: my first "Power Platform"</a> ·</span><span><a href="#">SVG animation took me back to Macromedia Flash</a></span></nav><nav class="u-links u-links-col" aria-label="Stories: Healthcare analytics" style="left:797.8px;top:280.4px"><span><a href="#">The CHDA exam shocked me</a> ·</span><span><a href="#">Learn my language if you want to talk to me</a></span></nav></div>
+    </section>
+
+    <!-- V4.05 · the last shop, at the end of the street -->
+    <section class="u-view" aria-label="View 5 of 5">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <p><strong>Life beyond data:</strong> skating, hiking and languages. → <span class="u-copy-links"><a href="#">Taking a break to skate</a> · <a href="#">Living like a local</a> · <a href="#">Human languages beat programming languages</a></span></p>
+        </div>
+        <div class="u-next next-row"><a class="next-link" href="#"><span>Next section</span><svg class="ic ic-18"><use href="#i-down"/></svg></a><span class="kbd-hint">coming soon</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links u-links-col" aria-label="Stories: Life beyond data" style="left:112.8px;top:280.4px"><span><a href="#">Taking a break to skate</a> ·</span><span><a href="#">Living like a local</a> ·</span><span><a href="#">Human languages beat programming languages</a></span></nav></div>
+    </section>
+  </main>
+
+  <nav class="u-spine" aria-label="Timeline">
+    <ol>
+      <li><a href="university.html" aria-label="University (2000)"><i></i>2000</a></li>
+      <li><a href="telkomsel.html" aria-label="Telkomsel (2005)"><i></i>2005</a></li>
+      <li><a href="trying.html" aria-label="A year of trying (2009)"><i></i>2009</a></li>
+      <li><a href="ericsson.html" aria-label="Ericsson (2010)"><i></i>2010</a></li>
+      <li><a href="kanzway.html" aria-label="Kanzway (2023)"><i></i>2023</a></li>
+      <li><a href="community.html" aria-label="Learning through community (2025)"><i></i>2025</a></li>
+      <li><a href="jhah.html" aria-label="Johns Hopkins Aramco Healthcare (now)"><i></i>now</a></li>
+    </ol>
+  </nav>
+
+  <div class="dial hud-glass" role="img" aria-label="View 1 of 5" id="dial">
+    <svg width="68" height="68" viewBox="0 0 68 68" aria-hidden="true"><circle class="dial-track" cx="34" cy="34" r="26"/><circle class="dial-fill" cx="34" cy="34" r="26" transform="rotate(-90 34 34)"/></svg>
+    <span class="dial-num"><span data-idx>1</span><span class="dial-of">/5</span></span>
+  </div>
+
+  <div class="phone-bar">
+    <span class="phone-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+    <button type="button" class="btn-coral" data-next data-phone-next>Next<svg class="ic ic-18"><use href="#i-down"/></svg></button>
+    <a class="btn-coral" href="writing.html" data-phone-section hidden>Next section</a>
+  </div>
+
+  <p class="sr-only" aria-live="polite" id="announce"></p>
+  <noscript><style>.u-view{position:static;visibility:visible;opacity:1}.u-scene,.u-next,.u-spine,.dial{display:none}.u-over{position:static;transform:none;width:auto;height:auto;padding:24px}.u-copy{position:static;width:auto;height:auto;clip:auto}</style></noscript>
+  <script type="module" src="assets/js/section.js"></script>
+</body>
+</html>

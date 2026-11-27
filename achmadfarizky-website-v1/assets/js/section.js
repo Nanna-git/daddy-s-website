@@ -1,9 +1,9 @@
-// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway, 2.6 Learning through community, 2.7 Johns Hopkins Aramco Healthcare) and 3 Portfolio. Each view is the canvas board: the scene
+// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway, 2.6 Learning through community, 2.7 Johns Hopkins Aramco Healthcare), 3 Portfolio and 4 What I write about. Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
 // The page picks its section with <body data-section="…">.
 import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 
-// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15, KZ01…KZ07, LC01…LC09, JH01…JH10 and PF01…PF13 (ut = the text painted into the scene).
+// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15, KZ01…KZ07, LC01…LC09, JH01…JH10, PF01…PF13 and WR01…WR05 (ut = the text painted into the scene).
 // moves: how the camera gets from each view to the next one:
 //   'travel'  it really goes there (1.5 s); the old view's text stays where it is
 //   'cut'     walk, cut, walk: for spots too far apart (1.8 s). The two pictures are moved, not redrawn:
@@ -156,6 +156,19 @@ const SECTIONS = {
   { cam: 'p11', uv: 11, ut: '||10. BI-style reporting website in ReactJS||ReactJS · a few years ago||A design experiment: filtering, drill-down and dynamic visuals on the web, fed by an ETL process that saved data as JavaScript files.||||||||1||' },
   { cam: 'p12', uv: 12, ut: 'Data engineering||11. Microsoft Fabric, end to end||Microsoft Fabric · April–August 2025||Lakehouse, warehouse, pipelines, real-time streaming, data quality and CI/CD, all in one month in the Fabric Dojo, then the DP-700 certification.||||||||2||Will Needham, Fabric Dojo' },
   { cam: 'p13', uv: 13, ut: 'Graphic design||12. PowerPoint makeup artist||PowerPoint · 2016–now||People often call me at the last minute: "Achmad, can you come to my desk? I have a meeting in less than an hour!" I give their slides a design facelift. In 2016, I also made education videos with my family using only PowerPoint, a screen recorder and free editing tools, and later a Basic Arabic video course.||||||||2||' },
+  ] },
+  // A library street: five small shops, one per view, zigzagging from the front row to the back row and out again. A view's ut is its
+  // heading and intro (view 1 only), then for each topic its name, its line and the number of lines kept free for its story links
+  // (they are page links: .u-pin in writing.html).
+  // 1→2: a flight up the first shop's front, over its roof and across the street, down to the second shop. 2→3: a flight backwards, up
+  // out of the back row and over the third shop, down in front of it. 3→4: sideways along the street, facing the shops, then down the
+  // lane to the fourth shop. 4→5: a flight backwards again, over the last shop and down in front of it.
+  writing: { scene: 'wr', moves: [{ kind: 'fly', up: 22, climb: 16, dur: 5000 }, { kind: 'fly', reverse: true, up: 24, glide: 0.3, dur: 5000 }, { kind: 'slide', dur: 4600 }, { kind: 'fly', reverse: true, up: 24, glide: 0.3, dur: 5000 }], views: [
+  { cam: 'w1', uv: 1, ut: 'What I write about||My stories, grouped by topic. Full list:||Power BI design craft:||dashboards that don\'t look like Power BI.||3||Data engineering & Fabric:||the part nobody sees.||2' },
+  { cam: 'w2', uv: 2, ut: '||||Data management & the CDMP road:||the "core of the core."||2||Automation & clever tricks:||small hacks, big time savings.||3' },
+  { cam: 'w3', uv: 3, ut: '||||Data storytelling:||it\'s not a bonus, it\'s mandatory.||2||Career & learning journey:||21 years and still a student.||3' },
+  { cam: 'w4', uv: 4, ut: '||||Creative design:||PowerPoint, Flash and Figma.||2||Healthcare analytics:||learning a new industry after 40.||2' },
+  { cam: 'w5', uv: 5, ut: '||||Life beyond data:||skating, hiking and languages.||3' },
   ] },
 };
 const SLUG = document.body.dataset.section;

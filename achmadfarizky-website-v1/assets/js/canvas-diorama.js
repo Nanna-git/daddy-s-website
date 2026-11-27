@@ -3211,6 +3211,261 @@ export class CanvasDiorama {
         });
         seen('vy', -FAR, GT[1], function () { backW(); sides(); });
       });
+    } else if (id === 'wr') {
+      // What I write about at human scale (same scale as 'uni', 'tsel', 'yt', 'er', 'kz', 'lc', 'jh' and 'pf': a man about 5.3 units),
+      // eye-level walk. A library street on the studio floor by day: five small shops stand well apart, each on its own patch of
+      // paving, joined by a street that bends and by lanes. A shop front is as wide as a view. Each topic of the story library has a
+      // shop window: its name and its line are painted over the window, and a small diorama of the topic stands inside it, lit at
+      // night. Shops one to four have two windows (V4.01-V4.04, two topics each); the last shop has one window and one tall one for
+      // the single topic of V4.05. The first shop carries the section heading on its fascia.
+      // The story links of a topic are not painted: the board puts them, as real links, one per line, on the lines the wall keeps
+      // free after the painted arrow. The same goes for the "all stories" link after the painted intro of view 1.
+      // Every camera looks toward -y, so each shop is authored back (small y) to front, and the shops go in back to front too.
+      // Each view passes uv (1-5) and its text in ut ("||"): heading, intro, then for each topic its name, its line and the number
+      // of lines kept free for its links.
+      def.label = 'What I write about set: a library street of five small shops, each shop window holding a small diorama of one topic of the story library, on a studio floor';
+      def.sky = ['#CFE3F2', '#F4F0E4']; def.nsky = ['#0E1730', '#26365E']; def.nmix = '#1E2A4A'; def.fog = 0; def.stars = true;
+      const WV = Number(opt.uv || 0), WT = String(opt.ut || '').split('||');
+      const INK = '#13203A', INK2 = '#44506A', LITE = '#EEF2F8', WHITE = '#F7F3EA', SOFT = '#B4BFD2';
+      const say = function (txt, x, y, z, s, o) { add(T(x, y, z, s, txt, Object.assign({ al: 'l', wt: 500, ff: 'Inter, sans-serif', c: INK, nc: INK }, o || {}))); };
+      const bold = function (txt, x, y, z, s, o) { say(txt, x, y, z, s, Object.assign({ wt: 800, ff: 'Manrope, sans-serif' }, o || {})); };
+      // Each shop shows its own view's text; seen from another view it shows the board copy, so the street reads the same from every camera.
+      const SX = {"1":["What I write about","My stories, grouped by topic. Full list:","Power BI design craft:","dashboards that don't look like Power BI.","3","Data engineering & Fabric:","the part nobody sees.","2"],"2":["","","Data management & the CDMP road:","the \"core of the core.\"","2","Automation & clever tricks:","small hacks, big time savings.","3"],"3":["","","Data storytelling:","it's not a bonus, it's mandatory.","2","Career & learning journey:","21 years and still a student.","3"],"4":["","","Creative design:","PowerPoint, Flash and Figma.","2","Healthcare analytics:","learning a new industry after 40.","2"],"5":["","","Life beyond data:","skating, hiking and languages.","3"]};
+      const SU = function (n) { return WV === n ? WT : (SX[n] || []); };
+      const RED = '#C0392B', RUST = '#B4532E', NRUST = '#E8A07E', TEAL = '#1D6A5A', MINT = '#4C9F94', BLUE = '#2F5C99', OCHRE = '#B7791F', GOLD = '#D9A441', GREEN = '#2E7D4F', YEL = '#F2C811', PURPLE = '#7A5C99', CARD = '#FFFFFF', NCARD = '#E8ECF2', DK = '#3D4A63', SKIN = '#B07A55', SHIRT = '#5C7FA8', TROUS = '#3D4A63', WOOD = '#B98B5E', NWOOD = '#55473A', LINE = '#B4BFD2', PALE = '#E6EAF0', CANVAS = '#FFFDF7';
+      // where the five shops stand on the lot (the left end of each shop's view); one view is BW wide
+      const BW = 23.75, SA = [-112, 34], SB = [-70, -58], SC = [-14, 6], SD = [44, -64], SE = [98, 22];
+      { const E = function (o, az) { const x = o[0] + BW / 2; return { pov: { eye: [x, o[1] + 19, 5.2], at: [x, o[1], az || 6.0], fov: 64, off: 0 } }; };
+        def.cams = { w1: E(SA, 6.6), w2: E(SB), w3: E(SC), w4: E(SD), w5: E(SE) }; }
+      // Where the camera stands (a camera move passes its own eye point).
+      const P0 = this.props || {}, EYE = (P0.pov && P0.pov.eye) || (def.cams[P0.cam] && def.cams[P0.cam].pov && def.cams[P0.cam].pov.eye) || [SA[0] + BW / 2, SA[1] + 19, 5.2];
+      // a set is authored around its own origin, then moved (o: x, y and, if given, z)
+      const at = function (o, f) { const i0 = I.length; f(); for (let i = i0; i < I.length; i++) { I[i].x += o[0]; I[i].y += o[1]; I[i].z += (o[2] || 0); } };
+      // seen(k, lo, hi, f): what f adds is drawn only while the camera's x (k 'vx') or y (k 'vy') is in [lo, hi), in lot coordinates.
+      // Nothing is depth-sorted, so anything that must cover its surroundings from both sides goes in twice, early and late.
+      const FAR = 1e9, seen = function (k, lo, hi, f) { const i0 = I.length; f(); for (let i = i0; i < I.length; i++) { const r = I[i][k]; I[i][k] = r ? [Math.max(r[0], lo), Math.min(r[1], hi)] : [lo, hi]; } };
+      // lit(f): what f adds keeps its day colours at night (the things in a lit shop window)
+      const lit = function (f) { const i0 = I.length; f(); for (let i = i0; i < I.length; i++) { if (I[i].t !== 'g' && !I[i].nc) I[i].nc = I[i].c; } };
+      // A small figure (k: its size, 1 = a man of 5.3 units): a plain head, no hair drawn.
+      const fig = function (px, py, z0, k, sh) { const s = sh || SHIRT;
+        add(B(px - 0.45 * k, py - 0.25 * k, z0, 0.38 * k, 0.5 * k, 2.5 * k, TROUS), B(px + 0.07 * k, py - 0.25 * k, z0, 0.38 * k, 0.5 * k, 2.5 * k, TROUS));
+        add(B(px + 0.65 * k, py - 0.2 * k, z0 + 2.7 * k, 0.3 * k, 0.4 * k, 1.65 * k, s), B(px - 0.62 * k, py - 0.35 * k, z0 + 2.45 * k, 1.24 * k, 0.7 * k, 1.95 * k, s), B(px - 0.95 * k, py - 0.2 * k, z0 + 2.7 * k, 0.3 * k, 0.4 * k, 1.65 * k, s));
+        add(S(px, py, z0 + 4.98 * k, 0.46 * k, SKIN)); };
+      const disc = function (x, y, z, r, c, o) { add(L.D(x, y, z, r, c, Object.assign({ n: 14, nc: c }, o || {}))); };
+      const F = function (x, y, z, w, h, c, o) { add(B(x, y, z, w, 0.005, h, c, Object.assign({ nc: c }, o || {}))); }; // a flat shape facing the street
+      const lamp = function (x, y, h) { add(C(x, y, 0, 0.14, h, DK, { n: 6 }), B(x - 0.5, y - 0.25, h, 1.0, 0.5, 0.18, DK), S(x, y, h - 0.25, 0.34, '#FFE7A8', { e: 1 }), G(x, y, h - 1, 9, '#FFD27A')); };
+      const tree = function (x, y, s) { add(C(x, y, 0, 2.6, 0.3, '#CFC4A8', { n: 12, nc: '#3A3A4E' }), C(x, y, 0, 0.2 * s, 1.5 * s, '#8C6A4A', { n: 6, nc: '#3E3428' }), S(x - 0.45 * s, y, 1.9 * s, 0.75 * s, '#8FB07A', { nc: '#2F4438' }), S(x + 0.5 * s, y + 0.1, 2.0 * s, 0.7 * s, '#A3BF86', { nc: '#34483A' }), S(x, y + 0.1, 2.5 * s, 0.7 * s, '#9BB97E', { nc: '#2F4A40' })); };
+      const pot = function (x, y, z, s, c) { add(C(x, y, z, 0.45 * s, 0.7 * s, c || '#C9785E', { n: 8, nc: '#6A4038' }), S(x, y, z + 1.15 * s, 0.55 * s, '#8FA66B', { nc: '#2F4A40' })); };
+      const seat = function (x, y, z, w, c, nc) { add(B(x + 0.3, y + 0.1, z, 0.3, 1.0, 0.9, DK), B(x + w - 0.6, y + 0.1, z, 0.3, 1.0, 0.9, DK), B(x, y, z + 0.9, w, 1.2, 0.2, c || WOOD, { nc: nc || NWOOD })); }; // a plain bench
+      // Flat ground: a patch (its top at z 0) or a thin layer lying on one; a strip of that layer between two points; a path along a line of points.
+      const patch = function (c, nc, pts, lay, o) { add(C(0, 0, lay ? 0 : -0.6, 0, lay ? lay : 0.6, c, Object.assign({ nc: nc, pts: pts }, o || {}))); };
+      const strip = function (a, b, w, c, nc, lay) { const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l * w / 2, ny = dx / l * w / 2; patch(c, nc, [[a[0] + nx, a[1] + ny], [b[0] + nx, b[1] + ny], [b[0] - nx, b[1] - ny], [a[0] - nx, a[1] - ny]], lay || 0.04); };
+      const path = function (P, w, c, nc, lay) { for (let i = 0; i < P.length - 1; i++) strip(P[i], P[i + 1], w, c, nc, lay); P.slice(1, -1).forEach(function (p) { add(C(p[0], p[1], 0, w / 2, lay || 0.04, c, { nc: nc, n: 14 })); }); };
+
+      // A topic's label, painted over its window: U is the view's text (see ut above), k the topic (0 or 1), x the left edge, z the
+      // height of the name. The lines after the arrow stay empty for the board's links, one link per line (0.52 apart).
+      const topic = function (U, k, x, z) { const n = U[2 + k * 3], l = U[3 + k * 3], rows = Number(U[4 + k * 3]) || 0; if (!n) return;
+        bold(n, x, 0.03, z, 0.5, { nc: LITE }); say(l || '', x, 0.03, z - 0.7, 0.33, { nc: LITE }); if (rows) say('→', x, 0.03, z - 1.45, 0.33, { nc: LITE }); };
+
+      // A shop: a small building whose front wall stands on y 0, from x -2 to BW + 2, with window niches cut into it.
+      //   top: the height of its wall; wall: [front, front at night, side, side at night]; trim: [day, night];
+      //   wins: one entry per window: { x, w, z, h, c: [back, floor, inner sides], inside: adds the diorama, authored from the
+      //   window's own left-back-bottom corner (x 0..w, y -ND..0, z 0..h) };
+      //   front(): the painted text and anything else on the wall; roof(): what stands on the roof; walk(): what stands on the pavement.
+      const ND = 2.6, W0 = -2, W1 = BW + 2, DP = 9;
+      const shop = function (o, top, wall, trim, wins, front, roof, walk) { at(o, function () {
+        const wc = { nc: wall[1] }, backW = function () { add(B(W0, -DP, 0, W1 - W0, 0.4, top, wall[2], { nc: wall[3] })); }, sideL = function () { add(B(W0, -DP + 0.4, 0, 0.4, DP - 0.8, top, wall[2], { nc: wall[3] })); }, sideR = function () { add(B(W1 - 0.4, -DP + 0.4, 0, 0.4, DP - 0.8, top, wall[2], { nc: wall[3] })); };
+        const sides = function () { seen('vx', o[0] + W1, FAR, sideR); seen('vx', -FAR, o[0] + W0, sideL); };
+        // The shell goes in here, behind the windows, for a camera in front; a camera behind or beside the shop (a camera move) gets
+        // it again further down, so it cannot be seen through.
+        const lamps = function () { lamp(-4.6, 14, 9.5); lamp(BW + 4.6, 14, 9.5); }; // the two lamp posts of its forecourt: behind the shop for a camera behind it
+        seen('vy', -FAR, o[1], lamps);
+        backW(); sideL(); sideR();
+        if (roof && EYE[2] <= top) roof(); // what stands on the roof: behind everything for a camera below the roof line
+        wins.forEach(function (q) { lit(function () {
+          add(B(q.x - 0.2, -ND - 0.1, q.z - 0.2, q.w + 0.4, 0.1, q.h + 0.4, q.c[0]), B(q.x, -ND, q.z - 0.2, q.w, ND, 0.2, q.c[1]));
+          add(B(q.x - 0.2, -ND, q.z, 0.2, ND, q.h, q.c[2]), B(q.x + q.w, -ND, q.z, 0.2, ND, q.h, q.c[2]), B(q.x, -ND, q.z + q.h, q.w, ND, 0.2, q.c[2], { ub: 1, ubf: 0.9 }));
+          at([q.x, 0, q.z], q.inside); }); });
+        add(B(W0, -DP, top, W1 - W0, DP - 0.4, 0.3, '#B9B2A6', { nc: '#2E3548' })); // the roof
+        if (roof && EYE[2] > top) roof();
+        // the front wall, built around the windows: full-height piers between them, a piece under and a piece over each window
+        // (the pieces furthest from the camera's x go in first, so that the only edges of the wall's thickness that show are the
+        // sides of the window openings)
+        { const xs = [W0], ps = []; wins.forEach(function (q) { xs.push(q.x, q.x + q.w); }); xs.push(W1);
+          for (let i = 0; i < xs.length - 1; i++) ps.push({ q: i % 2 ? wins[(i - 1) / 2] : null, x: xs[i], w: xs[i + 1] - xs[i] });
+          const ex = EYE[0] - o[0]; ps.sort(function (a, b) { return Math.abs(b.x + b.w / 2 - ex) - Math.abs(a.x + a.w / 2 - ex); });
+          ps.forEach(function (p) { const q = p.q; if (!q) add(B(p.x, -0.4, 0, p.w, 0.4, top, wall[0], wc)); else add(B(p.x, -0.4, 0, p.w, 0.4, q.z, wall[0], wc), B(p.x, -0.4, q.z + q.h, p.w, 0.4, top - q.z - q.h, wall[0], Object.assign({ ub: 1 }, wc))); }); }
+        add(B(W0, 0, 0, W1 - W0, 0.12, 0.9, trim[0], { nc: trim[1] })); // a painted base along the foot of the wall
+        add(B(W0 - 0.3, -0.5, top, W1 - W0 + 0.6, 0.9, 0.35, trim[0], { nc: trim[1] })); // the cornice
+        seen('vy', o[1], FAR, function () {
+          wins.forEach(function (q) { // each window's frame, its sill and a striped valance under the top of the frame
+            add(B(q.x - 0.18, 0, q.z, 0.18, 0.1, q.h, trim[0], { nc: trim[1] }), B(q.x + q.w, 0, q.z, 0.18, 0.1, q.h, trim[0], { nc: trim[1] }), B(q.x - 0.18, 0, q.z + q.h, q.w + 0.36, 0.1, 0.18, trim[0], { nc: trim[1] }), B(q.x - 0.3, 0, q.z - 0.28, q.w + 0.6, 0.4, 0.28, trim[0], { nc: trim[1] }));
+            const n = Math.round(q.w / 0.7), sw = q.w / n; for (let i = 0; i < n; i++) add(B(q.x + i * sw, -0.05, q.z + q.h - 0.34, sw, 0.05, 0.34, i % 2 ? WHITE : trim[0], { nc: i % 2 ? '#C9CEDA' : trim[1] })); });
+          if (front) front();
+          if (walk) walk();
+          sides(); });
+        seen('vy', -FAR, o[1], function () { backW(); sides(); });
+        seen('vy', o[1], FAR, lamps);
+      }); };
+      // small lanterns on the top of a shop front, at the given x; their glow stays above the painted text
+      const lanterns = function (xs, z) { xs.forEach(function (x) { add(C(x, 0, z, 0.08, 0.45, DK, { n: 6 }), S(x, 0, z + 0.72, 0.3, '#FFE7A8', { e: 1 }), G(x, 0.3, z + 0.72, 1.0, '#FFD27A')); }); };
+      const AX = 1.3, BX = 12.65, WW = 9.8, WZ = 1.9, WH = 4.7; // the two windows of a shop front: left edges, width, sill height, height
+
+      // ---- The ground. The studio floor; on it a pale base with slanted edges, and on that each shop's own patch of paving. A street
+      // bends between the shops; lanes leave it at an angle for each shop.
+      add(B(-760, -600, -0.66, 1520, 1040, 0.06, '#6F6A66', { nc: '#22263A' }));
+      patch('#DDE2D4', '#2B3442', [[-176, 96], [-184, 18], [-160, -70], [-112, -104], [-6, -112], [70, -108], [128, -92], [172, -40], [178, 48], [150, 98]]);
+      patch('#E6D9C0', '#3A3A4E', [[-124, 20], [-84, 18], [-74, 36], [-78, 64], [-118, 68], [-130, 48]], 0.05);
+      patch('#D3DDD8', '#30403E', [[-82, -72], [-42, -76], [-34, -58], [-38, -32], [-76, -28], [-88, -46]], 0.05);
+      patch('#E8D5CC', '#42384A', [[-26, -8], [14, -10], [24, 6], [20, 34], [-20, 38], [-32, 20]], 0.05);
+      patch('#D5DBE8', '#333A52', [[32, -78], [72, -80], [82, -64], [78, -36], [38, -32], [26, -50]], 0.05);
+      patch('#DFE2C8', '#3A4238', [[86, 8], [126, 6], [136, 24], [132, 52], [92, 56], [80, 38]], 0.05);
+      path([[-300, -2], [-140, -10], [-90, 2], [-40, -18], [20, -22], [84, -8], [150, -14], [300, -30]], 10, '#B9B2A6', '#2E323A');
+      path([[-90, 2], [-78, 26], [-76, 50], [-88, 60]], 4.4, '#F1E9DA', '#4A4A5E', 0.06);
+      path([[-56, -12], [-62, -24], [-58, -36]], 4.4, '#F1E9DA', '#4A4A5E', 0.06);
+      path([[10, -22], [26, -4], [24, 22], [12, 32]], 4.4, '#F1E9DA', '#4A4A5E', 0.06);
+      path([[58, -14], [64, -26], [56, -40]], 4.4, '#F1E9DA', '#4A4A5E', 0.06);
+      path([[110, -10], [130, 6], [134, 30], [122, 48]], 4.4, '#F1E9DA', '#4A4A5E', 0.06);
+
+      // ---- Far away, in the haze: the roofs of a town and a line of trees.
+      { [[-250, 44, 14], [-190, 30, 20], [-146, 40, 12], [-90, 34, 18], [-40, 26, 13], [4, 46, 22], [66, 30, 14], [110, 38, 18], [160, 36, 24], [214, 40, 15]].forEach(function (b) { add(B(b[0], -330, 0, b[1], 18, b[2], '#D6DDE6', { nc: '#262A52' })); });
+        for (let i = 0; i < 14; i++) { const x = -262 + i * 41 + (i % 3) * 8, h = 20 + (i % 4) * 4; add(C(x, -276, 0, 1.4, h, '#A8A08C', { n: 6, nc: '#232F4A' }), S(x, -276, h + 2, 7 + (i % 3), i % 2 ? '#A9BF96' : '#B7C9A2', { nc: '#232F4A' })); }
+        // the haze is one flat sheet: seen from the air (a camera move) its edges would show, so it thins out as the camera rises
+        add(B(-1400, -256, 0, 2800, 0.05, 230, '#EEF1EE', { nc: '#1B1C44', op: 0.55 * Math.max(0, Math.min(1, (11 - EYE[2]) / 5)) })); }
+
+      // The shops go in back to front: D and B in the back row, then what stands along the street, then C, E and A.
+      [[-100, -66, 3.4], [-26, -70, 3.6], [18, -72, 3.4], [92, -58, 3.6]].forEach(function (p) { tree(p[0], p[1], p[2]); }); // trees beside the back row
+
+      // ---- Shop four (V4.04): Creative design, Healthcare analytics.
+      shop(SD, 10.75, ['#E8EAF2', '#454C64', '#D6DAE6', '#3C4258'], [OCHRE, '#8A6A30'], [
+        // Creative design: a slide on an easel, the frames of an animation, a shape with its handles, a pot of pencils.
+        { x: AX, w: WW, z: WZ, h: WH, c: ['#F3EEE4', '#D9C7A8', '#E6DCCB'], inside: function () {
+          F(3.9, -ND + 0.01, 3.0, 3.0, 1.25, '#2B2F3A'); [0, 1, 2, 3].forEach(function (k) { F(4.07 + k * 0.7, -ND + 0.02, 3.22, 0.58, 0.8, CANVAS); disc(4.2 + k * 0.7 + k * 0.09, -ND + 0.03, 3.4 + [0, 0.24, 0.38, 0.24][k], 0.11, RUST); [0, 1].forEach(function (s) { F(4.28 + k * 0.7, -ND + 0.02, 3.06 + s * 1.03, 0.16, 0.09, '#8A8F9C'); }); });
+          at([0.45, 0], function () {
+            add(B(0.95, -1.8, 0, 0.1, 0.1, 3.0, WOOD), B(3.05, -1.8, 0, 0.1, 0.1, 3.0, WOOD), B(2.0, -2.25, 0, 0.1, 0.1, 2.8, WOOD), B(0.7, -1.7, 0.9, 2.7, 0.1, 1.95, DK), B(0.8, -1.6, 1.0, 2.5, 0.01, 1.75, CANVAS));
+            F(0.8, -1.59, 2.35, 2.5, 0.4, '#27457A'); F(0.95, -1.585, 2.5, 1.1, 0.1, '#FFFFFF'); [0, 1, 2].forEach(function (k) { disc(1.02, -1.59, 2.08 - k * 0.3, 0.06, OCHRE); F(1.2, -1.59, 2.04 - k * 0.3, 0.9 - k * 0.15, 0.08, INK2); }); [0.3, 0.5, 0.75].forEach(function (h, k) { F(2.45 + k * 0.26, -1.59, 1.2, 0.2, h, k === 2 ? OCHRE : LINE); }); });
+          add(C(4.75, -0.9, 0, 0.28, 0.55, '#8FA0B8', { n: 8 })); [RED, YEL, BLUE].forEach(function (c, k) { add(B(4.59 + k * 0.13, -0.92, 0.55, 0.07, 0.07, 0.5, c)); });
+          [BLUE, MINT, GOLD, RUST].forEach(function (c, k) { add(B(5.5 + k * 0.42, -0.6 - (k % 2) * 0.2, 0, 0.34, 0.34, 0.06, c)); });
+          add(B(7.0, -1.6, 0, 0.1, 0.1, 0.7, WOOD), B(9.0, -1.6, 0, 0.1, 0.1, 0.7, WOOD), B(6.8, -1.55, 0.7, 2.5, 0.08, 2.0, CARD), B(6.8, -1.5, 0.62, 2.5, 0.2, 0.08, WOOD));
+          disc(8.05, -1.46, 1.7, 0.52, PURPLE); F(7.4, -1.45, 1.05, 1.3, 0.03, BLUE); F(7.4, -1.45, 2.32, 1.3, 0.03, BLUE); F(7.4, -1.45, 1.05, 0.03, 1.3, BLUE); F(8.67, -1.45, 1.05, 0.03, 1.3, BLUE);
+          [[7.4, 1.05], [8.7, 1.05], [7.4, 2.35], [8.7, 2.35]].forEach(function (p) { F(p[0] - 0.09, -1.44, p[1] - 0.09, 0.18, 0.18, '#FFFFFF'); F(p[0] - 0.06, -1.435, p[1] - 0.06, 0.12, 0.12, BLUE); });
+          add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } },
+        // Healthcare analytics: a small hospital, a bed, a screen of bars, and the desk where a new subject is learned.
+        { x: BX, w: WW, z: WZ, h: WH, c: ['#EAF3F1', '#CFE0DC', '#DCE9E6'], inside: function () {
+          add(B(0.6, -2.4, 0, 2.7, 0.9, 3.3, '#F7F7F2'), B(0.5, -2.45, 3.3, 2.9, 1.0, 0.16, MINT)); [0, 1].forEach(function (r) { [0, 1, 2].forEach(function (c) { F(0.9 + c * 0.8, -1.49, 0.5 + r * 0.85, 0.5, 0.5, '#A9C6E8'); }); }); add(L.cross(1.95, -1.5, 2.25, 0.75, TEAL));
+          add(B(3.7, -1.3, 0, 0.1, 0.9, 0.45, DK), B(5.5, -1.3, 0, 0.1, 0.9, 0.45, DK), B(3.6, -1.35, 0.45, 2.1, 1.0, 0.22, CARD), B(3.6, -1.35, 0.45, 0.12, 1.0, 0.75, '#C9CED8'), B(3.78, -1.2, 0.67, 0.55, 0.7, 0.14, '#DCE6F2'), B(4.45, -1.35, 0.67, 1.25, 1.0, 0.1, MINT));
+          add(C(6.75, -2.0, 0, 0.07, 1.9, DK, { n: 6 }), B(6.15, -2.05, 1.9, 1.3, 0.12, 0.95, DK), B(6.23, -1.93, 1.98, 1.14, 0.01, 0.79, '#EAF4EC')); [0.3, 0.5, 0.4, 0.62].forEach(function (h, k) { F(6.35 + k * 0.25, -1.92, 2.04, 0.17, h, k === 3 ? TEAL : MINT); });
+          add(L.desk(7.5, -1.3, 0, 1.7, 0.9, 1.0, '#D8CBB0'), B(7.7, -1.1, 1.0, 0.5, 0.6, 0.05, CARD), B(8.22, -1.1, 1.0, 0.5, 0.6, 0.05, CARD), B(8.19, -1.1, 1.0, 0.04, 0.6, 0.07, TEAL));
+          add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } }
+      ], function () { const U = SU(4); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); lanterns([2.2, 6.2, 13.6, 21.6], 11.1); },
+      function () { add(C(17.6, -2.2, 11.05, 1.4, 2.3, '#A9B6CA', { n: 10, nc: '#3A4458' }), C(17.6, -2.2, 13.35, 1.52, 0.14, '#8FA0B8', { n: 10, nc: '#2E3548' }), B(9.3, -2.0, 11.05, 1.1, 1.1, 2.0, '#C9785E', { nc: '#5A3A34' }), B(9.2, -2.1, 13.05, 1.3, 1.3, 0.16, '#8C5A48', { nc: '#4A2E2A' })); },
+      function () { pot(8.7, 2.0, 0, 0.8); [15.6, 18.4].forEach(function (x) { add(C(x, 1.6, 0, 0.24, 0.85, '#8FA0B8', { n: 8, nc: '#39435E' }), S(x, 1.6, 0.92, 0.24, '#8FA0B8', { nc: '#39435E' })); }); });
+
+      // ---- Shop two (V4.02): Data management & the CDMP road, Automation & clever tricks.
+      shop(SB, 10.75, ['#E4ECEA', '#465260', '#D2DCDA', '#3C4854'], [TEAL, '#2E6F68'], [
+        // Data management: a road with its milestones and a flag at the end, the rings of a core on the wall, books, a telephone.
+        { x: AX, w: WW, z: WZ, h: WH, c: ['#EFE6D4', '#D9CFB8', '#E4DAC6'], inside: function () {
+          disc(7.9, -ND + 0.01, 3.2, 1.05, '#C9D9F0'); disc(7.9, -ND + 0.02, 3.2, 0.7, '#7FA3D6'); disc(7.9, -ND + 0.03, 3.2, 0.33, GOLD);
+          add(L.books(1.0, -2.3, 0, 5, [BLUE, '#C9785E', MINT, GOLD]));
+          path([[1.0, -0.45], [3.0, -1.2], [4.4, -0.8], [5.5, -1.7]], 0.6, '#8E99A8', '#8E99A8', 0.03);
+          [[3.2, -1.75], [4.6, -1.4]].forEach(function (p) { add(B(p[0], p[1], 0, 0.22, 0.12, 0.5, CARD), B(p[0], p[1], 0.5, 0.22, 0.12, 0.1, RED)); });
+          add(C(5.75, -2.0, 0, 0.5, 0.25, '#B9CF9A', { n: 10 }), C(5.75, -2.0, 0.25, 0.05, 1.7, DK, { n: 6 }), B(5.8, -2.02, 1.45, 0.8, 0.04, 0.5, RED));
+          add(B(7.5, -1.2, 0, 1.5, 0.8, 0.9, WOOD), B(7.8, -1.05, 0.9, 0.9, 0.5, 0.2, DK), B(7.7, -0.95, 1.12, 1.1, 0.26, 0.16, '#2B2F3A'));
+          add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } },
+        // Automation: envelopes ride a belt into a small machine with two cogs; colour cards come out; a clock for the time saved.
+        { x: BX, w: WW, z: WZ, h: WH, c: ['#E9E4DA', '#CFC8BC', '#DDD6CA'], inside: function () {
+          add(L.clock(8.4, -ND + 0.1, 3.5, 0.6));
+          add(B(0.6, -1.5, 0, 0.14, 0.7, 0.6, DK), B(3.9, -1.5, 0, 0.14, 0.7, 0.6, DK), B(0.4, -1.6, 0.6, 4.4, 0.9, 0.16, '#596379'));
+          [0, 1, 2, 3].forEach(function (k) { const x = 0.7 + k * 0.95; add(B(x, -1.15, 0.76, 0.66, 0.04, 0.44, CARD)); F(x, -1.105, 1.04, 0.66, 0.03, LINE); F(x + 0.46, -1.105, 0.82, 0.13, 0.13, RED); });
+          add(B(4.8, -2.0, 0, 2.3, 1.5, 2.5, SHIRT), B(5.25, -1.7, 2.5, 1.4, 0.9, 0.45, '#44628A'), B(4.8, -0.5, 0.62, 0.5, 0.01, 0.5, '#2B2F3A'));
+          disc(5.75, -0.49, 1.55, 0.5, GOLD); disc(5.75, -0.485, 1.55, 0.18, '#8A6A30'); disc(6.5, -0.49, 0.95, 0.34, '#C9CED8'); disc(6.5, -0.485, 0.95, 0.12, '#596379'); add(S(6.7, -0.5, 2.15, 0.12, '#7FD8A0', { e: 1, a: 'dz-blink' }));
+          [BLUE, MINT, GOLD, RUST].forEach(function (c, k) { add(B(7.45 + k * 0.5, -1.3 + k * 0.12, 0, 0.42, 0.04, 0.95, c)); });
+          add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } }
+      ], function () { const U = SU(2); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); lanterns([2.2, 6.2, 17.6, 21.6], 11.1); },
+      function () { add(B(8.9, -0.4, 11.1, 5.95, 0.4, 0.8, '#E4ECEA', { nc: '#465260' }), B(10.4, -0.4, 11.9, 2.95, 0.4, 0.6, '#E4ECEA', { nc: '#465260' }), B(8.75, -0.5, 11.9, 1.65, 0.6, 0.14, TEAL, { nc: '#2E6F68' }), B(13.35, -0.5, 11.9, 1.65, 0.6, 0.14, TEAL, { nc: '#2E6F68' }), B(10.25, -0.5, 12.5, 3.25, 0.6, 0.14, TEAL, { nc: '#2E6F68' })); },
+      function () { pot(8.7, 2.0, 0, 0.8, '#8FA0B8'); seat(14.6, 1.6, 0, 4.4); });
+
+      // ---- Along the street: trees in round beds, benches, lamps and two sandwich boards.
+      [[-150, 8, 3.4], [-118, -22, 3.2], [-30, -34, 3.4], [-8, -40, 3.2], [36, 2, 3.4], [84, -26, 3.2], [146, -30, 3.4], [-52, 30, 3.2], [60, 34, 3.4]].forEach(function (p) { tree(p[0], p[1], p[2]); });
+      seat(-112, 2, 0, 4.6); seat(-24, -10, 0, 4.6); seat(96, -2, 0, 4.6); lamp(-128, -2, 9.5); lamp(-66, 0, 9.5); lamp(0, -12, 9.5); lamp(52, -6, 9.5); lamp(124, -2, 9.5);
+      [[-44, -8], [70, -2]].forEach(function (p) { add(B(p[0], p[1], 0, 1.6, 0.9, 2.2, WOOD, { nc: NWOOD }), B(p[0] + 0.15, p[1] + 0.9, 0.5, 1.3, 0.03, 1.5, WHITE, { nc: '#C9CEDA' })); });
+
+      // ---- Shop three (V4.03): Data storytelling, Career & learning journey.
+      shop(SC, 10.75, ['#F1E3D8', '#52485A', '#E2D2C6', '#463E50'], [BLUE, '#27457A'], [
+        // Data storytelling: a bookshelf (one yellow book), an armchair under a reading lamp, a flip chart with one point picked out.
+        { x: AX, w: WW, z: WZ, h: WH, c: ['#F1E7D3', '#C9A27A', '#E6DAC2'], inside: function () {
+          add(B(1.0, -2.5, 0, 2.4, 0.7, 3.7, WOOD)); [0, 1, 2].forEach(function (r) { F(1.12, -1.79, 0.2 + r * 1.2, 2.16, 1.0, '#6A5038'); let x = 1.2; [0, 1, 2, 3, 4, 5].forEach(function (k) { const w = [0.3, 0.24, 0.36, 0.28, 0.32, 0.26, 0.3][(k + r) % 7], h = [0.8, 0.9, 0.7, 0.86, 0.76, 0.92, 0.82][(k + r * 2) % 7]; F(x, -1.78, 0.2 + r * 1.2, w, h, r === 1 && k === 2 ? YEL : [BLUE, RUST, MINT, PURPLE, '#C9785E', TEAL, GOLD][(k + r * 3) % 7]); x += w + 0.04; }); });
+          add(B(3.95, -1.75, 0, 1.5, 0.25, 1.9, MINT), B(3.95, -1.5, 0, 0.25, 1.0, 1.0, '#3F8A80'), B(5.2, -1.5, 0, 0.25, 1.0, 1.0, '#3F8A80'), B(4.2, -1.5, 0, 1.0, 1.0, 0.65, '#5FB0A5'));
+          add(C(6.15, -1.9, 0, 0.3, 0.08, DK, { n: 8 }), C(6.15, -1.9, 0.08, 0.05, 2.7, DK, { n: 6 }), K(6.15, -1.9, 2.6, 0.45, 0.5, GOLD, { n: 8 }), S(6.15, -1.9, 2.6, 0.13, '#FFE7A8', { e: 1 }), G(6.15, -1.6, 2.4, 1.3, '#FFD27A'));
+          at([0.15, 0], function () {
+            add(B(7.05, -1.7, 0, 0.1, 0.1, 3.3, DK), B(9.05, -1.7, 0, 0.1, 0.1, 3.3, DK), B(6.9, -1.6, 1.1, 2.4, 0.08, 2.4, CARD));
+            F(7.1, -1.51, 1.35, 2.0, 0.04, INK2); F(7.1, -1.51, 1.35, 0.04, 1.5, INK2); [[7.4, 1.65], [7.85, 1.9], [8.3, 1.8], [8.75, 2.45]].forEach(function (p, k) { disc(p[0], -1.51, p[1], k === 3 ? 0.17 : 0.09, k === 3 ? RUST : LINE); }); F(7.2, -1.51, 3.1, 1.3, 0.1, INK); F(7.2, -1.51, 2.88, 0.9, 0.07, LINE); });
+          add(G(4.9, -0.6, 2.4, 2.0, '#FFE2A8')); } },
+        // Career & learning journey: a flight of steps, a school desk at its foot, and a man with a school bag still climbing; the
+        // flag at the top carries the words of the line.
+        { x: BX, w: WW, z: WZ, h: WH, c: ['#E6EEF2', '#D8D0B4', '#D9E2E6'], inside: function () {
+          add(B(0.45, -1.5, 0, 1.1, 0.7, 0.7, WOOD), B(0.55, -1.4, 0.7, 0.5, 0.4, 0.07, BLUE));
+          [0, 1, 2, 3, 4, 5, 6].forEach(function (k) { add(B(2.0 + k * 0.82, -2.1, 0, 0.82, 1.3, 0.32 * (k + 1), k % 2 ? '#C9B48C' : '#D9C7A0')); });
+          add(B(5.02, -1.72, 1.6 + 0.95, 0.14, 0.3, 0.6, RUST)); fig(5.69, -1.45, 1.6, 0.4);
+          add(C(7.35, -1.5, 2.24, 0.05, 1.75, DK, { n: 6 }), B(7.4, -1.52, 3.3, 2.0, 0.04, 0.66, RUST)); add(T(8.4, -1.47, 3.63, 0.34, '21 years', { wt: 700, ff: 'Manrope, sans-serif', c: '#FFFFFF', nc: '#FFFFFF' }));
+          add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } }
+      ], function () { const U = SU(3); topic(U, 0, AX, 10.0); topic(U, 1, BX, 10.0); lanterns([2.2, 6.2, 17.6, 21.6], 11.1); },
+      function () { [0, 1, 2].forEach(function (k) { add(B(8.75 + k * 0.9, -0.4, 11.1 + k * 0.45, 6.25 - k * 1.8, 0.4, 0.45, '#F1E3D8', { nc: '#52485A' })); }); add(B(10.4, -0.5, 12.45, 2.95, 0.6, 0.14, BLUE, { nc: '#27457A' })); },
+      function () { add(B(8.3, 1.7, 0, 0.9, 0.9, 0.9, WOOD, { nc: NWOOD }), L.books(8.2, 1.75, 0.9, 3, [BLUE, RUST, GOLD])); add(B(14.8, 1.6, 0, 4.6, 0.9, 0.8, '#C9785E', { nc: '#6A4038' })); [0, 1, 2, 3].forEach(function (k) { add(S(15.4 + k * 1.15, 2.05, 1.15, 0.5, k % 2 ? '#8FA66B' : '#9BB97E', { nc: '#2F4A40' })); }); });
+
+      // ---- Shop five (V4.05): Life beyond data. One window like the others, and one tall window for the mountain.
+      shop(SE, 10.75, ['#EEF0DE', '#4A5248', '#DDE0CC', '#40483E'], [PURPLE, '#5A4476'], [
+        // skating and languages: a line of cones and a man on skates; two people talking over glasses of tea, each in their own script.
+        { x: AX, w: WW, z: WZ, h: WH, c: ['#EEF2F6', '#D6DCE4', '#E0E6EC'], inside: function () {
+          F(5.0, -ND + 0.01, 3.05, 1.8, 1.1, CARD); F(5.5, -ND + 0.01, 2.85, 0.3, 0.22, CARD); [0, 1, 2].forEach(function (k) { F(5.2, -ND + 0.02, 3.8 - k * 0.27, 1.4 - (k % 2) * 0.5, 0.1, BLUE); });
+          F(7.4, -ND + 0.01, 3.2, 1.8, 1.05, '#FBF1DC'); F(8.5, -ND + 0.01, 3.0, 0.3, 0.22, '#FBF1DC'); [0, 1, 2, 3, 4].forEach(function (k) { disc(7.65 + k * 0.32, -ND + 0.02, 3.93, 0.09, RUST); }); [0, 1, 2].forEach(function (k) { F(7.6 + k * 0.5, -ND + 0.02, 3.45, 0.34, 0.2, RUST); });
+          fig(6.5, -1.4, 0, 0.42, '#8C5A48'); fig(8.8, -1.4, 0, 0.42, MINT); add(B(7.3, -1.2, 0, 0.7, 0.6, 0.75, WOOD), C(7.5, -0.95, 0.75, 0.08, 0.2, '#E8B36A', { n: 6 }), C(7.8, -0.95, 0.75, 0.08, 0.2, '#E8B36A', { n: 6 }));
+          [0, 1, 2, 3, 4].forEach(function (k) { add(K(1.5 + k * 0.56, -0.5 - k * 0.25, 0, 0.17, 0.42, '#E07A3A', { n: 8 })); });
+          add(B(4.34, -1.65, 0, 0.3, 0.42, 0.18, '#2B2F3A'), B(4.86, -1.65, 0, 0.3, 0.42, 0.18, '#2B2F3A')); fig(4.75, -1.4, 0.18, 0.42);
+          add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } },
+        // hiking: a mountain with snow on it and a flag on top, a lower hill, pines, a tent, a signpost and a walker on the trail.
+        { x: BX, w: WW, z: WZ, h: 8.3, c: ['#DCEBF5', '#B9CF9A', '#D2E0EA'], inside: function () {
+          disc(8.0, -ND + 0.01, 7.0, 0.62, YEL); [[1.3, 6.7, 0.45], [2.0, 6.85, 0.55], [2.7, 6.65, 0.42]].forEach(function (p) { disc(p[0], -ND + 0.01, p[1], p[2], '#FFFFFF'); });
+          add(K(6.9, -1.9, 0, 2.6, 4.0, '#A9BBA0', { n: 6, rot: 0.3 }), K(3.8, -1.6, 0, 3.0, 5.6, '#8FA0A8', { n: 6, rot: 0.1 }), K(3.8, -1.6, 4.2, 0.75, 1.4, '#FFFFFF', { n: 6, rot: 0.1 }));
+          add(C(3.8, -1.6, 5.55, 0.04, 0.8, DK, { n: 6 }), B(3.84, -1.61, 6.0, 0.55, 0.03, 0.34, RED));
+          add(L.pine(0.9, -1.0, 0, 0.85), L.pine(8.6, -1.0, 0, 0.95));
+          add(K(2.9, -0.7, 0, 0.8, 0.9, GOLD, { n: 3, rot: 0.6 }));
+          add(C(5.2, -0.6, 0, 0.06, 1.5, WOOD, { n: 6 }), B(5.2, -0.62, 1.2, 0.85, 0.06, 0.24, WOOD), B(4.41, -0.62, 0.86, 0.85, 0.06, 0.24, WOOD));
+          add(B(6.52, -0.82, 0.86, 0.14, 0.26, 0.5, GREEN)); fig(7.05, -0.6, 0, 0.34, RUST);
+          add(G(4.9, -0.6, 3.6, 2.6, '#FFE2A8')); } }
+      ], function () { const U = SU(5); topic(U, 0, AX, 10.0); lanterns([2.2, 6.2, 10.2, 13.6, 21.6], 11.1); },
+      function () { add(C(17.5, -3.5, 11.05, 0.07, 2.4, DK, { n: 6 }), B(17.55, -3.52, 12.7, 1.5, 0.04, 0.7, PURPLE, { nc: '#9C82BA' })); },
+      function () { pot(8.7, 2.0, 0, 0.8, '#B98B5E'); seat(14.6, 1.6, 0, 4.4, MINT, '#2E6F68'); });
+
+      // ---- Shop one (V4.01): where the street starts. The heading is painted on the fascia, the intro under it; the windows are
+      // Power BI design craft and Data engineering & Fabric.
+      shop(SA, 12.75, ['#F3E9D6', '#4A4658', '#E4D8C2', '#3E3A4C'], [RUST, '#8A4A30'], [
+        // Power BI design craft: a park with a tree and a bench, a report on an easel that looks like a website, an anvil with a hot bar.
+        { x: AX, w: WW, z: WZ, h: WH, c: ['#E4EEF2', '#B9CF9A', '#D6E2E6'], inside: function () {
+          strip([0.2, -0.45], [9.6, -0.9], 0.6, '#E9DEC6', '#E9DEC6', 0.03);
+          add(C(1.75, -1.8, 0, 0.13, 1.2, '#8C6A4A', { n: 6 }), S(1.45, -1.8, 1.75, 0.6, '#8FB07A'), S(2.1, -1.7, 1.85, 0.55, '#A3BF86'), S(1.75, -1.7, 2.4, 0.55, '#9BB97E'));
+          add(B(3.2, -1.5, 0, 0.12, 0.5, 0.45, DK), B(4.28, -1.5, 0, 0.12, 0.5, 0.45, DK), B(3.1, -1.55, 0.45, 1.4, 0.6, 0.1, WOOD), B(3.1, -1.6, 0.75, 1.4, 0.08, 0.4, WOOD));
+          at([0.35, 0], function () {
+            add(B(4.85, -1.85, 0, 0.1, 0.1, 3.3, WOOD), B(7.05, -1.85, 0, 0.1, 0.1, 3.3, WOOD), B(5.95, -2.3, 0, 0.1, 0.1, 3.0, WOOD), B(4.6, -1.75, 1.0, 2.8, 0.1, 2.3, DK), B(4.7, -1.65, 1.1, 2.6, 0.01, 2.1, CANVAS));
+            F(4.7, -1.64, 2.82, 2.6, 0.38, '#27457A'); F(4.82, -1.635, 2.96, 0.7, 0.1, '#FFFFFF'); [0, 1, 2].forEach(function (k) { F(6.1 + k * 0.38, -1.635, 2.97, 0.28, 0.07, '#C9D9F0'); });
+            F(4.85, -1.64, 2.05, 2.3, 0.62, '#FBF1DC'); F(5.0, -1.635, 2.42, 1.0, 0.1, INK); F(5.0, -1.635, 2.2, 0.6, 0.14, RUST); disc(6.65, -1.635, 2.36, 0.22, MINT);
+            [0, 1, 2].forEach(function (k) { F(4.85 + k * 0.8, -1.64, 1.25, 0.7, 0.66, PALE); F(4.92 + k * 0.8, -1.635, 1.32, 0.56, [0.2, 0.36, 0.28][k], [BLUE, MINT, OCHRE][k]); }); });
+          add(B(8.2, -1.5, 0, 0.8, 0.7, 0.45, '#4A5468'), B(8.35, -1.45, 0.45, 0.5, 0.6, 0.35, '#596379'), B(7.95, -1.55, 0.8, 1.4, 0.8, 0.38, DK), B(8.15, -1.2, 1.18, 0.9, 0.2, 0.1, '#F2A03D', { e: 1, nc: '#FFB347' }));
+          add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } },
+        // Data engineering & Fabric: a kettle on a stove, pipes along the wall, drums of data and the racks of a warehouse.
+        { x: BX, w: WW, z: WZ, h: WH, c: ['#DCE4EA', '#C9CED6', '#D0D8DE'], inside: function () {
+          F(1.4, -ND + 0.01, 2.6, 5.4, 0.2, MINT); F(1.4, -ND + 0.01, 1.3, 0.2, 1.5, MINT); F(4.1, -ND + 0.01, 1.4, 0.2, 1.4, MINT); F(6.6, -ND + 0.01, 2.6, 0.2, 1.6, MINT); [2.6, 5.3].forEach(function (x) { F(x, -ND + 0.02, 2.52, 0.3, 0.36, '#3F8A80'); });
+          add(B(0.6, -1.9, 0, 1.7, 1.2, 1.0, '#8E99A8'), B(0.6, -0.71, 0.3, 1.7, 0.01, 0.45, '#596379'), C(1.45, -1.3, 1.0, 0.5, 0.62, '#C9785E', { n: 10 }), S(1.45, -1.3, 1.7, 0.13, DK), B(1.9, -1.36, 1.3, 0.42, 0.12, 0.12, '#C9785E'));
+          [0, 1].forEach(function (s) { [0, 1, 2].forEach(function (k) { add(C(3.3 + s * 1.45, -1.6 + s * 0.3, k * 0.58, 0.58, 0.46, [BLUE, '#4C78B8', '#7FA3D6'][k], { n: 12 })); }); });
+          add(L.racking(6.3, -2.0, 0, 2.6, 3, 1));
+          add(G(4.9, -0.6, 2.4, 2.2, '#FFE2A8')); } }
+      ], function () { const U = SU(1);
+        add(B(W0 + 0.6, 0, 11.25, W1 - W0 - 1.2, 0.08, 1.3, '#FBF3E4', { nc: '#3A3F58' }));
+        add(T(BW / 2, 0.1, 11.9, 0.85, U[0] || '', { wt: 800, ff: 'Manrope, sans-serif', c: INK, nc: LITE }));
+        say(U[1] || '', 8.0, 0.03, 10.85, 0.33, { nc: LITE });
+        topic(U, 0, AX, 9.9); topic(U, 1, BX, 9.9); lanterns([7.5, 11.875, 16.25, 20.6], 13.1); },
+      null,
+      function () { pot(8.7, 2.0, 0, 0.8); add(B(15.2, 1.6, 0, 1.5, 0.9, 1.7, WOOD, { nc: NWOOD }), B(15.33, 2.5, 0.35, 1.24, 0.03, 1.2, WHITE, { nc: '#C9CEDA' })); add(B(18.3, 1.6, 0, 1.7, 1.1, 0.8, WOOD, { nc: NWOOD })); [0, 1, 2, 3].forEach(function (k) { add(B(18.42 + k * 0.4, 1.75, 0.8, 0.3, 0.8, 0.3 + (k % 2) * 0.1, [BLUE, RUST, MINT, GOLD][k], { nc: '#3A4458' })); }); });
     } else if (id === 'kanzway') {
       def.label = 'Kanzway warehouse: catalog shelves of industrial tools, an ERD board, a pallet and a small team at three desks';
       def.sky = ['#D5DAE0', '#EDEDEB']; def.nsky = ['#141B2E', '#2A3450']; def.fog = 0.15; def.haze = '#E3E6EA';
