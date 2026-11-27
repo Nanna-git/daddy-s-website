@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Portfolio · Achmad Farizky</title>
+  <meta name="description" content="A few projects I'm proud of: Power BI dashboards and reports, programming and automation, data engineering with Microsoft Fabric, and graphic design, each with its links and the people I credit.">
+  <meta property="og:title" content="Portfolio">
+  <meta property="og:description" content="A few projects I'm proud of: Power BI dashboards and reports, programming and automation, data engineering with Microsoft Fabric, and graphic design, each with its links and the people I credit.">
+  <meta property="og:type" content="article">
+  <meta name="theme-color" content="#F4F1EA">
+  <script>
+    // Theme and reduced motion are decided before first paint (same keys as Home).
+    (function () {
+      var d = document.documentElement, t = null, r = null;
+      try { t = localStorage.getItem('theme'); r = localStorage.getItem('af-reduce'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      d.setAttribute('data-theme', t);
+      if (r === '1' || (r === null && matchMedia('(prefers-reduced-motion: reduce)').matches)) d.classList.add('reduce-motion');
+      d.classList.add('js');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=Kalam:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/diorama.css">
+  <link rel="stylesheet" href="assets/css/university.css">
+</head>
+<body class="u-page" data-section="portfolio">
+  <script src="assets/js/slate.js"></script>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#views">Skip to content</a>
+
+  <header class="hud-top">
+    <div class="hud-id">
+      <a class="af-mark" href="index.html" aria-label="Achmad Farizky, home">AF</a>
+      <span class="hud-divider" aria-hidden="true"></span>
+      <p class="hud-section"><span>Portfolio</span></p>
+    </div>
+    <div class="hud-menu" id="hud-menu">
+      <button type="button" class="hud-glass hud-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="hud-menu-items"><svg class="ic ic-22"><use href="#i-menu"/></svg></button>
+      <div class="hud-menu-items" id="hud-menu-items">
+        <div class="hud-glass seg seg-icons" role="group" aria-label="Colour mode">
+          <button type="button" data-theme-set="light" aria-label="Day" aria-pressed="true"><svg class="ic ic-18"><use href="#i-sun"/></svg></button>
+          <button type="button" data-theme-set="dark" aria-label="Night" aria-pressed="false"><svg class="ic ic-18"><use href="#i-moon"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="hud-phone">
+      <span class="phone-chip">Portfolio <span class="phone-count"><span data-idx>1</span>/13</span></span>
+      <span class="phone-btns">
+        <a class="round-glass" href="index.html" aria-label="Home"><span class="af-mark" aria-hidden="true">AF</span></a>
+        <button type="button" class="round-glass" data-theme-toggle aria-label="Switch to night"><svg class="ic ic-18"><use href="#i-moon"/></svg></button>
+      </span>
+    </div>
+  </header>
+
+  <main id="views" tabindex="-1">
+    <!-- V3.01 · the gallery front -->
+    <section class="u-view" aria-label="View 1 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h1>Portfolio</h1>
+          <p>A few projects I'm proud of. Most were made while learning in communities, so I always credit the people who taught me.</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+    </section>
+
+    <!-- V3.02 · Power BI hall one: the CEO dashboard -->
+    <section class="u-view" aria-label="View 2 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h2>Power BI</h2>
+          <h3>1. CEO Dashboard</h3>
+          <p><em>Power BI · July 2025</em></p>
+          <p>I rebuilt the CEO dashboard concept from a Nick Desbarats interview. Top managers need to see many dimensions and metrics in about three seconds. I unpivoted everything in the data model so one matrix can show all dimensions at once.</p>
+          <p><strong>What I learned:</strong> 70% of the work was data modeling in Power Query, only 30% was DAX and design.</p>
+          <p><strong>Tools:</strong> Power Query, DAX, matrix visual</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7347197268795482113/" target="_blank" rel="noopener">Post 1</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7350742169269239808/" target="_blank" rel="noopener">Final version</a> · <a href="https://lnkd.in/d6BZRBTA" target="_blank" rel="noopener">PBIX &amp; dataset</a></p>
+          <p><strong>Credit:</strong> Nick Desbarats, Ian Stuart (Rupe), Gustaw Dudek</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:601.1px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7347197268795482113/" target="_blank" rel="noopener">Post 1</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7350742169269239808/" target="_blank" rel="noopener">Final version</a> ·</span> <span><a href="https://lnkd.in/d6BZRBTA" target="_blank" rel="noopener">PBIX &amp; dataset</a></span></nav></div>
+    </section>
+
+    <!-- V3.03 · Power BI hall one: the HR page -->
+    <section class="u-view" aria-label="View 3 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h3>2. HR Overview</h3>
+          <p><em>Power BI · January 2025</em></p>
+          <p>My fourth Power BI Park project. I added salary data, color-coded changes vs. last year, and turned KPI cards into buttons.</p>
+          <blockquote>"You've taken it even further than anyone else. Great job." — Injae Park</blockquote>
+          <p><strong>Tools:</strong> DAX, SVG, tile slicer</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7291081489188810753/" target="_blank" rel="noopener">Post</a> · <a href="https://lnkd.in/dPwWnuux" target="_blank" rel="noopener">Report</a></p>
+          <p><strong>Credit:</strong> Injae Park, Power BI Park</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:536.3px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7291081489188810753/" target="_blank" rel="noopener">Post</a> ·</span> <span><a href="https://lnkd.in/dPwWnuux" target="_blank" rel="noopener">Report</a></span></nav></div>
+    </section>
+
+    <!-- V3.04 · Power BI hall one: a website inside Power BI -->
+    <section class="u-view" aria-label="View 4 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h3>3. A website inside Power BI</h3>
+          <p><em>Power BI · January 2025</em></p>
+          <p>A report that looks and works like a job-board website.</p>
+          <blockquote>"This doesn't even look like Power BI anymore. Great job Achmad Farizky." — Injae Park</blockquote>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7288149984321966080/" target="_blank" rel="noopener">Post</a> · <a href="https://lnkd.in/dHpJ2dJJ" target="_blank" rel="noopener">Web-style report</a></p>
+          <p><strong>Credit:</strong> Injae Park, Power BI Park</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:431.7px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7288149984321966080/" target="_blank" rel="noopener">Post</a> ·</span> <span><a href="https://lnkd.in/dHpJ2dJJ" target="_blank" rel="noopener">Web-style report</a></span></nav></div>
+    </section>
+
+    <!-- V3.05 · Power BI hall one: the hierarchy series -->
+    <section class="u-view" aria-label="View 5 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h3>4. Dynamic hierarchy series</h3>
+          <p><em>Power BI · May 2025</em></p>
+          <p>Three workouts where users choose the order of a table breakdown, with a heatmap you can switch on and off, and column widths that stay right whatever you choose.</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7328328261631889408/" target="_blank" rel="noopener">Part 1</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7328591527583047680/" target="_blank" rel="noopener">Part 2</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7328807517554130944/" target="_blank" rel="noopener">Part 3</a></p>
+          <p><strong>Credit:</strong> Gustaw Dudek, The Data Vis Forge; tip from Iwa Sanjaya</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:382.1px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7328328261631889408/" target="_blank" rel="noopener">Part 1</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7328591527583047680/" target="_blank" rel="noopener">Part 2</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7328807517554130944/" target="_blank" rel="noopener">Part 3</a></span></nav></div>
+    </section>
+
+    <!-- V3.06 · Power BI hall two: animated SVG -->
+    <section class="u-view" aria-label="View 6 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h3>5. Animated SVG: KPI card and button slicer in one</h3>
+          <p><em>Power BI · July 2025</em></p>
+          <p>Animated SVG inside Power BI. It reminded me of my Macromedia Flash days at university.</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7345979314770735104/" target="_blank" rel="noopener">Post</a> · <a href="https://lnkd.in/dSNqh9BH" target="_blank" rel="noopener">Report</a></p>
+          <p><strong>Credit:</strong> Injae Park, Guy Orlov</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:390.6px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7345979314770735104/" target="_blank" rel="noopener">Post</a> ·</span> <span><a href="https://lnkd.in/dSNqh9BH" target="_blank" rel="noopener">Report</a></span></nav></div>
+    </section>
+
+    <!-- V3.07 · Power BI hall two: Trello to a timeline -->
+    <section class="u-view" aria-label="View 7 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h3>6. Trello data to a smart timeline</h3>
+          <p><em>Power BI · August 2025</em></p>
+          <p>Trello's dashboard only shows what you are doing now. Its exported JSON has much more. I turned it into a calendar of work hours and a workload view for managers, built manually as a Gantt-style timeline (before Power BI had its own Gantt visual).</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7361010035000336384/" target="_blank" rel="noopener">Post</a> · <a href="https://lnkd.in/dg2GrXET" target="_blank" rel="noopener">Report</a> · <a href="https://lnkd.in/d76J4msE" target="_blank" rel="noopener">PBIX</a></p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:413.5px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7361010035000336384/" target="_blank" rel="noopener">Post</a> ·</span> <span><a href="https://lnkd.in/dg2GrXET" target="_blank" rel="noopener">Report</a> ·</span> <span><a href="https://lnkd.in/d76J4msE" target="_blank" rel="noopener">PBIX</a></span></nav></div>
+    </section>
+
+    <!-- V3.08 · Power BI hall two: the ROI planner -->
+    <section class="u-view" aria-label="View 8 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h3>7. Small-business ROI planner</h3>
+          <p><em>Power BI · March 2025</em></p>
+          <p>A friend was starting a small business. I built a planner showing how fast he could get his investment back and the minimum capital he needed. The best part was his reaction.</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7305921652414939136/" target="_blank" rel="noopener">Post</a></p>
+          <p><strong>Credit:</strong> Techniques from Power BI Park</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:382.1px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7305921652414939136/" target="_blank" rel="noopener">Post</a></span></nav></div>
+    </section>
+
+    <!-- V3.09 · the workshop: the theme generator -->
+    <section class="u-view" aria-label="View 9 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h2>Programming &amp; automation</h2>
+          <h3>8. My own Power BI theme generator</h3>
+          <p><em>Python · May–June 2025</em></p>
+          <p>I format visuals once, save the report as PBIP, and a Python script turns it into a reusable JSON theme. Now I spend only about 20% of my time on formatting.</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7334655181541797888/" target="_blank" rel="noopener">v1</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7338476340116881408/" target="_blank" rel="noopener">v2</a> · <a href="https://lnkd.in/d9DQTQkN" target="_blank" rel="noopener">Code &amp; PBIX</a></p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:454.7px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7334655181541797888/" target="_blank" rel="noopener">v1</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7338476340116881408/" target="_blank" rel="noopener">v2</a> ·</span> <span><a href="https://lnkd.in/d9DQTQkN" target="_blank" rel="noopener">Code &amp; PBIX</a></span></nav></div>
+    </section>
+
+    <!-- V3.10 · the workshop: the email attachments -->
+    <section class="u-view" aria-label="View 10 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h3>9. Hundreds of email attachments, in one go</h3>
+          <p><em>Power Query + Python · May 2025</em></p>
+          <p>A client had to send me hundreds of PDFs, each in a separate email. I guided him to export all of them with Power Query into one Excel file, then turned them back into PDFs with Python. No new software needed.</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7326583605067956224/" target="_blank" rel="noopener">Post</a></p>
+          <p><strong>Credit:</strong> Chandeep Chhabra (technique)</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:453.5px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7326583605067956224/" target="_blank" rel="noopener">Post</a></span></nav></div>
+    </section>
+
+    <!-- V3.11 · the workshop: the ReactJS site -->
+    <section class="u-view" aria-label="View 11 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h3>10. BI-style reporting website in ReactJS</h3>
+          <p><em>ReactJS · a few years ago</em></p>
+          <p>A design experiment: filtering, drill-down and dynamic visuals on the web, fed by an ETL process that saved data as JavaScript files.</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7313778618269089792/" target="_blank" rel="noopener">Post</a> · <a href="https://lnkd.in/dw29GDkB" target="_blank" rel="noopener">Demo</a></p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:422.0px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7313778618269089792/" target="_blank" rel="noopener">Post</a> ·</span> <span><a href="https://lnkd.in/dw29GDkB" target="_blank" rel="noopener">Demo</a></span></nav></div>
+    </section>
+
+    <!-- V3.12 · the data engineering pavilion -->
+    <section class="u-view" aria-label="View 12 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h2>Data engineering</h2>
+          <h3>11. Microsoft Fabric, end to end</h3>
+          <p><em>Microsoft Fabric · April–August 2025</em></p>
+          <p>Lakehouse, warehouse, pipelines, real-time streaming, data quality and CI/CD, all in one month in the Fabric Dojo, then the DP-700 certification.</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:share:7314252306923847680/" target="_blank" rel="noopener">Joining the Dojo</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7321766345275002880/" target="_blank" rel="noopener">Lakehouse</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7322225808863838208/" target="_blank" rel="noopener">Real-time</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7323979073880227840/" target="_blank" rel="noopener">Quality assurance</a> · <a href="https://www.linkedin.com/feed/update/urn:li:share:7363249127498960897/" target="_blank" rel="noopener">DP-700</a></p>
+          <p><strong>Credit:</strong> Will Needham, Fabric Dojo</p>
+        </div>
+        <div class="u-next next-row"><button type="button" class="next-link" data-next><span>Next</span><svg class="ic ic-18"><use href="#i-down"/></svg></button><span class="kbd-hint">or press Enter</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:454.7px"><span><a href="https://www.linkedin.com/feed/update/urn:li:share:7314252306923847680/" target="_blank" rel="noopener">Joining the Dojo</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7321766345275002880/" target="_blank" rel="noopener">Lakehouse</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7322225808863838208/" target="_blank" rel="noopener">Real-time</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7323979073880227840/" target="_blank" rel="noopener">Quality assurance</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:share:7363249127498960897/" target="_blank" rel="noopener">DP-700</a></span></nav></div>
+    </section>
+
+    <!-- V3.13 · the graphic design pavilion -->
+    <section class="u-view" aria-label="View 13 of 13">
+      <div class="u-scene" aria-hidden="true"><div class="u-board"></div></div>
+      <div class="u-over">
+        <div class="u-copy">
+          <h2>Graphic design</h2>
+          <h3>12. PowerPoint makeup artist</h3>
+          <p><em>PowerPoint · 2016–now</em></p>
+          <p>People often call me at the last minute: "Achmad, can you come to my desk? I have a meeting in less than an hour!" I give their slides a design facelift. In 2016, I also made education videos with my family using only PowerPoint, a screen recorder and free editing tools, and later a Basic Arabic video course.</p>
+          <p class="u-copy-links"><strong>Links:</strong> <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7335048807547559936/" target="_blank" rel="noopener">Makeup artist</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7335870879333081089/" target="_blank" rel="noopener">PowerPoint videos</a> · <a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7488854622544109570/" target="_blank" rel="noopener">PowerPoint for executives</a> · <a href="https://lnkd.in/d-AnMq2F" target="_blank" rel="noopener">Sample PPTX</a></p>
+        </div>
+        <div class="u-next next-row"><a class="next-link" href="#"><span>Next section</span><svg class="ic ic-18"><use href="#i-down"/></svg></a><span class="kbd-hint">What I write about, coming soon</span></div>
+      </div>
+      <div class="u-pin"><nav class="u-links" aria-label="Links" style="left:277px;top:518.0px"><span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7335048807547559936/" target="_blank" rel="noopener">Makeup artist</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7335870879333081089/" target="_blank" rel="noopener">PowerPoint videos</a> ·</span> <span><a href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7488854622544109570/" target="_blank" rel="noopener">PowerPoint for executives</a> ·</span> <span><a href="https://lnkd.in/d-AnMq2F" target="_blank" rel="noopener">Sample PPTX</a></span></nav></div>
+    </section>
+  </main>
+
+  <nav class="u-spine" aria-label="Timeline">
+    <ol>
+      <li><a href="university.html" aria-label="University (2000)"><i></i>2000</a></li>
+      <li><a href="telkomsel.html" aria-label="Telkomsel (2005)"><i></i>2005</a></li>
+      <li><a href="trying.html" aria-label="A year of trying (2009)"><i></i>2009</a></li>
+      <li><a href="ericsson.html" aria-label="Ericsson (2010)"><i></i>2010</a></li>
+      <li><a href="kanzway.html" aria-label="Kanzway (2023)"><i></i>2023</a></li>
+      <li><a href="community.html" aria-label="Learning through community (2025)"><i></i>2025</a></li>
+      <li><a href="jhah.html" aria-label="Johns Hopkins Aramco Healthcare (now)"><i></i>now</a></li>
+    </ol>
+  </nav>
+
+  <div class="dial hud-glass" role="img" aria-label="View 1 of 13" id="dial">
+    <svg width="68" height="68" viewBox="0 0 68 68" aria-hidden="true"><circle class="dial-track" cx="34" cy="34" r="26"/><circle class="dial-fill" cx="34" cy="34" r="26" transform="rotate(-90 34 34)"/></svg>
+    <span class="dial-num"><span data-idx>1</span><span class="dial-of">/13</span></span>
+  </div>
+
+  <div class="phone-bar">
+    <span class="phone-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+    <button type="button" class="btn-coral" data-next data-phone-next>Next<svg class="ic ic-18"><use href="#i-down"/></svg></button>
+    <a class="btn-coral" href="#" data-phone-section hidden>Next section</a>
+  </div>
+
+  <p class="sr-only" aria-live="polite" id="announce"></p>
+  <noscript><style>.u-view{position:static;visibility:visible;opacity:1}.u-scene,.u-next,.u-spine,.dial{display:none}.u-over{position:static;transform:none;width:auto;height:auto;padding:24px}.u-copy{position:static;width:auto;height:auto;clip:auto}</style></noscript>
+  <script type="module" src="assets/js/section.js"></script>
+</body>
+</html>

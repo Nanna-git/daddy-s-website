@@ -1,9 +1,9 @@
-// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway, 2.6 Learning through community, 2.7 Johns Hopkins Aramco Healthcare). Each view is the canvas board: the scene
+// My story sections (2.1 University, 2.2 Telkomsel, 2.3 A year of trying, 2.4 Ericsson, 2.5 Kanzway, 2.6 Learning through community, 2.7 Johns Hopkins Aramco Healthcare) and 3 Portfolio. Each view is the canvas board: the scene
 // drawn by the canvas engine (canvas-diorama.js) at 1440 × 900, plus that board's overlay.
 // The page picks its section with <body data-section="…">.
 import { sceneHTML, cameraMove, viaMove, povOf, warm } from './board.js';
 
-// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15, KZ01…KZ07, LC01…LC09 and JH01…JH10 (ut = the text painted into the scene).
+// cam / uv / ut are copied from the boards U01…U11, TK01…TK10, YT01…YT05, ER01…ER15, KZ01…KZ07, LC01…LC09, JH01…JH10 and PF01…PF13 (ut = the text painted into the scene).
 // moves: how the camera gets from each view to the next one:
 //   'travel'  it really goes there (1.5 s); the old view's text stays where it is
 //   'cut'     walk, cut, walk: for spots too far apart (1.8 s). The two pictures are moved, not redrawn:
@@ -133,6 +133,29 @@ const SECTIONS = {
   { cam: 'j8', uv: 8, ut: 'A moment I\'m proud of||That shareholder meeting, when the dashboard answered their questions better than I could.' },
   { cam: 'j9', uv: 9, ut: 'Tools I picked up' },
   { cam: 'j10', uv: 10, ut: '' },
+  ] },
+  // A gallery street: the gallery front at the front left, two Power BI halls in the back row, the workshop and two small pavilions in
+  // the front row. One project per view; a project's ut is its heading, title, date line, paragraph, quote, what I learned, tools, the
+  // number of lines kept free for the links (they are page links: .u-pin in portfolio.html), and credit.
+  // 1→2: a flight up the gallery front, over its roof and across the street, down to the first hall. 2→5, 6→8, 9→11: along the wall,
+  // one bay at a time. 5→6: back out of hall one, sideways along the back row, facing the walls, to hall two. 8→9: a flight backwards,
+  // up out of hall two, across the street and over the workshop, down in front of it. 11→12: back out of the workshop and sideways to
+  // the data engineering pavilion. 12→13: a short flight over the corner of that pavilion to the graphic design one.
+  portfolio: { scene: 'pf', moves: [{ kind: 'fly', up: 22, climb: 26, dur: 5000 }, 'travel', 'travel', 'travel', { kind: 'slide', dur: 4200 }, 'travel', 'travel',
+    { kind: 'fly', reverse: true, up: 24, glide: 0.3, dur: 5000 }, 'travel', 'travel', { kind: 'slide', dur: 3600 }, { kind: 'fly', up: 14, out: 8, in: 8, dur: 3800 }], views: [
+  { cam: 'p1', uv: 1, ut: 'Portfolio||A few projects I\'m proud of. Most were made while learning in communities, so I always credit the people who taught me.' },
+  { cam: 'p2', uv: 2, ut: 'Power BI||1. CEO Dashboard||Power BI · July 2025||I rebuilt the CEO dashboard concept from a Nick Desbarats interview. Top managers need to see many dimensions and metrics in about three seconds. I unpivoted everything in the data model so one matrix can show all dimensions at once.||||70% of the work was data modeling in Power Query, only 30% was DAX and design.||Power Query, DAX, matrix visual||1||Nick Desbarats, Ian Stuart (Rupe), Gustaw Dudek' },
+  { cam: 'p3', uv: 3, ut: '||2. HR Overview||Power BI · January 2025||My fourth Power BI Park project. I added salary data, color-coded changes vs. last year, and turned KPI cards into buttons.||"You\'ve taken it even further than anyone else. Great job." — Injae Park||||DAX, SVG, tile slicer||1||Injae Park, Power BI Park' },
+  { cam: 'p4', uv: 4, ut: '||3. A website inside Power BI||Power BI · January 2025||A report that looks and works like a job-board website.||"This doesn\'t even look like Power BI anymore. Great job Achmad Farizky." — Injae Park||||||1||Injae Park, Power BI Park' },
+  { cam: 'p5', uv: 5, ut: '||4. Dynamic hierarchy series||Power BI · May 2025||Three workouts where users choose the order of a table breakdown, with a heatmap you can switch on and off, and column widths that stay right whatever you choose.||||||||1||Gustaw Dudek, The Data Vis Forge; tip from Iwa Sanjaya' },
+  { cam: 'p6', uv: 6, ut: '||5. Animated SVG: KPI card and button slicer in one||Power BI · July 2025||Animated SVG inside Power BI. It reminded me of my Macromedia Flash days at university.||||||||1||Injae Park, Guy Orlov' },
+  { cam: 'p7', uv: 7, ut: '||6. Trello data to a smart timeline||Power BI · August 2025||Trello\'s dashboard only shows what you are doing now. Its exported JSON has much more. I turned it into a calendar of work hours and a workload view for managers, built manually as a Gantt-style timeline (before Power BI had its own Gantt visual).||||||||1||' },
+  { cam: 'p8', uv: 8, ut: '||7. Small-business ROI planner||Power BI · March 2025||A friend was starting a small business. I built a planner showing how fast he could get his investment back and the minimum capital he needed. The best part was his reaction.||||||||1||Techniques from Power BI Park' },
+  { cam: 'p9', uv: 9, ut: 'Programming & automation||8. My own Power BI theme generator||Python · May–June 2025||I format visuals once, save the report as PBIP, and a Python script turns it into a reusable JSON theme. Now I spend only about 20% of my time on formatting.||||||||1||' },
+  { cam: 'p10', uv: 10, ut: '||9. Hundreds of email attachments, in one go||Power Query + Python · May 2025||A client had to send me hundreds of PDFs, each in a separate email. I guided him to export all of them with Power Query into one Excel file, then turned them back into PDFs with Python. No new software needed.||||||||1||Chandeep Chhabra (technique)' },
+  { cam: 'p11', uv: 11, ut: '||10. BI-style reporting website in ReactJS||ReactJS · a few years ago||A design experiment: filtering, drill-down and dynamic visuals on the web, fed by an ETL process that saved data as JavaScript files.||||||||1||' },
+  { cam: 'p12', uv: 12, ut: 'Data engineering||11. Microsoft Fabric, end to end||Microsoft Fabric · April–August 2025||Lakehouse, warehouse, pipelines, real-time streaming, data quality and CI/CD, all in one month in the Fabric Dojo, then the DP-700 certification.||||||||2||Will Needham, Fabric Dojo' },
+  { cam: 'p13', uv: 13, ut: 'Graphic design||12. PowerPoint makeup artist||PowerPoint · 2016–now||People often call me at the last minute: "Achmad, can you come to my desk? I have a meeting in less than an hour!" I give their slides a design facelift. In 2016, I also made education videos with my family using only PowerPoint, a screen recorder and free editing tools, and later a Basic Arabic video course.||||||||2||' },
   ] },
 };
 const SLUG = document.body.dataset.section;

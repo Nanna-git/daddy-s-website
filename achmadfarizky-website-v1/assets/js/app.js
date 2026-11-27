@@ -3,7 +3,7 @@ import { renderDiorama } from './still.js';
 import { sceneHTML, povOf, travel, cameraMove } from './board.js';
 
 // sections that have a page; every other link is '#'
-const PAGES = { university: 'university.html', telkomsel: 'telkomsel.html', trying: 'trying.html', ericsson: 'ericsson.html', kanzway: 'kanzway.html', community: 'community.html', jhah: 'jhah.html' };
+const PAGES = { university: 'university.html', telkomsel: 'telkomsel.html', trying: 'trying.html', ericsson: 'ericsson.html', kanzway: 'kanzway.html', community: 'community.html', jhah: 'jhah.html', portfolio: 'portfolio.html' };
 // Scene props per Home view, copied from the boards H01, H02, H02b, H03, H04, H05 (the text painted into the room).
 const HOME_VIEWS = [
   { cam: 'pov', side: 'right' },
@@ -258,7 +258,7 @@ function setBackgroundInert(on) {
 const chapters = $('#chapters');
 $('#phase-list').innerHTML = PHASES.map((p) =>
   `<a class="phase-row" href="${PAGES[p.id] || '#'}"><span class="phase-dot" aria-hidden="true"></span><span class="phase-name">${esc(p.name)}</span><span class="phase-years">${p.years}</span></a>`).join('');
-$('#more-grid').innerHTML = MORE.map((m) => `<a href="#">${esc(m.name)}</a>`).join('');
+$('#more-grid').innerHTML = MORE.map((m) => `<a href="${PAGES[m.id] || '#'}">${esc(m.name)}</a>`).join('');
 
 function openChapters() {
   closeHudMenu();

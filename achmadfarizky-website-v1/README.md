@@ -107,7 +107,7 @@ Its camera moves are in the `community` entry of `SECTIONS` in `section.js`:
 
 ## My story · Johns Hopkins Aramco Healthcare
 
-`jhah.html` is section 2.7, the last of My story (V7.01–V7.10, links `#/jhah/1` … `#/jhah/10`), built the same way from boards JH01–JH10 and the `jh` scene: a hospital lot with four places standing apart, each on its own patch of ground: the hospital front and the wing (clinic corridor, meeting room) at the front, the library and the long data office behind them. Community's last view, the timeline on every section page, the slate and Home's Chapters sheet link to it. Everything after it (Portfolio) points to `#`.
+`jhah.html` is section 2.7, the last of My story (V7.01–V7.10, links `#/jhah/1` … `#/jhah/10`), built the same way from boards JH01–JH10 and the `jh` scene: a hospital lot with four places standing apart, each on its own patch of ground: the hospital front and the wing (clinic corridor, meeting room) at the front, the library and the long data office behind them. Community's last view, the timeline on every section page, the slate and Home's Chapters sheet link to it. Its last view links to Portfolio.
 
 Its camera moves are in the `jhah` entry of `SECTIONS` in `section.js`:
 
@@ -124,3 +124,22 @@ Its camera moves are in the `jhah` entry of `SECTIONS` in `section.js`:
 | 9 → 10 | `crane`: back and up over the wing, to the whole lot (3.4 s) |
 
 The hospital's ground floor has back and side walls that are drawn twice (`seen` in the scene), so the lobby cannot be seen through them when a move passes beside or behind the building.
+
+## Portfolio
+
+`portfolio.html` is section 3 (V3.01–V3.13, links `#/portfolio/1` … `#/portfolio/13`), built the same way from boards PF01–PF13 and the `pf` scene: a gallery street at golden hour with six places, each on its own paving: the gallery front, two halls of the Power BI gallery in the back row, the workshop (Programming & automation) and two small pavilions (Data engineering, Graphic design) in the front row. One project per view: its label is painted on the left of its bay, its framed work hangs on the right. JHAH's last view, the slate and Home's Chapters sheet link to it. Everything after it (What I write about) points to `#`. It is not a chapter of the timeline, so no node is current there.
+
+A project's links are not painted, because painted text cannot be followed. The scene paints "Links:" and keeps the line after it free; the links are real links in a `.u-pin` layer, which is scaled like the scene (`--cover`), so they stay on that line at any window size. Their place is in board pixels in each view's `style` (left 277; top = the painted "Links:" minus 5.8). If the label's layout in the scene changes, measure again (`linkTops()` on the test page of the canvas tools). On a phone the wall links are hidden and the same links show in the sheet, inside the written copy (`.u-copy-links`).
+
+Its camera moves are in the `portfolio` entry of `SECTIONS` in `section.js`:
+
+| Move | What the camera does |
+|---|---|
+| 1 → 2 | `fly`: up the gallery front, over its roof and across the street, down to the first hall (5 s) |
+| 2 → 3, 3 → 4, 4 → 5 | `travel`: along the wall of hall one, one bay at a time (1.5 s) |
+| 5 → 6 | `slide`: back out of hall one, sideways along the back row, facing the walls, to hall two (4.2 s) |
+| 6 → 7, 7 → 8 | `travel`: along the wall of hall two (1.5 s) |
+| 8 → 9 | `fly`, backwards: up out of hall two, across the street and over the workshop, down in front of it (5 s) |
+| 9 → 10, 10 → 11 | `travel`: along the workshop wall (1.5 s) |
+| 11 → 12 | `slide`: back out of the workshop and sideways to the data engineering pavilion (3.6 s) |
+| 12 → 13 | `fly`: a short flight over the corner of that pavilion to the graphic design one (3.8 s) |
