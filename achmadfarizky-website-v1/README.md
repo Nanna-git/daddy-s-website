@@ -24,9 +24,11 @@ Then open <http://localhost:8000/>. Views have their own links: `#/home/1` … `
 | `assets/js/still.js` | SVG renderer for library thumbnails and the article illustration |
 | `assets/js/data.js` | Stories (33), topics (9), career phases and sections used by the menus |
 | `achmadfarizky-content/` | All written content (source of truth for the text) |
+| `stories/`, `stories.html`, `assets/js/story.js` | The 33 story pages and the story index, article mode only (see Stories) |
+| `tools/build-stories.mjs` | Writes the story pages from `achmadfarizky-content/stories/` |
 | `design/` | Design brief and view-by-view content map |
 
-All story and section links point to `#` for now.
+Links to sections that have no page yet point to `#`.
 
 ### Camera moves
 
@@ -148,7 +150,7 @@ Its camera moves are in the `portfolio` entry of `SECTIONS` in `section.js`:
 
 `writing.html` is section 4 (V4.01–V4.05, links `#/writing/1` … `#/writing/5`), built the same way from boards WR01–WR05 and the `wr` scene: a library street by day with five small shops, each on its own paving, one shop per view. Each topic has a shop window with a small diorama inside; its name and its line are painted over the window. Portfolio's last view, the slate and Home's Chapters sheet link to it. Everything after it (Community & recognition) points to `#`.
 
-A topic's stories are not painted, because painted text cannot be followed. The scene paints the arrow and keeps the lines under it free; the stories are real links in the `.u-pin` layer (as on Portfolio), one per line (`.u-links-col`). "all stories" is a real link after the painted "Full list:". Their place is in board pixels in each `style` (view 1: left 115 and 797.6, top 323.1; the other views: left 112.8 and 797.8, top 280.4); it comes from the scene's own numbers (`gen-boards.mjs` in the canvas tools), so measure again if the shop layout changes. No story page exists yet, so every one of these links is `#`. On a phone the wall links are hidden and the same links show in the sheet.
+A topic's stories are not painted, because painted text cannot be followed. The scene paints the arrow and keeps the lines under it free; the stories are real links in the `.u-pin` layer (as on Portfolio), one per line (`.u-links-col`). "all stories" is a real link after the painted "Full list:". Their place is in board pixels in each `style` (view 1: left 115 and 797.6, top 323.1; the other views: left 112.8 and 797.8, top 280.4); it comes from the scene's own numbers (`gen-boards.mjs` in the canvas tools), so measure again if the shop layout changes. They point to the story pages (see Stories). On a phone the wall links are hidden and the same links show in the sheet.
 
 Its camera moves are in the `writing` entry of `SECTIONS` in `section.js`:
 
@@ -158,3 +160,15 @@ Its camera moves are in the `writing` entry of `SECTIONS` in `section.js`:
 | 2 → 3 | `fly`, backwards: up out of the back row, across the street and over the third shop, down in front of it (5 s) |
 | 3 → 4 | `slide`: sideways along the street, facing the shops, then down the lane to the fourth shop (4.6 s) |
 | 4 → 5 | `fly`, backwards: up out of the back row, over the last shop and down in front of it (5 s) |
+
+## Stories
+
+The 33 stories are article pages only: no scene views and no camera moves.
+
+- `stories/<slug>.html`: one page per story (`<slug>` = the file name in `achmadfarizky-content/stories/`). Story chips (phase, topics, reading time), a still illustration (the story's library-card diorama, drawn once), the text, the LinkedIn post(s) it comes from, and a "Next story" card. The left column lists the story's `##` headings and marks the one being read; each heading has a link button in the margin.
+- `stories.html`: the story index, the library as a page (same cards and order as Home's Story library, all 33 shown, filter by topic).
+- `assets/js/story.js`: theme switch (same `theme` key as the other pages), the still illustrations, the "In this story" highlight and the topic filter. Styles: "STORY PAGES" in `site.css`.
+
+These files are written by `node tools/build-stories.mjs` from `achmadfarizky-content/stories/*.md` (the text and the frontmatter; the view maps hold the same text). Run it again after a story changes, and commit what it writes. It stops if a page's words are not exactly the file's words. The same run points every story link on the other pages at its page: a link counts as a story link when its text (or a related-story card's title) is the start of exactly one story title, and "all stories" goes to `stories.html`. Run it again after a section page is regenerated, since its links come back as `#`.
+
+Decisions: the text keeps its line breaks (a bold line followed by text on the next line stays on two lines); links between stories (`x.md`) go to `x.html`; images are not shown yet (the frontmatter `assets` lists what Achmad still has to supply); "Next story" follows the timeline (the library's phase chips in order, then the story's date), as on the canvas's story board S08. The story index is `stories.html`, not `stories/index.html`, because the slate (`slate.js`) knows pages by file name and would take `index.html` for Home.

@@ -314,7 +314,7 @@ function renderLibrary() {
     <a class="story-card" href="${s.href}" style="--n:${n % 12}">
       <div class="story-thumb" data-scene="${s.scene}" data-cam="${s.cam}"></div>
       <div class="story-body">
-        <div class="story-chips"><span>${esc(s.chip)}</span><span>${s.views} views</span></div>
+        <div class="story-chips"><span>${esc(s.chip)}</span><span>${s.minutes} min</span></div>
         <strong class="story-title">${esc(s.title)}</strong>
       </div>
     </a>`).join('') : '<p class="lib-empty">0 stories</p>';

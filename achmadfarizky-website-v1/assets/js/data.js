@@ -1,7 +1,7 @@
 // Site content used by the Home page menus.
 // Titles, phases, themes and reading times are copied from
 // achmadfarizky-content/stories/*.md frontmatter and portfolio.md.
-// Every story and section link points to '#' until those pages exist.
+// Each story has its own page, stories/<slug>.html (written by tools/build-stories.mjs).
 
 export const TOPICS = [
   { id: 'powerbi',    name: 'Power BI design craft',            line: "dashboards that don't look like Power BI." },
@@ -57,7 +57,7 @@ const CARD = {
 
 const S = (title, slug, date, phase, themes, minutes) => {
   const [views, chip, scene, cam] = CARD[slug];
-  return { title, slug, date, phase, minutes, views, chip, scene, cam, href: '#', topics: themes.map((name) => T[name]) };
+  return { title, slug, date, phase, minutes, views, chip, scene, cam, href: `stories/${slug}.html`, topics: themes.map((name) => T[name]) };
 };
 
 export const STORIES = [
